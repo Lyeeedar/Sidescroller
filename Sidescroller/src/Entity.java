@@ -265,11 +265,6 @@ public class Entity implements Serializable{
 		
 		if (MainFrame.key1)
 		{
-			if (spellCD > 0)
-				return;
-			
-			spellCD
-			
 			int dir = 0;
 			
 			if (pos[2] == 0)
@@ -277,8 +272,18 @@ public class Entity implements Serializable{
 			else
 				dir = 7;
 			
-			Spell s = new Spell("Fire", 60, new int[]{pos[0], pos[1], pos[2]}, new File("Data/Resources/Spells/fireball.png"), new int[]{0,0,37,30},
-					new boolean[]{true}, new int[]{dir, 0}, 700, Entity.DAMAGE_PHYSICAL, 10, false, this);
+			BufferedImage im = null;
+			
+			try{
+				im = ImageIO.read(new File("Data/Resources/Spells/fireball.png"));
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
+			
+			Spell s = new Spell("Fire", 60, new int[]{pos[0], pos[1], pos[2]}, new int[]{0,0,37,30},
+					new boolean[]{true}, new int[]{dir, 0}, im, 0, false, 1000, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
 			
 			Main.gamedata.getGameEntities().put("Fire"+System.currentTimeMillis(), s);
 			
@@ -511,6 +516,15 @@ public class Entity implements Serializable{
 
 	}
 
+	/**
+	 * Update all values based on game time
+	 * @param time
+	 */
+	public void updateTime(long time)
+	{
+		this.spellCD -= time;
+		animate(time);
+	}
 
 	/**
 	 * Method to update the animation stage for the entity
@@ -518,7 +532,6 @@ public class Entity implements Serializable{
 	 */
 	public void animate(long time)
 	{
-		this.spellCD -= time;
 		if (animate)
 		{
 			this.remainingAnimateTime -= time;

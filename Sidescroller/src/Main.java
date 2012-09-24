@@ -121,7 +121,7 @@ public class Main {
 				for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 				{
 					Entity e = entry.getValue();
-					e.animate(elapsedTime);
+					e.updateTime(elapsedTime);
 				}
 			}
 		}
