@@ -279,7 +279,7 @@ public class Entity implements Serializable{
 				dir = 7;
 			
 			Spell s = new Spell("Fireball", 60, new int[]{pos[0], pos[1], pos[2]}, new int[]{0,0,37,30},
-					new boolean[]{true}, new int[]{dir, 0}, SpellList.getImage("Fireball"), 0, false, 200, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
+					new boolean[]{true}, new int[]{dir, 0}, SpellList.getImage("Fireball"), 0, true, 200, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
 			
 			spellCD = s.spellCDTime;
 			

@@ -292,7 +292,7 @@ public class MainFrame extends JFrame implements KeyListener{
 		// Distant background, moves at half the speed of the rest
 		g2d.drawImage(Main.gamedata.getBackground()[0],
 				0, 0, resolution[0], resolution[1],
-				screenPosition[0]/2, screenPosition[1]/2, (screenPosition[0]/2)+(int)(resolution[0]), (screenPosition[1]/2)+(int)(resolution[1]),
+				screenPosition[0]/2, screenPosition[1], (screenPosition[0]/2)+(int)(resolution[0]), (screenPosition[1])+(int)(resolution[1]),
 				null);
 
 		// Near background (non collision
