@@ -5,6 +5,9 @@ import java.io.File;
 class Spell extends Entity
 {
 
+	/**
+	 * Time that spell casting is locked for
+	 */
 	long spellCDTime;
 	
 	int explode = 0;
