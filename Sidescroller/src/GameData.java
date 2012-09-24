@@ -19,7 +19,7 @@ public class GameData {
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
-	private long gameSpeed = 15;
+	private long gameSpeed = 10;
 	/**
 	 * The remaining time before another Game Logic update
 	 */
@@ -78,7 +78,7 @@ public class GameData {
 	public void test()
 	{	
 		boolean a = true;
-		if (!a)
+		if (a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -147,6 +147,7 @@ public class GameData {
 				}
 		}
 
+			SpellList.populateSpellImages(this.getGameEntities());
 			createCollisionMap();
 		}
 

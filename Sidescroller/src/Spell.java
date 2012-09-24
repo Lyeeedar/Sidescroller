@@ -64,9 +64,15 @@ class Spell extends Entity
 			explode++;
 		}
 		
-		if (aliveTime < 0)
+		if ((aliveTime < 0) && (alive))
 		{
 			alive = false;
+			this.animateStrip = 2;
+			this.animateStage = 0;
+		}
+		
+		if (!alive)
+		{
 			this.animateStrip = 2;
 		}
 		

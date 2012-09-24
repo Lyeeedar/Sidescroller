@@ -151,6 +151,7 @@ public class Entity implements Serializable{
 	
 	protected long spellCD = 0;
 	
+	protected ArrayList<String> spells = new ArrayList<String>();
 
 
 	/**
@@ -189,6 +190,7 @@ public class Entity implements Serializable{
 
 		collisionShape = collision;
 		
+		spells.add("Fireball");
 		
 		defense.put(Entity.DAMAGE_PHYSICAL, (double) 0);
 	}
@@ -265,6 +267,10 @@ public class Entity implements Serializable{
 		
 		if (MainFrame.key1)
 		{
+			
+			if (spellCD > 0)
+				return;
+			
 			int dir = 0;
 			
 			if (pos[2] == 0)
@@ -272,22 +278,12 @@ public class Entity implements Serializable{
 			else
 				dir = 7;
 			
-			BufferedImage im = null;
+			Spell s = new Spell("Fireball", 60, new int[]{pos[0], pos[1], pos[2]}, new int[]{0,0,37,30},
+					new boolean[]{true}, new int[]{dir, 0}, SpellList.getImage("Fireball"), 0, false, 200, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
 			
-			try{
-				im = ImageIO.read(new File("Data/Resources/Spells/fireball.png"));
-			}
-			catch (IOException ioe)
-			{
-				ioe.printStackTrace();
-			}
-			
-			Spell s = new Spell("Fire", 60, new int[]{pos[0], pos[1], pos[2]}, new int[]{0,0,37,30},
-					new boolean[]{true}, new int[]{dir, 0}, im, 0, false, 1000, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
+			spellCD = s.spellCDTime;
 			
 			Main.gamedata.getGameEntities().put("Fire"+System.currentTimeMillis(), s);
-			
-			MainFrame.key1 = false;
 		}
 	}
 
@@ -1026,6 +1022,38 @@ public class Entity implements Serializable{
 	 */
 	public void setDefense(HashMap<String, Double> defense) {
 		this.defense = defense;
+	}
+
+	/**
+	 * Returns {@link Entity#spellCD}
+	 * @return the spellCD
+	 */
+	public long getSpellCD() {
+		return spellCD;
+	}
+
+	/**
+	 * Sets {@link Entity#spellCD}
+	 * @param spellCD the spellCD to set
+	 */
+	public void setSpellCD(long spellCD) {
+		this.spellCD = spellCD;
+	}
+
+	/**
+	 * Returns {@link Entity#spells}
+	 * @return the spells
+	 */
+	public ArrayList<String> getSpells() {
+		return spells;
+	}
+
+	/**
+	 * Sets {@link Entity#spells}
+	 * @param spells the spells to set
+	 */
+	public void setSpells(ArrayList<String> spells) {
+		this.spells = spells;
 	}
 
 }
