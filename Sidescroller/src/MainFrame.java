@@ -292,17 +292,23 @@ public class MainFrame extends JFrame implements KeyListener{
 		// Distant background, moves at half the speed of the rest
 		g2d.drawImage(Main.gamedata.getBackground()[0],
 				0, 0, resolution[0], resolution[1],
-				screenPosition[0]/2, screenPosition[1], (screenPosition[0]/2)+(int)(resolution[0]), (screenPosition[1])+(int)(resolution[1]),
+				screenPosition[0]/3, screenPosition[1], (screenPosition[0]/3)+(int)(resolution[0]), (screenPosition[1])+(int)(resolution[1]),
 				null);
 
-		// Near background (non collision
+		// Far background
 		g2d.drawImage(Main.gamedata.getBackground()[1],
 				0, 0, resolution[0], resolution[1],
-				screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
+				screenPosition[0]/2, screenPosition[1], (screenPosition[0]/2)+resolution[0], screenPosition[1]+resolution[1],
 				null);
 
+		// Close Background layer
+				g2d.drawImage(Main.gamedata.getBackground()[2],
+						0, 0, resolution[0], resolution[1],
+						screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
+						null);
+		
 		// Collision layer
-		g2d.drawImage(Main.gamedata.getBackground()[2],
+		g2d.drawImage(Main.gamedata.getBackground()[3],
 				0, 0, resolution[0], resolution[1],
 				screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
 				null);
@@ -317,7 +323,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	private void drawForeground(Graphics2D g2d)
 	{
 		// Foreground layer
-		g2d.drawImage(Main.gamedata.getBackground()[3],
+		g2d.drawImage(Main.gamedata.getBackground()[4],
 				0, 0, resolution[0], resolution[1],
 				screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
 				null);

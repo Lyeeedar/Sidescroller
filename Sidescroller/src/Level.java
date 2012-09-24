@@ -49,9 +49,9 @@ public class Level implements Serializable{
 	
 	public BufferedImage[] getBackground()
 	{
-		BufferedImage[] back = new BufferedImage[4];
+		BufferedImage[] back = new BufferedImage[5];
 		
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
 			

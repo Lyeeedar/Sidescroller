@@ -48,7 +48,7 @@ public class GameData {
 	 *  2 = Collision background
 	 *  3 = Foreground
 	 */
-	public BufferedImage[] background = new BufferedImage[4];
+	public BufferedImage[] background = new BufferedImage[5];
 
 	/**
 	 * A map of which pixels are collidable with
@@ -78,15 +78,15 @@ public class GameData {
 	public void test()
 	{	
 		boolean a = true;
-		if (a)
+		if (!a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
-			Entity e = new Entity("Player", 100, 4, new int[]{20, 20, 0}, new File("HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{true, true, false}, null);
+			Entity e = new Entity("Player", 100, 4, new int[]{20, 20, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{true, true, false}, null);
 
 			gameEntities.put("Player", e);
 
-			Entity ef = new Entity("NPC", 60, 4, new int[]{90, 90, 0}, new File("HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, true}, null);
+			Entity ef = new Entity("NPC", 60, 4, new int[]{90, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, true}, null);
 
 			gameEntities.put("NPC", ef);	
 			//		gameEntities.add(efd);	
@@ -95,7 +95,7 @@ public class GameData {
 
 			BufferedImage im = null;
 			try{
-				im = ImageIO.read(new File("Test/back0.png"));
+				im = ImageIO.read(new File("Test2/back0.png"));
 			}
 			catch (IOException ex)
 			{
@@ -105,7 +105,7 @@ public class GameData {
 			background[0] = im;
 
 			try{
-				im = ImageIO.read(new File("Test/back1.png"));
+				im = ImageIO.read(new File("Test2/back1.png"));
 			}
 			catch (IOException ex)
 			{
@@ -115,7 +115,7 @@ public class GameData {
 			background[1] = im;
 
 			try{
-				im = ImageIO.read(new File("Test/back2.png"));
+				im = ImageIO.read(new File("Test2/back2.png"));
 			}
 			catch (IOException ex)
 			{
@@ -125,7 +125,7 @@ public class GameData {
 			background[2] = im;
 
 			try{
-				im = ImageIO.read(new File("Test/back3.png"));
+				im = ImageIO.read(new File("Test2/back3.png"));
 			}
 			catch (IOException ex)
 			{
@@ -133,10 +133,20 @@ public class GameData {
 			}
 
 			background[3] = im;
+			
+			try{
+				im = ImageIO.read(new File("Test2/back4.png"));
+			}
+			catch (IOException ex)
+			{
+
+			}
+
+			background[4] = im;
 		}
 		else
 		{
-				Level level = Level.load(new File("Data/Test3.data"));
+				Level level = Level.load(new File("Data/Test.data"));
 				gameEntities = level.gameEntities;
 				levelName = level.name;
 				background = level.getBackground();
@@ -162,7 +172,7 @@ public class GameData {
 			{
 				for (int y = 0; y < levelSize[1]; y++)
 				{
-					int colour = background[2].getRGB(x, y);
+					int colour = background[3].getRGB(x, y);
 
 					int alpha = (colour>>24) & 0xff;
 

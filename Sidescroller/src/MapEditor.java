@@ -45,7 +45,7 @@ import javax.swing.JTextField;
 public class MapEditor {
 
 	public static GameData gamedata = Main.gamedata;
-	public static String[] background = new String[4];
+	public static String[] background = new String[5];
 	/**
 	 * @param args
 	 */
@@ -92,8 +92,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		this.setPreferredSize(new Dimension(2000, 1000));
-		this.setSize(2000, 1000);
+		this.setPreferredSize(new Dimension(MapEditor.gamedata.levelSize[0], MapEditor.gamedata.levelSize[1]));
+		this.setSize(MapEditor.gamedata.levelSize[0], MapEditor.gamedata.levelSize[1]);
 	}
 
 	public void paintComponent(Graphics g)
@@ -106,6 +106,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 			g.drawImage(MapEditor.gamedata.getBackground()[1], 0, 0, null);
 		if (MapEditor.gamedata.getBackground()[2] != null)
 			g.drawImage(MapEditor.gamedata.getBackground()[2], 0, 0, null);
+		if (MapEditor.gamedata.getBackground()[3] != null)
+			g.drawImage(MapEditor.gamedata.getBackground()[3], 0, 0, null);
 
 		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
@@ -148,8 +150,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 
 		}
 
-		if (MapEditor.gamedata.getBackground()[3] != null)
-			g.drawImage(MapEditor.gamedata.getBackground()[3], 0, 0, null);
+		if (MapEditor.gamedata.getBackground()[4] != null)
+			g.drawImage(MapEditor.gamedata.getBackground()[4], 0, 0, null);
 
 	}
 
@@ -315,7 +317,7 @@ class OptionsPanel extends JPanel
 
 				Level.save(level);
 				
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < 5; i++)
 				{
 					file = new File("Data/Resources/Levels/"+name.getText()+"/back"+i+".png");
 					try{
@@ -406,8 +408,8 @@ class BackgroundFrame extends JFrame
 		panel.add(distantTxt);
 		distantTxt.setText(MapEditor.background[0]);
 
-		JButton backBtn = new JButton("Background");
-		backBtn.addActionListener(new ActionListener(){
+		JButton fbackBtn = new JButton("Far Background");
+		fbackBtn.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -416,7 +418,19 @@ class BackgroundFrame extends JFrame
 			}});
 
 
-		panel.add(backBtn);
+		panel.add(fbackBtn);
+		
+		JButton cbackBtn = new JButton("Close Background");
+		cbackBtn.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				filechoose(2);
+
+			}});
+
+
+		panel.add(cbackBtn);
 
 		JTextField backTxt = new JTextField(15);
 		panel.add(backTxt);
@@ -427,7 +441,7 @@ class BackgroundFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filechoose(2);
+				filechoose(3);
 
 			}});
 
@@ -443,7 +457,7 @@ class BackgroundFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				filechoose(3);
+				filechoose(4);
 
 			}});
 
@@ -490,17 +504,7 @@ class BackgroundFrame extends JFrame
 
 				MapEditor.gamedata.collisionMap = new boolean[MapEditor.gamedata.levelSize[0]][MapEditor.gamedata.levelSize[1]];
 
-				for (int x = 0; x < MapEditor.gamedata.levelSize[0]; x++)
-				{
-					for (int y = 0; y < MapEditor.gamedata.levelSize[1]; y++)
-					{
-						int colour = MapEditor.gamedata.background[2].getRGB(x, y);
-
-						int alpha = (colour>>24) & 0xff;
-
-						MapEditor.gamedata.collisionMap[x][y] = (alpha != 0);
-					}
-				}
+				MapEditor.gamedata.createCollisionMap();
 			}
 
 			EditorFrame.mapPanel.repaint();
