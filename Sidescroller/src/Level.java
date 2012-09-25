@@ -11,6 +11,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
+ * Class that holds all the data for a level. Designed to be serialized
  * @author Lyeeedar
  *
  */
@@ -21,7 +22,14 @@ public class Level implements Serializable{
 	 */
 	private static final long serialVersionUID = -8036541149682971280L;
 	
+	/**
+	 * The level name
+	 */
 	String name;
+	
+	/**
+	 * The entities in the level
+	 */
 	HashMap<String, Entity> gameEntities = new HashMap<String, Entity>();
 	
 	public Level()
@@ -29,24 +37,21 @@ public class Level implements Serializable{
 		
 	}
 	
+	/**
+	 * Method to store the name and game entities in the level object.
+	 * @param name
+	 * @param gameEntities
+	 */
 	public void create(String name, HashMap<String, Entity> gameEntities)
 	{
 		this.name = name;
 		this.gameEntities = gameEntities;
 	}
 	
-//	public BufferedImage[] getBackground()
-//	{
-//		BufferedImage[] back = new BufferedImage[4];
-//		
-//		for (int i = 0; i < 4; i++)
-//		{
-//			back[i] = background[i].getImage();
-//		}
-//		
-//		return back;
-//	}
-	
+	/**
+	 * Method that loads and returns the background images for this level name
+	 * @return
+	 */
 	public BufferedImage[] getBackground()
 	{
 		BufferedImage[] back = new BufferedImage[5];
@@ -65,6 +70,11 @@ public class Level implements Serializable{
 		return back;
 	}
 	
+	/**
+	 * Method that serializes the level objected given into the Data folder, and saves the background images into the Data/Resources/Levels/'name' folder
+	 * @param level
+	 * @return
+	 */
 	public static boolean save(Level level)
 	{
 		try
@@ -85,6 +95,11 @@ public class Level implements Serializable{
 		return true;
 	}
 
+	/**
+	 * Method that deserializes a level object from the file given
+	 * @param file
+	 * @return
+	 */
 	public static Level load(File file)
 	{
 		Level level = null;
@@ -101,31 +116,6 @@ public class Level implements Serializable{
 		}
 
 		return level;
-	}
-
-}
-
-/**
- * A wrapper for BufferedImage to allow it to be serialized
- * @author Lyeeedar
- *
- */
-class ImageWrapper implements Serializable{
-
-	private static final long serialVersionUID = -383914860206735079L;
-
-	int width; int height; int[] pixels;
-
-	public ImageWrapper(BufferedImage bi) {
-		width = bi.getWidth();
-		height = bi.getHeight();
-		pixels=bi.getRGB(0,0,width,height,pixels,0,width);
-	}
-
-	public BufferedImage getImage() {
-		BufferedImage bi = new BufferedImage(width,height, BufferedImage.TYPE_INT_ARGB);
-		bi.setRGB(0,0,width,height,pixels,0,width);
-		return bi;
 	}
 
 }

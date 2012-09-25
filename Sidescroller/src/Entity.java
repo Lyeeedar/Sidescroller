@@ -119,6 +119,7 @@ public class Entity implements Serializable{
 	 *  Array to determine entity behavior: <p>
 	 *  0 = Takes player input for actions - {@link Entity#behavior0} <p>
 	 *  1 = Effected by Physics - {@link Entity#behavior1} <p>
+	 *  2 = Simple enemy AI - {@link Entity#behavior2()} <p>
 	 */
 	protected boolean[] behavior;
 
@@ -152,14 +153,36 @@ public class Entity implements Serializable{
 	 */
 	protected boolean alive = true;
 	
+	/**
+	 * The Entities current health
+	 */
 	protected double health = 100;
 	
+	/**
+	 * The elemental defense for the entity. Elements are: <br>
+	 * {@link Entity#DAMAGE_PHYSICAL} <br>
+	 * {@link Entity#DAMAGE_FIRE} <br>
+	 * {@link Entity#DAMAGE_AIR} <br>
+	 * {@link Entity#DAMAGE_EARTH} <br>
+	 * {@link Entity#DAMAGE_WATER} <br>
+	 * {@link Entity#DAMAGE_DEATH} <br>
+	 * {@link Entity#DAMAGE_LIFE} <br>
+	 */
 	protected HashMap<String, Double> defense = new HashMap<String, Double>();
 	
+	/**
+	 * Cooldown until this entity can cast a spell again
+	 */
 	protected long spellCD = 0;
 	
+	/**
+	 * All the spells that this entity knows
+	 */
 	protected ArrayList<String> spells = new ArrayList<String>();
 	
+	/**
+	 * Whether this entity has been damaged
+	 */
 	protected boolean damaged = false;
 
 
@@ -240,6 +263,7 @@ public class Entity implements Serializable{
 	 */
 	protected void behavior0()
 	{
+		// Move left and right
 		if (MainFrame.left)
 		{
 			this.getVelocity()[0] = -3;
@@ -255,15 +279,20 @@ public class Entity implements Serializable{
 		else
 			this.setAnimate(false);
 
+		// Jump
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
 			this.getVelocity()[1] -= 15;
 		}
 
+		// Activate infront of Entity
 		if (MainFrame.enter)
 		{
+			// Make sure that you can super speedily iterate through all the dialogue
 			MainFrame.enter = false;
 			Rectangle r = null;
+			
+			// Create a rectangle representing the area to be activated
 			if (this.getPos()[2] == 0)
 			{
 				r = new Rectangle(pos[0]-size[0]/2, pos[1], size[0], size[1]);
@@ -273,6 +302,7 @@ public class Entity implements Serializable{
 				r = new Rectangle(pos[0]+size[0]/2, pos[1], size[0], size[1]);
 			}
 
+			// See if any Entities lie within this rectangle
 			for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 			{
 				Entity e = entry.getValue();
@@ -287,16 +317,14 @@ public class Entity implements Serializable{
 
 		}
 		
+		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
 		if (MainFrame.key1)
 		{
-			
+			// If still in cooldown then don't allow spell casting 
 			if (spellCD > 0)
 				return;
 			
-			Spell s = SpellList.getSpell("Fireball");
-			s.setPos(new int[]{pos[0], pos[1], pos[2]});
-			s.launch(new int[]{7, 0});
-			s.setExclude(this.getName());
+			Spell s = SpellList.getSpell("Fireball", new int[]{pos[0], pos[1], pos[2]}, new int[]{7,0}, this.getName());
 			
 			spellCD = s.spellCDTime;
 			
@@ -336,8 +364,10 @@ public class Entity implements Serializable{
 			velocity[1] = 40;
 		}
 
+		// Work out positions that the entity is trying to move to
 		int[] cpos = {this.getPos()[0]+velocity[0], this.getPos()[1]+velocity[1]};
 
+		// If there is no collision at this point then all is well and move the entity to this point
 		if (checkCollision(cpos) == null)
 		{
 			this.changePosition(cpos[0], cpos[1], this.getPos()[2]);
@@ -348,13 +378,15 @@ public class Entity implements Serializable{
 			return;
 		}
 
-		// Extract and store current position
+		// Extract and store current position for individual axis checking
 		int[] pos = {this.pos[0], this.pos[1]};
 
 		// Modify new position by the velocity of the entity in the X direction
 		pos[0] += velocity[0];
 
-		// Check if moving in the X direction would cause a collision, if so the reset the new X position to the old one
+		// Check if moving in the X direction would cause a collision, if so then see if the entity can slide up the slope to get to a valid position. 
+		// If no position is found then just reset X to the old X. If a position is found then the entity will be on the ground, so the entity can be moved
+		// and no more checks need to be done.
 		if (checkCollision(pos) != null)
 		{
 			int[] npos = {this.getPos()[0], pos[1]};
@@ -469,10 +501,7 @@ public class Entity implements Serializable{
 			Random ran = new Random();
 			String spell = spells.get(ran.nextInt(spells.size()));
 			
-			Spell s = SpellList.getSpell(spell);
-			s.setPos(new int[]{pos[0], pos[1], pos[2]});
-			s.launch(new int[]{7,0});
-			s.setExclude(this.getName());
+			Spell s = SpellList.getSpell(spell, new int[]{pos[0], pos[1], pos[2]}, new int[]{7,0}, this.getName());
 			
 			spellCD = s.spellCDTime*2;
 			
@@ -481,6 +510,10 @@ public class Entity implements Serializable{
 		
 	}
 
+	/**
+	 * Update the entity jump animation to reflect if the entity is in the air or on the ground. The entity needs to be in the air for 5 AI updates for the animation to change.
+	 * @param grounded
+	 */
 	protected void updateJumpAnim(boolean grounded)
 	{
 		this.setAnimateStrip(1);
@@ -504,37 +537,44 @@ public class Entity implements Serializable{
 	}
 
 	/**
-	 * Method to check if this entity will collide with another entity or a surface if moved to the position given.
+	 * Method to check if this entity will collide with another entity or a surface if moved to the position given. <p>
+	 * Returns null for no collision, this Entities name if theres is a collision with the level or the name of the Entity collided with.
 	 * @return
 	 */
 	public String checkCollision(int[] pos)
 	{
-		if ((pos[0]+collisionShape[0] < 0) || (pos[0]+collisionShape[0]+collisionShape[2] > GameData.levelSize[0])
-				|| (pos[1]+collisionShape[1] < 0) || (pos[1]+collisionShape[1]+collisionShape[3] > GameData.levelSize[1]))
+		int x = pos[0]+collisionShape[0];
+		int y = pos[1]+collisionShape[1];
+		
+		// If the entity is trying to move outside the bounds of the level then return to say that its colliding with the level.
+		if ((x < 0) || (x+collisionShape[2] > GameData.levelSize[0])
+				|| (y < 0) || (y+collisionShape[3] > GameData.levelSize[1]))
 		{
 			return this.getName();
 		}
 
-		int x = pos[0]+collisionShape[0];
-		int y = pos[1]+collisionShape[1];
-
+		// Create a rectangle simulating the collision box of the entity
 		Rectangle r = new Rectangle(x, y, collisionShape[2], collisionShape[3]);
 
+		// Iterate through all the game Entities and check if there is a collision is an entity that isnt passable
 		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
 			Entity e = entry.getValue();
 			if ((e.getName().equals(this.getName())) || (e.isPassable()))
 				continue;
 
+			// Create a collision box for the entity that is being checked
 			Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 					e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
+			// If the two rectangles intersect (overlap) then return the entity name that the collision happened with
 			if (r.intersects(rn))
 			{
 				return e.getName();
 			}
 		}
 
+		// Check the collsion box for this entity to see if any of the level is inside it (any non-transparent pixels)
 		for (int nx = x; nx < x+collisionShape[2]; nx++)
 		{
 			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
@@ -550,6 +590,9 @@ public class Entity implements Serializable{
 	}
 
 
+	/**
+	 * Method that allows this entity to be talked to
+	 */
 	public void activate()
 	{
 		if (!this.isAlive())
@@ -623,6 +666,9 @@ public class Entity implements Serializable{
 		pos[2] = dir;
 	}
 
+	/**
+	 * Method that loads the spritesheet determined by {@link Entity#spriteFile}. Also works out the width and height of a frame for the entity.
+	 */
 	public void processSpritesheet()
 	{
 		BufferedImage im = null;
@@ -651,6 +697,11 @@ public class Entity implements Serializable{
 		}
 	}
 
+	/**
+	 * method to damage the entity. If the elemental defense for the damage type is not 0 then do this -> amount -= amount/defense
+	 * @param amount
+	 * @param type
+	 */
 	public void damage(double amount, String type)
 	{		
 		double eleDefense = defense.get(type);

@@ -1,9 +1,9 @@
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Map;
 
 
 /**
+ * This class contains all the dialogue for an Entity. It also functions as the quest system (due to conditional branches)
  * @author Lyeeedar
  *
  */
@@ -13,14 +13,30 @@ public class Dialogue implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -7786012719423291608L;
+	
+	/**
+	 * This array list holds all the dialogue blocks for the entire dialogue object. <br>
+	 * Blocks can be of the type 'Speech' and 'Kill' at the moment.
+	 */
 	private ArrayList<ArrayList<String>> quest;
+	
+	/**
+	 * The current dialogue block
+	 */
 	private int stage = 0;
+	/**
+	 * The current line inside the dialogue block
+	 */
 	private int internalstage = 0;
 	
 	public static final int dialogueFade = 10000;
 	public static final int fadeDuration = 3000;
 	public static final float fadeStep = (float) 255/fadeDuration;
 	
+	/**
+	 * The dialogue type. Effects the way the dialogue is drawn to the screen. <br>
+	 * Currently has types 'Speech' and 'Examine'
+	 */
 	public int type;
 	
 	public Dialogue(ArrayList<ArrayList<String>> text, int type)
@@ -29,9 +45,16 @@ public class Dialogue implements Serializable{
 		this.quest = text;
 	}
 
+	/**
+	 * Returns the text from the current block and current line. <br>
+	 * Uses each block types specific method to get customized effects for different types.
+	 * @return
+	 */
 	public String getText()
 	{
 		ArrayList<String> stagetext = null;
+		
+		// Make sure there is never a null reference passed back (unless the dialogue object is empty)
 		if (stage == quest.size())
 			stagetext = quest.get(stage-1);
 		else
@@ -49,6 +72,11 @@ public class Dialogue implements Serializable{
 		return null;
 	}
 	
+	/**
+	 * Method that returns the current text for the speech block type
+	 * @param stagetext
+	 * @return
+	 */
 	private String speech(ArrayList<String> stagetext)
 	{
 		if (internalstage == 0)
@@ -57,6 +85,9 @@ public class Dialogue implements Serializable{
 		return stagetext.get(internalstage);
 	}
 	
+	/**
+	 * Method that increments internalstage and stage for the speech block type
+	 */
 	private void incrSpeech()
 	{
 		internalstage++;
@@ -68,6 +99,11 @@ public class Dialogue implements Serializable{
 		}
 	}
 	
+	/**
+	 * Method that returns the current text for the kill block type
+	 * @param stagetext
+	 * @return
+	 */
 	private String kill (ArrayList<String> stagetext)
 	{
 		Entity e = Main.gamedata.getGameEntities().get(stagetext.get(1));
@@ -81,6 +117,9 @@ public class Dialogue implements Serializable{
 		}
 	}
 	
+	/**
+	 * Method that increments internalstage and stage for the kill block type
+	 */
 	private void incrKill()
 	{
 		Entity e = Main.gamedata.getGameEntities().get(quest.get(stage).get(1));
@@ -91,6 +130,9 @@ public class Dialogue implements Serializable{
 		}
 	}
 	
+	/**
+	 * This method calls the customized increment mehtods for the current block type
+	 */
 	public void incrStage()
 	{
 		ArrayList<String> stagetext = null;
@@ -109,7 +151,10 @@ public class Dialogue implements Serializable{
 		}
 	}
 	
-	
+	/**
+	 * This method returns a deep copy of this dialogue object
+	 * @return
+	 */
 	public Dialogue copy()
 	{
 		

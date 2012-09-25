@@ -38,10 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 /**
- * 
- */
-
-/**
+ * Map Editor. Allows loading and saving of levels, and the modifying of all the entity properties within the levels. Minimal Commenting because most of it is just GUI stuff, positioning and etc.
  * @author Lyeeedar
  *
  */

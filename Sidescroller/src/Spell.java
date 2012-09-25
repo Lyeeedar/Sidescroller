@@ -1,23 +1,46 @@
 import java.awt.image.BufferedImage;
-import java.io.File;
 
-
+/**
+ * This class simulates a spell. It is a subclass of entity but overrides many of the methods contained within it.
+ * @author Lyeeedar
+ *
+ */
 class Spell extends Entity
 {
 
 	/**
-	 * Time that spell casting is locked for
+	 * 
+	 */
+	private static final long serialVersionUID = -2847831540861108398L;
+
+	/**
+	 * Time that spell casting is locked for the entity that casts this spell.
 	 */
 	long spellCDTime;
 	
+	/**
+	 * The current stage of the explode animation
+	 */
 	int explode = 0;
 	
+	/**
+	 * The length of time this spell will exist for before exploding
+	 */
 	int aliveTime;
 	
+	/**
+	 *  the type of damage this spell inflicts
+	 */
 	String damageType;
 	
+	/**
+	 * The amount of damage this spell inflicts
+	 */
 	int damageAmount;
 	
+	/**
+	 * The entity to exclude from collision (normally the entity that casts the spell)
+	 */
 	String exclude;
 	
 	public Spell(String name, int animateTime,	int[] pos, int[] collision, boolean[] behaviour,
@@ -55,7 +78,12 @@ class Spell extends Entity
 			if (this.remainingAnimateTime <= 0)
 			{
 				this.remainingAnimateTime = this.animateTime;
-				this.animateStage += 1;
+				
+				if (!alive)
+					animateStage = explode;
+				else
+					this.animateStage += 1;
+				
 				if (this.animateStage > Entity.animStages)
 				{
 					this.animateStage = 1;
@@ -71,6 +99,10 @@ class Spell extends Entity
 			behaviorProjectile();
 	}
 	
+	/**
+	 * Method that sets the entity velocity depending on what direction its facing
+	 * @param velocity
+	 */
 	public void launch(int[] velocity)
 	{
 		if (pos[2] == 0)
@@ -109,6 +141,9 @@ class Spell extends Entity
 		
 	}
 	
+	/**
+	 * Method that makes the Spell act like a projectile. Moves it directly in the direction of {@link Entity#velocity} and then explodes when it hits something, damaging it.
+	 */
 	public void behaviorProjectile()
 	{
 		int[] npos = {pos[0]+velocity[0], pos[1]+velocity[1]};

@@ -47,6 +47,7 @@ public class MainFrame extends JFrame implements KeyListener{
 		// Store the buffer Strategy
 		bufferStrategy = this.getBufferStrategy();
 
+		// If the frame is not running as fullscreen then create a window for it
 		if (!Main.fullscreen)
 		{
 			this.setSize(900, 600);
@@ -79,6 +80,7 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Get its Graphics object
 			g2d = (Graphics2D) im.getGraphics();
 			
+			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -101,6 +103,7 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw fps
 			g2d.drawString(Long.toString(totalTime), 50, 50);
 
+			// Get the graphics object for the current setting of fullscreen
 			if (Main.fullscreen)
 			{
 				// Get a graphics object for the current backbuffer
@@ -111,6 +114,7 @@ public class MainFrame extends JFrame implements KeyListener{
 				g2d = (Graphics2D) this.getGraphics();
 			}
 			
+			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -136,6 +140,7 @@ public class MainFrame extends JFrame implements KeyListener{
 			Entity e = entry.getValue();
 			if (e.isTalking())
 			{
+				// Create the colours used in the speech bubbles
 				Color dark = null;
 				Color pale = null;
 				if (e.getTalkingTimer() < Dialogue.dialogueFade)
@@ -154,6 +159,7 @@ public class MainFrame extends JFrame implements KeyListener{
 					pale = new Color(202, 255, 255, alpha);
 				}
 				
+				// Calculate the width and height of the dialogue bubble depending on how much text needs to be drawn
 				int width = 20+e.getDialogue().getText().length()*6;
 				
 				if (width > 200)
@@ -162,7 +168,7 @@ public class MainFrame extends JFrame implements KeyListener{
 				String[] text = wrapText(e.getDialogue().getText(), 34);
 				int height = text.length*25;
 				
-				
+				// Is the dialogue is of the type 'Speech' then do a speech bubble.
 				if (e.getDialogue().getType() == 0)
 				{
 
@@ -189,6 +195,7 @@ public class MainFrame extends JFrame implements KeyListener{
 					}
 				
 				}
+				// If dialogue is of the type 'Examine' do a thought bubble
 				else if (e.getDialogue().getType() == 1)
 				{
 					int x = e.getPos()[0]-MainFrame.screenPosition[0]-(width/2)+(e.getSize()[0]/2);
@@ -241,6 +248,7 @@ public class MainFrame extends JFrame implements KeyListener{
 			{
 				BufferedImage i = e.getSpriteSheet();
 				
+				// If the entity has been damaged then tint the image with red
 				if (e.isDamaged())
 					i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
 
@@ -271,6 +279,11 @@ public class MainFrame extends JFrame implements KeyListener{
 		}
 	}
 	
+	/**
+	 * Method that returns a deep copy of the bufferedimage
+	 * @param bi
+	 * @return
+	 */
 	public BufferedImage deepCopy(BufferedImage bi) {
 		 ColorModel cm = bi.getColorModel();
 		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
@@ -278,6 +291,15 @@ public class MainFrame extends JFrame implements KeyListener{
 		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 	
+	/**
+	 * Method that tints the supplied bufferedimage with red
+	 * @param image
+	 * @param minX
+	 * @param minY
+	 * @param maxX
+	 * @param maxY
+	 * @return
+	 */
 	public BufferedImage tintImage(BufferedImage image, int minX, int minY, int maxX, int maxY)
 	{
 		BufferedImage im = deepCopy(image);
@@ -317,6 +339,12 @@ public class MainFrame extends JFrame implements KeyListener{
 		return im;
 	}
 
+	/**
+	 * Method to split text along word boundries so each line is less than the given length
+	 * @param text
+	 * @param len
+	 * @return
+	 */
 	String [] wrapText (String text, int len)
 	{
 	  // return empty array for null text
@@ -332,7 +360,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	  return new String [] {text};
 
 	  char [] chars = text.toCharArray();
-	  Vector lines = new Vector();
+	  Vector<String> lines = new Vector<String>();
 	  StringBuffer line = new StringBuffer();
 	  StringBuffer word = new StringBuffer();
 
@@ -366,7 +394,7 @@ public class MainFrame extends JFrame implements KeyListener{
 
 	  String [] ret = new String[lines.size()];
 	  int c = 0; // counter
-	  for (Enumeration e = lines.elements(); e.hasMoreElements(); c++) {
+	  for (Enumeration<String> e = lines.elements(); e.hasMoreElements(); c++) {
 	    ret[c] = (String) e.nextElement();
 	  }
 

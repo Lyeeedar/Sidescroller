@@ -65,6 +65,9 @@ public class GameData {
 	 */
 	public static final int friction = 3;
 
+	/**
+	 * The name of the level
+	 */
 	public String levelName;
 
 	public GameData()
@@ -133,7 +136,7 @@ public class GameData {
 			}
 
 			background[3] = im;
-			
+
 			try{
 				im = ImageIO.read(new File("Test2/back4.png"));
 			}
@@ -146,232 +149,243 @@ public class GameData {
 		}
 		else
 		{
-				Level level = Level.load(new File("Data/Test3.data"));
-				gameEntities = level.gameEntities;
-				levelName = level.name;
-				background = level.getBackground();
-				for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
-				{
-					Entity ent = entry.getValue();
-					ent.processSpritesheet();
-				}
-		}
-			createCollisionMap();
-		}
-
-		public void createCollisionMap()
-		{
-			levelSize[0] = background[0].getWidth();
-			levelSize[1] = background[0].getHeight();
-
-			collisionMap = new boolean[levelSize[0]][levelSize[1]];
-
-			for (int x = 0; x < levelSize[0]; x++)
+			Level level = Level.load(new File("Data/Test3.data"));
+			gameEntities = level.gameEntities;
+			levelName = level.name;
+			background = level.getBackground();
+			for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 			{
-				for (int y = 0; y < levelSize[1]; y++)
-				{
-					int colour = background[3].getRGB(x, y);
-
-					int alpha = (colour>>24) & 0xff;
-
-					collisionMap[x][y] = (alpha != 0);
-				}
+				Entity ent = entry.getValue();
+				ent.processSpritesheet();
 			}
 		}
+		createCollisionMap();
+	}
 
+	/**
+	 * Method to calculate and store the collision map for the entity. Created from the collision layer (background[3]). Collisionable pixels are the non-transparent ones
+	 */
+	public void createCollisionMap()
+	{
+		levelSize[0] = background[0].getWidth();
+		levelSize[1] = background[0].getHeight();
 
-		/**
-		 * Method to update and evaluate the AI for every entity in the game
-		 * @param time
-		 */
-		public void evaluateAI(long time)
+		collisionMap = new boolean[levelSize[0]][levelSize[1]];
+
+		for (int x = 0; x < levelSize[0]; x++)
 		{
-			// Minus the time since last method call from the game speed timer
-			this.gameSpeedRemainder -= time;
-
-			// If the time since the last update exceeds the game speed then do an update
-			if (this.gameSpeedRemainder <= 0)
+			for (int y = 0; y < levelSize[1]; y++)
 			{
-				// Reset game speed timer
-				this.gameSpeedRemainder = this.gameSpeed;
-				
-				ArrayList<String> delete = new ArrayList<String>();
-				
-				ArrayList<Map.Entry<String, Entity>> evaluate = new ArrayList<Map.Entry<String, Entity>>();
+				// Extract pixel colour
+				int colour = background[3].getRGB(x, y);
 
-				// Iterate over all the game entities
-				for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
+				// Extract alpha value
+				int alpha = (colour>>24) & 0xff;
+
+				// If alpha is not 0 then store true in the collision map
+				collisionMap[x][y] = (alpha != 0);
+			}
+		}
+	}
+
+
+	/**
+	 * Method to update and evaluate the AI for every entity in the game
+	 * @param time
+	 */
+	public void evaluateAI(long time)
+	{
+		// Minus the time since last method call from the game speed timer
+		this.gameSpeedRemainder -= time;
+
+		// If the time since the last update exceeds the game speed then do an update
+		if (this.gameSpeedRemainder <= 0)
+		{
+			// Reset game speed timer
+			this.gameSpeedRemainder = this.gameSpeed;
+
+			// Create an array to hold all the entities to be deleted at the end of the loop
+			ArrayList<String> delete = new ArrayList<String>();
+
+			// Create an array to hold only the entities that need their AI evaluated
+			ArrayList<Map.Entry<String, Entity>> evaluate = new ArrayList<Map.Entry<String, Entity>>();
+
+			// Iterate over all the game entities
+			for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
+			{
+				Entity e = entry.getValue();
+				// If the entity is over double the resolution away from the screen (and player)
+				// then do not update its AI. Stops excessive AI processing.
+				if ((e.getPos()[0] < MainFrame.screenPosition[0]-MainFrame.resolution[0]) || (e.getPos()[0] > (MainFrame.screenPosition[0]+(2*MainFrame.resolution[0])))
+						|| (e.getPos()[1]+e.getSize()[1] < MainFrame.screenPosition[1]-MainFrame.resolution[1]) || (e.getPos()[1] > (MainFrame.screenPosition[1]+(2*MainFrame.resolution[1]))))
+					continue;
+
+				evaluate.add(entry);
+			}
+
+			for (Map.Entry<String, Entity> entry : evaluate){
+				Entity e = entry.getValue();
+				// Evaluate the Entity AI
+				e.AI();
+
+				// If the entity is talking then check that the time the entity has stood idle with the text up doesnt exceed the maximum length, else turn the dialogue off
+				if (e.isTalking())
 				{
-					Entity e = entry.getValue();
-					// If the entity is over double the resolution away from the screen (and player)
-					// then do not update its AI. Stops excessive AI processing.
-					if ((e.getPos()[0] < MainFrame.screenPosition[0]-MainFrame.resolution[0]) || (e.getPos()[0] > (MainFrame.screenPosition[0]+(2*MainFrame.resolution[0])))
-							|| (e.getPos()[1]+e.getSize()[1] < MainFrame.screenPosition[1]-MainFrame.resolution[1]) || (e.getPos()[1] > (MainFrame.screenPosition[1]+(2*MainFrame.resolution[1]))))
-						continue;
-
-					evaluate.add(entry);
-				}
-				
-				for (Map.Entry<String, Entity> entry : evaluate){
-					Entity e = entry.getValue();
-					// Evaluate the Entity AI
-					e.AI();
-
-					if (e.isTalking())
+					if (e.getTalkingTimer() > Dialogue.dialogueFade+Dialogue.fadeDuration)
 					{
-						if (e.getTalkingTimer() > Dialogue.dialogueFade+Dialogue.fadeDuration)
-						{
-							e.setTalking(false);
-							e.setTalkingTimer(0);
-						}
-						else
-						{
-							e.setTalkingTimer(e.getTalkingTimer()+time);
-						}
+						e.setTalking(false);
+						e.setTalkingTimer(0);
 					}
 					else
 					{
-						e.setTalkingTimer(0);
-					}
-					
-					if ((e instanceof Spell) && (!e.isAlive()) && (((Spell)e).explode >= 8))
-					{
-						delete.add(entry.getKey());
+						e.setTalkingTimer(e.getTalkingTimer()+time);
 					}
 				}
-				
-				for (String s : delete)
+				else
 				{
-					this.getGameEntities().remove(s);
+					e.setTalkingTimer(0);
+				}
+
+				// If the Entity is a spell and has exploded and played its entire explode animation then add it to the delete array
+				if ((e instanceof Spell) && (!e.isAlive()) && (((Spell)e).explode >= 8))
+				{
+					delete.add(entry.getKey());
 				}
 			}
+
+			// Delete all the entities
+			for (String s : delete)
+			{
+				this.getGameEntities().remove(s);
+			}
 		}
-
-		public Iterator<Entity> getEntityIterator()
-		{
-			Collection<Entity> c = gameEntities.values();
-			Iterator<Entity> itr = c.iterator();
-			return itr;
-		}
-
-
-
-
-
-
-
-
-
-		/**
-		 *  Returns {@link GameData#gameEntities}
-		 * @return the gameEntities
-		 */
-		public HashMap<String, Entity> getGameEntities() {
-			return gameEntities;
-		}
-
-		/**
-		 * Sets {@link GameData#gameEntities}
-		 * @param gameEntities to set
-		 */
-		public void setGameEntities(HashMap<String, Entity> gameEntities) {
-			this.gameEntities = gameEntities;
-		}
-
-		/**
-		 * Returns {@link GameData#gameSpeed}
-		 * @return the gameSpeed
-		 */
-		public long getGameSpeed() {
-			return gameSpeed;
-		}
-
-		/**
-		 * Sets {@link GameData#gameSpeed}
-		 * @param gameSpeed the gameSpeed to set
-		 */
-		public void setGameSpeed(long gameSpeed) {
-			this.gameSpeed = gameSpeed;
-		}
-
-		/**
-		 * Returns {@link GameData#framerate}
-		 * @return the framerate
-		 */
-		public long getFramerate() {
-			return framerate;
-		}
-
-		/**
-		 * Sets {@link GameData#framerate}
-		 * @param framerate the framerate to set
-		 */
-		public void setFramerate(long framerate) {
-			this.framerate = framerate;
-		}
-
-		/**
-		 * Returns {@link GameData#gameSpeedRemainder}
-		 * @return the gameSpeedRemainder
-		 */
-		public long getGameSpeedRemainder() {
-			return gameSpeedRemainder;
-		}
-
-		/**
-		 * Sets {@link GameData#gameSpeedRemainder}
-		 * @param gameSpeedRemainder the gameSpeedRemainder to set
-		 */
-		public void setGameSpeedRemainder(long gameSpeedRemainder) {
-			this.gameSpeedRemainder = gameSpeedRemainder;
-		}
-
-		/**
-		 * Returns {@link GameData#background}
-		 * @return the background
-		 */
-		public BufferedImage[] getBackground() {
-			return background;
-		}
-
-		/**
-		 * Sets {@link GameData#background}
-		 * @param background the background to set
-		 */
-		public void setBackground(BufferedImage[] background) {
-			this.background = background;
-		}
-
-		/**
-		 * Returns {@link GameData#collisionMap}
-		 * @return the collisionMap
-		 */
-		public boolean[][] getCollisionMap() {
-			return collisionMap;
-		}
-
-		/**
-		 * Sets {@link GameData#collisionMap}
-		 * @param collisionMap the collisionMap to set
-		 */
-		public void setCollisionMap(boolean[][] collisionMap) {
-			this.collisionMap = collisionMap;
-		}
-
-		/**
-		 * Returns {@link GameData#levelName}
-		 * @return the levelName
-		 */
-		public String getLevelName() {
-			return levelName;
-		}
-
-		/**
-		 * Sets {@link GameData#levelName}
-		 * @param levelName the levelName to set
-		 */
-		public void setLevelName(String levelName) {
-			this.levelName = levelName;
-		}
-
 	}
+
+	public Iterator<Entity> getEntityIterator()
+	{
+		Collection<Entity> c = gameEntities.values();
+		Iterator<Entity> itr = c.iterator();
+		return itr;
+	}
+
+
+
+
+
+
+
+
+
+	/**
+	 *  Returns {@link GameData#gameEntities}
+	 * @return the gameEntities
+	 */
+	public HashMap<String, Entity> getGameEntities() {
+		return gameEntities;
+	}
+
+	/**
+	 * Sets {@link GameData#gameEntities}
+	 * @param gameEntities to set
+	 */
+	public void setGameEntities(HashMap<String, Entity> gameEntities) {
+		this.gameEntities = gameEntities;
+	}
+
+	/**
+	 * Returns {@link GameData#gameSpeed}
+	 * @return the gameSpeed
+	 */
+	public long getGameSpeed() {
+		return gameSpeed;
+	}
+
+	/**
+	 * Sets {@link GameData#gameSpeed}
+	 * @param gameSpeed the gameSpeed to set
+	 */
+	public void setGameSpeed(long gameSpeed) {
+		this.gameSpeed = gameSpeed;
+	}
+
+	/**
+	 * Returns {@link GameData#framerate}
+	 * @return the framerate
+	 */
+	public long getFramerate() {
+		return framerate;
+	}
+
+	/**
+	 * Sets {@link GameData#framerate}
+	 * @param framerate the framerate to set
+	 */
+	public void setFramerate(long framerate) {
+		this.framerate = framerate;
+	}
+
+	/**
+	 * Returns {@link GameData#gameSpeedRemainder}
+	 * @return the gameSpeedRemainder
+	 */
+	public long getGameSpeedRemainder() {
+		return gameSpeedRemainder;
+	}
+
+	/**
+	 * Sets {@link GameData#gameSpeedRemainder}
+	 * @param gameSpeedRemainder the gameSpeedRemainder to set
+	 */
+	public void setGameSpeedRemainder(long gameSpeedRemainder) {
+		this.gameSpeedRemainder = gameSpeedRemainder;
+	}
+
+	/**
+	 * Returns {@link GameData#background}
+	 * @return the background
+	 */
+	public BufferedImage[] getBackground() {
+		return background;
+	}
+
+	/**
+	 * Sets {@link GameData#background}
+	 * @param background the background to set
+	 */
+	public void setBackground(BufferedImage[] background) {
+		this.background = background;
+	}
+
+	/**
+	 * Returns {@link GameData#collisionMap}
+	 * @return the collisionMap
+	 */
+	public boolean[][] getCollisionMap() {
+		return collisionMap;
+	}
+
+	/**
+	 * Sets {@link GameData#collisionMap}
+	 * @param collisionMap the collisionMap to set
+	 */
+	public void setCollisionMap(boolean[][] collisionMap) {
+		this.collisionMap = collisionMap;
+	}
+
+	/**
+	 * Returns {@link GameData#levelName}
+	 * @return the levelName
+	 */
+	public String getLevelName() {
+		return levelName;
+	}
+
+	/**
+	 * Sets {@link GameData#levelName}
+	 * @param levelName the levelName to set
+	 */
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
+
+}
