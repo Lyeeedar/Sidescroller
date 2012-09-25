@@ -124,6 +124,30 @@ public class Main {
 					e.updateTime(elapsedTime);
 				}
 			}
+			else if (state == 2)
+			{
+				// Update fps every 0.5 seconds
+				if (totalTime < 500)
+				{
+					totalTime += System.currentTimeMillis() - lastTime;
+					frames++;
+				}
+				else
+				{
+					totalTime = 0;
+					framerate = frames*2;
+					frames = 0;
+				}
+				
+				// Store current time
+				lastTime = System.currentTimeMillis();
+				
+				// Paint game graphics
+				Main.mainframe.paintGame(framerate, gc);
+				
+				// Work out time taken to draw graphics and evaluate AI
+				elapsedTime = System.currentTimeMillis() - lastTime;
+			}
 		}
 	}
 

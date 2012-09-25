@@ -95,6 +95,24 @@ public class MainFrame extends JFrame implements KeyListener{
 			
 			// Draw speech bubbles
 			drawSpeech(g2d);
+			
+			if (Main.getState() == 2)
+			{
+				g2d.setColor(Color.LIGHT_GRAY);
+				g2d.fillRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
+				
+				g2d.setColor(Color.DARK_GRAY);
+				g2d.drawRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
+				
+				if (Main.gamedata.loading)
+				{
+					g2d.drawString("Loading - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
+				}
+				else if (Main.gamedata.saving)
+				{
+					g2d.drawString("Saving - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
+				}
+			}
 
 			// Setup fonts and colour for fps
 			g2d.setFont(g2d.getFont().deriveFont((float) 20));
@@ -528,10 +546,12 @@ public class MainFrame extends JFrame implements KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
+			Main.gamedata.saveGame();
 			MainFrame.space = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
+			Main.gamedata.loadGame("Test3");
 			MainFrame.enter = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_1)

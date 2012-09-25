@@ -1,6 +1,10 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,6 +73,14 @@ public class GameData {
 	 * The name of the level
 	 */
 	public String levelName;
+	
+	/**
+	 * The name for this instance of the game, effects the name of the save file.
+	 */
+	public String gameName = "test";
+	
+	public boolean saving = false;
+	public boolean loading = false;
 
 	public GameData()
 	{
@@ -146,20 +158,14 @@ public class GameData {
 			}
 
 			background[4] = im;
+			
+			createCollisionMap();
 		}
 		else
 		{
-			Level level = Level.load(new File("Data/Test3.data"));
-			gameEntities = level.gameEntities;
-			levelName = level.name;
-			background = level.getBackground();
-			for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
-			{
-				Entity ent = entry.getValue();
-				ent.processSpritesheet();
-			}
+			this.loadGame("Test3");
 		}
-		createCollisionMap();
+
 	}
 
 	/**
@@ -267,8 +273,138 @@ public class GameData {
 		Iterator<Entity> itr = c.iterator();
 		return itr;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean saveGame()
+	{
+		this.saving = true;
+		Main.setState(2);
+
+		HashMap<String, HashMap<String, Entity>> entireGameEntities = null;
+		
+		File dir = new File("Data/Saves");
+		dir.mkdirs();
+		
+		File file = new File("Data/Saves/"+this.getGameName()+".sav");
+		
+		if (file.exists())
+		{
+			try{
+				FileInputStream fin = new FileInputStream(file);
+				ObjectInputStream in = new ObjectInputStream(fin);
+				entireGameEntities = (HashMap<String, HashMap<String, Entity>>) in.readObject();
+				in.close();
+				fin.close();
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				this.saving = false;
+				Main.setState(1);
+				return false;
+			}
+		}
+		else
+		{
+			entireGameEntities = new HashMap<String, HashMap<String, Entity>>();
+		}
+		
+		HashMap<String, Entity> save = new HashMap<String, Entity>();
+		
+		for (Map.Entry<String, Entity> entry : this.getGameEntities().entrySet()){
+			Entity e = entry.getValue();
+			
+			if (e instanceof Spell)
+			{
+				continue;
+			}
+			else
+			{
+				save.put(entry.getKey(), entry.getValue());
+			}
+		}
+		
+		if (entireGameEntities.containsKey(this.getLevelName()))
+		{
+			entireGameEntities.remove(this.getLevelName());
+		}
+		
+		entireGameEntities.put(this.getLevelName(), save);
+		
+		try
+		{
+			FileOutputStream fileOut = new FileOutputStream(file);
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(entireGameEntities);
+			out.close();
+			fileOut.close();
+		}
+		catch(IOException i)
+		{
+			i.printStackTrace();
+			this.saving = false;
+			Main.setState(1);
+			return false;
+		}
+
+		this.saving = false;
+		Main.setState(1);
+		return true;
+	}
 
 
+	@SuppressWarnings("unchecked")
+	public boolean loadGame(String levelName)
+	{
+		this.loading = true;
+		Main.setState(2);
+		
+		Level level = Level.load(new File("Data/"+levelName+".data"));
+		HashMap<String, Entity> gameEntities = level.gameEntities;
+		this.levelName = level.name;
+		
+		HashMap<String, HashMap<String, Entity>> entireGameEntities = null;
+		
+		File dir = new File("Data/Saves");
+		dir.mkdirs();
+		
+		File file = new File("Data/Saves/"+this.getGameName()+".sav");
+		
+		if (file.exists())
+		{
+			try{
+				FileInputStream fin = new FileInputStream(file);
+				ObjectInputStream in = new ObjectInputStream(fin);
+				entireGameEntities = (HashMap<String, HashMap<String, Entity>>) in.readObject();
+				in.close();
+				fin.close();
+				
+				if (entireGameEntities.containsKey(levelName))
+					gameEntities = entireGameEntities.get(levelName);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				this.loading = false;
+				Main.setState(1);
+				return false;
+			}
+		}
+		
+		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
+		{
+			Entity ent = entry.getValue();
+			ent.processSpritesheet();
+		}
+		
+		this.gameEntities = gameEntities;
+		background = level.getBackground();
+		createCollisionMap();
+		
+		this.loading = false;
+		Main.setState(1);
+		return true;
+	}
 
 
 
@@ -386,6 +522,38 @@ public class GameData {
 	 */
 	public void setLevelName(String levelName) {
 		this.levelName = levelName;
+	}
+
+	/**
+	 * Returns {@link GameData#levelSize}
+	 * @return the levelSize
+	 */
+	public static int[] getLevelSize() {
+		return levelSize;
+	}
+
+	/**
+	 * Sets {@link GameData#levelSize}
+	 * @param levelSize the levelSize to set
+	 */
+	public static void setLevelSize(int[] levelSize) {
+		GameData.levelSize = levelSize;
+	}
+
+	/**
+	 * Returns {@link GameData#gameName}
+	 * @return the gameName
+	 */
+	public String getGameName() {
+		return gameName;
+	}
+
+	/**
+	 * Sets {@link GameData#gameName}
+	 * @param gameName the gameName to set
+	 */
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
 	}
 
 }
