@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -75,6 +76,9 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Get its Graphics object
 			g2d = (Graphics2D) im.getGraphics();
+			
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the background to the back buffer
 			drawBackground(g2d);
@@ -104,6 +108,9 @@ public class MainFrame extends JFrame implements KeyListener{
 			{
 				g2d = (Graphics2D) this.getGraphics();
 			}
+			
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the buffered Image onto the back buffer
 			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);

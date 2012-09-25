@@ -156,8 +156,6 @@ public class GameData {
 					ent.processSpritesheet();
 				}
 		}
-
-			SpellList.populateSpellImages(this.getGameEntities());
 			createCollisionMap();
 		}
 

@@ -124,5 +124,101 @@ class Spell extends Entity
 			return s;
 		}
 	}
+
+	/**
+	 * Returns {@link Spell#spellCDTime}
+	 * @return the spellCDTime
+	 */
+	public long getSpellCDTime() {
+		return spellCDTime;
+	}
+
+	/**
+	 * Sets {@link Spell#spellCDTime}
+	 * @param spellCDTime the spellCDTime to set
+	 */
+	public void setSpellCDTime(long spellCDTime) {
+		this.spellCDTime = spellCDTime;
+	}
+
+	/**
+	 * Returns {@link Spell#explode}
+	 * @return the explode
+	 */
+	public int getExplode() {
+		return explode;
+	}
+
+	/**
+	 * Sets {@link Spell#explode}
+	 * @param explode the explode to set
+	 */
+	public void setExplode(int explode) {
+		this.explode = explode;
+	}
+
+	/**
+	 * Returns {@link Spell#aliveTime}
+	 * @return the aliveTime
+	 */
+	public int getAliveTime() {
+		return aliveTime;
+	}
+
+	/**
+	 * Sets {@link Spell#aliveTime}
+	 * @param aliveTime the aliveTime to set
+	 */
+	public void setAliveTime(int aliveTime) {
+		this.aliveTime = aliveTime;
+	}
+
+	/**
+	 * Returns {@link Spell#damageType}
+	 * @return the damageType
+	 */
+	public String getDamageType() {
+		return damageType;
+	}
+
+	/**
+	 * Sets {@link Spell#damageType}
+	 * @param damageType the damageType to set
+	 */
+	public void setDamageType(String damageType) {
+		this.damageType = damageType;
+	}
+
+	/**
+	 * Returns {@link Spell#damageAmount}
+	 * @return the damageAmount
+	 */
+	public int getDamageAmount() {
+		return damageAmount;
+	}
+
+	/**
+	 * Sets {@link Spell#damageAmount}
+	 * @param damageAmount the damageAmount to set
+	 */
+	public void setDamageAmount(int damageAmount) {
+		this.damageAmount = damageAmount;
+	}
+
+	/**
+	 * Returns {@link Spell#exclude}
+	 * @return the exclude
+	 */
+	public String getExclude() {
+		return exclude;
+	}
+
+	/**
+	 * Sets {@link Spell#exclude}
+	 * @param exclude the exclude to set
+	 */
+	public void setExclude(String exclude) {
+		this.exclude = exclude;
+	}
 	
 }

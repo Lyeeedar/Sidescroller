@@ -15,45 +15,6 @@ public class SpellList {
 
 	public static final HashMap<String, BufferedImage> spellImages = new HashMap<String, BufferedImage>();
 	
-	public static void populateSpellImages(HashMap<String, Entity> entities)
-	{
-		ArrayList<String> spells = new ArrayList<String>();
-		
-		for (Map.Entry<String, Entity> entry : entities.entrySet())
-		{
-			Entity e = entry.getValue();
-			
-			for (String s : e.getSpells())
-			{
-				if (!spells.contains(s))
-					spells.add(s);
-			}
-		}
-		
-		for (String s : spells)
-		{
-			File file = getIm(s);
-			
-			if (file == null)
-			{
-				System.err.println("Invalid spell "+s);
-				continue;
-			}
-			
-			BufferedImage im = null;
-			
-			try{
-				im = ImageIO.read(file);
-			}
-			catch(IOException ioe)
-			{
-				ioe.printStackTrace();
-			}
-			
-			spellImages.put(s, im);
-		}
-	}
-	
 	private static File getIm(String spell)
 	{
 		if (spell.equals("Fireball"))
@@ -66,6 +27,33 @@ public class SpellList {
 	
 	public static BufferedImage getImage(String spell)
 	{
-		return spellImages.get(spell);
+		if (spellImages.containsKey(spell))
+			return spellImages.get(spell);
+		else
+		{
+			BufferedImage im = null;
+			try{
+				im = ImageIO.read(getIm(spell));
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
+			spellImages.put(spell, im);
+			return im;
+		}
+	}
+	
+	public static Spell getSpell(String spell)
+	{
+		if (spell.equals("Fireball"))
+		{
+			Spell s = new Spell("Fireball", 60, new int[]{0, 0, 0}, new int[]{0,0,37,30},
+					new boolean[]{true}, new int[]{0, 0}, getImage("Fireball"), 0, true, 200, 700, Entity.DAMAGE_PHYSICAL, 10, "");
+			
+			return s;
+		}
+		
+		return null;
 	}
 }

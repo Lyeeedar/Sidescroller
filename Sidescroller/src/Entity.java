@@ -201,6 +201,9 @@ public class Entity implements Serializable{
 	 */
 	public void AI()
 	{
+		if (!this.isAlive())
+			return;
+		
 		if (behavior[0])
 			behavior0();
 
@@ -278,8 +281,10 @@ public class Entity implements Serializable{
 			else
 				dir = 7;
 			
-			Spell s = new Spell("Fireball", 60, new int[]{pos[0], pos[1], pos[2]}, new int[]{0,0,37,30},
-					new boolean[]{true}, new int[]{dir, 0}, SpellList.getImage("Fireball"), 0, true, 200, 700, Entity.DAMAGE_PHYSICAL, 10, this.getName());
+			Spell s = SpellList.getSpell("Fireball");
+			s.setPos(new int[]{pos[0], pos[1], pos[2]});
+			s.setVelocity(new int[]{dir, 0});
+			s.setExclude(this.getName());
 			
 			spellCD = s.spellCDTime;
 			
@@ -497,6 +502,9 @@ public class Entity implements Serializable{
 
 	public void activate()
 	{
+		if (!this.isAlive())
+			return;
+		
 		if (dialogue == null)
 			return;
 		if (!this.isTalking())
@@ -528,6 +536,15 @@ public class Entity implements Serializable{
 	 */
 	public void animate(long time)
 	{
+		if (!this.isAlive())
+		{
+			this.setAnimateStrip(3);
+			this.setAnimateStage(1);
+			this.setAnimate(false);
+			this.setPassable(true);
+			return;
+		}
+		
 		if (animate)
 		{
 			this.remainingAnimateTime -= time;
@@ -588,7 +605,7 @@ public class Entity implements Serializable{
 	{
 		if (type.equals(Entity.DAMAGE_PHYSICAL))
 		{
-			amount /= defense.get(Entity.DAMAGE_PHYSICAL);
+			amount -= amount/defense.get(Entity.DAMAGE_PHYSICAL);
 			health -= amount;
 		}
 		
