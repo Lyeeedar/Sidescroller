@@ -530,7 +530,7 @@ class EntityFrame extends JFrame
 		d = e.getDialogue().copy();
 		spritefile = e.getSpriteFile();
 
-		behavior = new boolean[e.getBehavior().length];
+		behavior = new boolean[4];
 		for (int i = 0; i < e.getBehavior().length; i++)
 		{
 			behavior[i] = e.getBehavior()[i];
@@ -830,9 +830,15 @@ class BehaviorFrame extends JFrame
 		panel.add(GravCol);
 
 		panel.add(new JLabel("Simple Enemy AI - Move to Player and shoot spells"));
-		final JCheckBox Empty = new JCheckBox("");
-		Empty.setSelected(behavior[2]);
-		panel.add(Empty);
+		final JCheckBox simpleAI = new JCheckBox("");
+		simpleAI.setSelected(behavior[2]);
+		panel.add(simpleAI);
+		
+		panel.add(new JLabel("Activate Dialogue when stepped into"));
+		final JCheckBox stepOnActivate = new JCheckBox("");
+		if (behavior.length > 3)
+			stepOnActivate.setSelected(behavior[3]);
+		panel.add(stepOnActivate);
 
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -840,9 +846,11 @@ class BehaviorFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				try{
+					
 					behavior[0] = KeyCon.isSelected();
 					behavior[1] = GravCol.isSelected();
-					behavior[2] = Empty.isSelected();
+					behavior[2] = simpleAI.isSelected();
+					behavior[3] = stepOnActivate.isSelected();
 
 					frame.dispose();
 				}
@@ -903,7 +911,7 @@ class DialogueFrame extends JFrame
 			}});
 		bottom.add(bubbleBox);
 		
-		final String[] dialogueTypes = {"Speech", "Kill"};
+		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
 		bottom.add(comboBox);
 		
@@ -988,6 +996,10 @@ class DialogueBlockFrame extends JFrame
 		else if (block.get(0).equals("Kill"))
 		{
 			kill();
+		}
+		else if (block.get(0).equals("ChangeLevel"))
+		{
+			changeLevel();
 		}
 		
 		
@@ -1101,6 +1113,35 @@ class DialogueBlockFrame extends JFrame
 				block.set(1, target.getText());
 				block.set(2, success.getText());
 				block.set(3, fail.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	public void changeLevel()
+	{
+		while (block.size() < 2)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Next Level: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
 				
 				frame.dispose();
 				

@@ -16,7 +16,10 @@ public class Dialogue implements Serializable{
 	
 	/**
 	 * This array list holds all the dialogue blocks for the entire dialogue object. <br>
-	 * Blocks can be of the type 'Speech' and 'Kill' at the moment.
+	 * Block types: <p>
+	 * Speech = Just show the blocks of text sequentially. After finishing all the text then increment the stage <p>
+	 * Kill = Show prompt text until the entity specified is not alive, then show success text and increment stage <p>
+	 * ChangeLevel = change to the given level.
 	 */
 	private ArrayList<ArrayList<String>> quest;
 	
@@ -67,6 +70,10 @@ public class Dialogue implements Serializable{
 		else if (stagetext.get(0).equals("Kill"))
 		{
 			return kill(stagetext);
+		}
+		else if (stagetext.get(0).equals("ChangeLevel"))
+		{
+			return changeLevel(stagetext);
 		}
 		
 		return null;
@@ -128,6 +135,13 @@ public class Dialogue implements Serializable{
 			stage++;
 			internalstage = 0;
 		}
+	}
+	
+	private String changeLevel(ArrayList<String> stagetext)
+	{
+		Main.gamedata.saveGame();
+		Main.gamedata.loadGame(stagetext.get(1));
+		return "Loading Level "+stagetext.get(1);
 	}
 	
 	/**

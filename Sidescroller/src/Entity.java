@@ -120,6 +120,7 @@ public class Entity implements Serializable{
 	 *  0 = Takes player input for actions - {@link Entity#behavior0} <p>
 	 *  1 = Effected by Physics - {@link Entity#behavior1} <p>
 	 *  2 = Simple enemy AI - {@link Entity#behavior2()} <p>
+	 *  3 = Activate dialogue when player steps into it <p>
 	 */
 	protected boolean[] behavior;
 
@@ -254,6 +255,9 @@ public class Entity implements Serializable{
 
 		if (behavior[2])
 			behavior2();
+		
+		if ((behavior.length > 3) && (behavior[3]))
+			behavior3();
 	}
 
 	/**
@@ -509,6 +513,22 @@ public class Entity implements Serializable{
 		}
 		
 	}
+	
+	/**
+	 * This behavior makes the entity initiate dialogue when being stepped onto by the entity 
+	 */
+	public void behavior3()
+	{
+		String s = this.collideEntities(pos);
+		if (s == null)
+		{
+			return;
+		}
+		else if (s.equals("Player"))
+		{
+			this.activate();
+		}
+	}
 
 	/**
 	 * Update the entity jump animation to reflect if the entity is in the air or on the ground. The entity needs to be in the air for 5 AI updates for the animation to change.
@@ -552,7 +572,31 @@ public class Entity implements Serializable{
 		{
 			return this.getName();
 		}
+		
+		String s = this.collideEntities(pos);
+		if (s != null)
+			return s;
+		
+		// Check the collision box for this entity to see if any of the level is inside it (any non-transparent pixels)
+		for (int nx = x; nx < x+collisionShape[2]; nx++)
+		{
+			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
+			{
+				if (nx >= Main.gamedata.getCollisionMap().length)
+					return this.getName();
+				else if (Main.gamedata.getCollisionMap()[nx][ny])
+					return this.getName();
+			}
+		}
 
+		return null;
+	}
+	
+	public String collideEntities(int[] pos)
+	{
+		int x = pos[0]+collisionShape[0];
+		int y = pos[1]+collisionShape[1];
+		
 		// Create a rectangle simulating the collision box of the entity
 		Rectangle r = new Rectangle(x, y, collisionShape[2], collisionShape[3]);
 
@@ -573,19 +617,7 @@ public class Entity implements Serializable{
 				return e.getName();
 			}
 		}
-
-		// Check the collsion box for this entity to see if any of the level is inside it (any non-transparent pixels)
-		for (int nx = x; nx < x+collisionShape[2]; nx++)
-		{
-			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
-			{
-				if (nx >= Main.gamedata.getCollisionMap().length)
-					return this.getName();
-				else if (Main.gamedata.getCollisionMap()[nx][ny])
-					return this.getName();
-			}
-		}
-
+		
 		return null;
 	}
 
@@ -671,6 +703,10 @@ public class Entity implements Serializable{
 	 */
 	public void processSpritesheet()
 	{
+	
+		if (!visible)
+			return;
+		
 		BufferedImage im = null;
 		if (spriteFile != null)
 		{

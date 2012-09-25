@@ -97,11 +97,11 @@ public class GameData {
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
-			Entity e = new Entity("Player", 100, 4, new int[]{20, 20, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{true, true, false}, null);
+			Entity e = new Entity("Player", 100, 4, new int[]{20, 20, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{true, true, false, false}, null);
 
 			gameEntities.put("Player", e);
 
-			Entity ef = new Entity("NPC", 60, 4, new int[]{90, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, true}, null);
+			Entity ef = new Entity("NPC", 60, 4, new int[]{90, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, true, false}, null);
 
 			gameEntities.put("NPC", ef);	
 			//		gameEntities.add(efd);	
@@ -163,7 +163,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadGame("Test3");
+			this.loadGame("Test4");
 		}
 
 	}
@@ -274,9 +274,14 @@ public class GameData {
 		return itr;
 	}
 	
+	/**
+	 * This method is used to save the game (state of all the entities in the current level)
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public boolean saveGame()
 	{
+		// Set the screen to show the 'saving' message
 		this.saving = true;
 		Main.setState(2);
 
