@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +23,12 @@ public class Entity implements Serializable{
 	protected static final long serialVersionUID = -8723388619027762099L;
 	
 	public static final String DAMAGE_PHYSICAL = "DPHYS";
+	public static final String DAMAGE_FIRE = "DFIRE";
+	public static final String DAMAGE_AIR = "DAIR";
+	public static final String DAMAGE_EARTH = "DEARTH";
+	public static final String DAMAGE_WATER = "DWATER";
+	public static final String DAMAGE_DEATH = "DDEATH";
+	public static final String DAMAGE_LIFE = "DLIFE";
 
 	/**
 	 * The internal name of the Entity
@@ -152,6 +159,8 @@ public class Entity implements Serializable{
 	protected long spellCD = 0;
 	
 	protected ArrayList<String> spells = new ArrayList<String>();
+	
+	protected boolean damaged = false;
 
 
 	/**
@@ -181,7 +190,7 @@ public class Entity implements Serializable{
 		else
 		{
 			ArrayList<ArrayList<String>> dia = new ArrayList<ArrayList<String>>();
-			this.dialogue = new Dialogue(dia);
+			this.dialogue = new Dialogue(dia, 0);
 		}
 
 		this.spriteFile = spritefile;
@@ -193,6 +202,13 @@ public class Entity implements Serializable{
 		spells.add("Fireball");
 		
 		defense.put(Entity.DAMAGE_PHYSICAL, (double) 0);
+		defense.put(Entity.DAMAGE_FIRE, (double) 0);
+		defense.put(Entity.DAMAGE_AIR, (double) 0);
+		defense.put(Entity.DAMAGE_EARTH, (double) 0);
+		defense.put(Entity.DAMAGE_WATER, (double) 0);
+		defense.put(Entity.DAMAGE_DEATH, (double) 0);
+		defense.put(Entity.DAMAGE_LIFE, (double) 0);
+		
 	}
 
 	/**
@@ -204,14 +220,17 @@ public class Entity implements Serializable{
 		if (!this.isAlive())
 			return;
 		
+		if (this.isDamaged())
+			this.setDamaged(false);
+		
 		if (behavior[0])
 			behavior0();
 
 		if (behavior[1])
 			behavior1();
 
-//		if (behavior[2])
-//			behavior2();
+		if (behavior[2])
+			behavior2();
 	}
 
 	/**
@@ -274,16 +293,9 @@ public class Entity implements Serializable{
 			if (spellCD > 0)
 				return;
 			
-			int dir = 0;
-			
-			if (pos[2] == 0)
-				dir = -7;
-			else
-				dir = 7;
-			
 			Spell s = SpellList.getSpell("Fireball");
 			s.setPos(new int[]{pos[0], pos[1], pos[2]});
-			s.setVelocity(new int[]{dir, 0});
+			s.launch(new int[]{7, 0});
 			s.setExclude(this.getName());
 			
 			spellCD = s.spellCDTime;
@@ -429,6 +441,44 @@ public class Entity implements Serializable{
 		{
 			this.setGrounded(false);
 		}
+	}
+	
+	/**
+	 * Very simple enemy AI. Just moves towards player and fires off its spells randomly.
+	 */
+	public void behavior2()
+	{
+		Entity player = Main.gamedata.getGameEntities().get("Player");
+		
+		if (player.getPos()[0] < this.getPos()[0])
+		{
+			velocity[0] -= 2;
+			pos[2] = 0;
+		}
+		else
+		{
+			velocity[0] += 2;
+			pos[2] = 1;
+		}
+		
+		if (Math.abs(player.getPos()[0])-Math.abs(pos[0]) < 20)
+		{
+			if (spellCD > 0)
+				return;
+			
+			Random ran = new Random();
+			String spell = spells.get(ran.nextInt(spells.size()));
+			
+			Spell s = SpellList.getSpell(spell);
+			s.setPos(new int[]{pos[0], pos[1], pos[2]});
+			s.launch(new int[]{7,0});
+			s.setExclude(this.getName());
+			
+			spellCD = s.spellCDTime*2;
+			
+			Main.gamedata.getGameEntities().put("Fire"+System.currentTimeMillis(), s);
+		}
+		
 	}
 
 	protected void updateJumpAnim(boolean grounded)
@@ -602,17 +652,20 @@ public class Entity implements Serializable{
 	}
 
 	public void damage(double amount, String type)
-	{
-		if (type.equals(Entity.DAMAGE_PHYSICAL))
-		{
+	{		
+		double eleDefense = defense.get(type);
+		
+		if (eleDefense != 0)
 			amount -= amount/defense.get(Entity.DAMAGE_PHYSICAL);
-			health -= amount;
-		}
+		
+		health -= amount;
 		
 		if (health <= 0)
 		{
 			this.setAlive(false);
 		}
+		
+		this.setDamaged(true);
 	}
 
 	
@@ -1071,6 +1124,22 @@ public class Entity implements Serializable{
 	 */
 	public void setSpells(ArrayList<String> spells) {
 		this.spells = spells;
+	}
+
+	/**
+	 * Returns {@link Entity#damaged}
+	 * @return the damaged
+	 */
+	public boolean isDamaged() {
+		return damaged;
+	}
+
+	/**
+	 * Sets {@link Entity#damaged}
+	 * @param damaged the damaged to set
+	 */
+	public void setDamaged(boolean damaged) {
+		this.damaged = damaged;
 	}
 
 }

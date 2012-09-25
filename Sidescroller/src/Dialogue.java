@@ -21,8 +21,11 @@ public class Dialogue implements Serializable{
 	public static final int fadeDuration = 3000;
 	public static final float fadeStep = (float) 255/fadeDuration;
 	
-	public Dialogue(ArrayList<ArrayList<String>> text)
+	public int type;
+	
+	public Dialogue(ArrayList<ArrayList<String>> text, int type)
 	{
+		this.type = type;
 		this.quest = text;
 	}
 
@@ -120,7 +123,7 @@ public class Dialogue implements Serializable{
 			}
 			newquest.add(newblock);
 		}
-		Dialogue d = new Dialogue(newquest);
+		Dialogue d = new Dialogue(newquest, type);
 		return d;
 	}
 	
@@ -162,6 +165,22 @@ public class Dialogue implements Serializable{
 	 */
 	public void setInternalstage(int internalstage) {
 		this.internalstage = internalstage;
+	}
+
+	/**
+	 * Returns {@link Dialogue#type}
+	 * @return the type
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * Sets {@link Dialogue#type}
+	 * @param type the type to set
+	 */
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

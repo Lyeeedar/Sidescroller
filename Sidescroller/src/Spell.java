@@ -47,10 +47,41 @@ class Spell extends Entity
 	}
 	
 	@Override
+	public void animate(long time)
+	{
+		if (animate)
+		{
+			this.remainingAnimateTime -= time;
+			if (this.remainingAnimateTime <= 0)
+			{
+				this.remainingAnimateTime = this.animateTime;
+				this.animateStage += 1;
+				if (this.animateStage > Entity.animStages)
+				{
+					this.animateStage = 1;
+				}
+			}
+		}
+	}
+	
+	@Override
 	public void AI()
 	{
 		if (behavior[0])
 			behaviorProjectile();
+	}
+	
+	public void launch(int[] velocity)
+	{
+		if (pos[2] == 0)
+		{
+			this.velocity[0] = -velocity[0];
+		}
+		else
+		{
+			this.velocity[0] = velocity[0];
+		}
+		this.velocity[1] = velocity[1];
 	}
 	
 	@Override
@@ -84,8 +115,8 @@ class Spell extends Entity
 		
 		if (!alive)
 		{
-			npos[0] = pos[0]+(velocity[0]/2);
-			npos[1] = pos[1]+(velocity[1]/2);
+			npos[0] = pos[0]+(velocity[0]/5);
+			npos[1] = pos[1]+(velocity[1]/5);
 		}
 		
 		String s = this.checkCollision(npos);
@@ -101,8 +132,16 @@ class Spell extends Entity
 		}
 		else if (s != null)
 		{
-			Main.gamedata.getGameEntities().get(s).damage(this.damageAmount, this.damageType);
-			this.setAlive(false);
+			if (alive)
+			{
+				Main.gamedata.getGameEntities().get(s).damage(this.damageAmount, this.damageType);
+				this.setAlive(false);
+			}
+			
+			if (!alive)
+			{
+				this.changePosition(npos[0], npos[1], pos[2]);
+			}
 		}
 	}
 	

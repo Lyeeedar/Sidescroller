@@ -146,7 +146,7 @@ public class GameData {
 		}
 		else
 		{
-				Level level = Level.load(new File("Data/Test.data"));
+				Level level = Level.load(new File("Data/Test3.data"));
 				gameEntities = level.gameEntities;
 				levelName = level.name;
 				background = level.getBackground();

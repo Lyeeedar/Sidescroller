@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -536,16 +539,19 @@ class EntityFrame extends JFrame
 			behavior[i] = e.getBehavior()[i];
 		}
 
+		JScrollPane sp = new JScrollPane(panel);
+		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.add(panel);
 		init();
-		this.setSize(600, 600);
+		this.setSize(1000, 600);
+		panel.setPreferredSize(new Dimension(1000, 400));
 		this.setVisible(true);
 	}
 
 	public void init()
 	{
 		panel.removeAll();
-		panel.setLayout(new GridLayout(13, 2));
+		panel.setLayout(new GridLayout(25, 2));
 
 		panel.add(new JLabel("Name: "));
 		final JTextField name = new JTextField(10);
@@ -650,6 +656,46 @@ class EntityFrame extends JFrame
 				
 			}});
 		panel.add(dialogue);
+		
+		panel.add(new JLabel("Health"));
+		final JTextField health = new JTextField(5);
+		health.setText(Double.toString(e.getHealth()));
+		panel.add(health);
+		
+		panel.add(new JLabel("Armour - Phys"));
+		final JTextField armorPhys = new JTextField(5);
+		armorPhys.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_PHYSICAL)));
+		panel.add(armorPhys);
+		
+		panel.add(new JLabel("Armour - Fire"));
+		final JTextField armorFire = new JTextField(5);
+		armorFire.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_FIRE)));
+		panel.add(armorFire);
+		
+		panel.add(new JLabel("Armour - Air"));
+		final JTextField armorAir = new JTextField(5);
+		armorAir.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_AIR)));
+		panel.add(armorAir);
+		
+		panel.add(new JLabel("Armour - Earth"));
+		final JTextField armorEarth = new JTextField(5);
+		armorEarth.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_EARTH)));
+		panel.add(armorEarth);
+		
+		panel.add(new JLabel("Armour - Water"));
+		final JTextField armorWater = new JTextField(5);
+		armorWater.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_WATER)));
+		panel.add(armorWater);
+		
+		panel.add(new JLabel("Armour - Death"));
+		final JTextField armorDeath = new JTextField(5);
+		armorDeath.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_DEATH)));
+		panel.add(armorDeath);
+		
+		panel.add(new JLabel("Armour - Life"));
+		final JTextField armorLife = new JTextField(5);
+		armorLife.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_LIFE)));
+		panel.add(armorLife);
 
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -687,7 +733,20 @@ class EntityFrame extends JFrame
 					e.setBehavior(behavior);
 					
 					e.setDialogue(d);
-
+					
+					e.setHealth(Double.parseDouble(health.getText()));
+					
+					HashMap<String, Double> newDefense = new HashMap<String, Double>();
+					newDefense.put(Entity.DAMAGE_PHYSICAL, Double.parseDouble(armorPhys.getText()));
+					newDefense.put(Entity.DAMAGE_FIRE, Double.parseDouble(armorFire.getText()));
+					newDefense.put(Entity.DAMAGE_AIR, Double.parseDouble(armorAir.getText()));
+					newDefense.put(Entity.DAMAGE_EARTH, Double.parseDouble(armorEarth.getText()));
+					newDefense.put(Entity.DAMAGE_WATER, Double.parseDouble(armorWater.getText()));
+					newDefense.put(Entity.DAMAGE_DEATH, Double.parseDouble(armorDeath.getText()));
+					newDefense.put(Entity.DAMAGE_LIFE, Double.parseDouble(armorLife.getText()));
+					
+					e.setDefense(newDefense);
+					
 					EditorFrame.mapPanel.repaint();
 					init();
 				}
@@ -773,7 +832,7 @@ class BehaviorFrame extends JFrame
 		GravCol.setSelected(behavior[1]);
 		panel.add(GravCol);
 
-		panel.add(new JLabel("Empty"));
+		panel.add(new JLabel("Simple Enemy AI - Move to Player and shoot spells"));
 		final JCheckBox Empty = new JCheckBox("");
 		Empty.setSelected(behavior[2]);
 		panel.add(Empty);
@@ -835,6 +894,17 @@ class DialogueFrame extends JFrame
 		
 		JPanel bottom = new JPanel();
 		panel.add(bottom, BorderLayout.SOUTH);
+		
+		final String[] bubbleType = {"Speech", "Examine"};
+		final JComboBox bubbleBox = new JComboBox(bubbleType);
+		bubbleBox.addItemListener(new ItemListener(){
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				d.setType(bubbleBox.getSelectedIndex());
+				
+			}});
+		bottom.add(bubbleBox);
 		
 		final String[] dialogueTypes = {"Speech", "Kill"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);

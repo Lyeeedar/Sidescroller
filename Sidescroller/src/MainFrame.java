@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
@@ -160,25 +162,59 @@ public class MainFrame extends JFrame implements KeyListener{
 				String[] text = wrapText(e.getDialogue().getText(), 34);
 				int height = text.length*25;
 				
-				int x = e.getPos()[0]-MainFrame.screenPosition[0]+15;
-				int y = e.getPos()[1]-MainFrame.screenPosition[1]-height-20;
-
-				int[] xp = {x+20, x+35, x-10+(e.getSize()[0]/2)};
-				int[] yp = {y+height, y+height, y+height+15};
-
-				g2d.setColor(pale);
-				g2d.fillRoundRect(x, y, width, height, 30, 30);
-				g2d.setColor(dark);
-				g2d.drawRoundRect(x, y, width, height, 30, 30);
-				g2d.setColor(pale);
-				g2d.fillPolygon(xp, yp, 3);
-				g2d.setColor(dark);
-				g2d.drawLine(xp[0], yp[0], xp[2], yp[2]);
-				g2d.drawLine(xp[1], yp[1], xp[2], yp[2]);
 				
-				for (int i = 0; i < text.length; i++)
+				if (e.getDialogue().getType() == 0)
 				{
-					g2d.drawString(text[i], x+15, y+((i+1)*20));
+
+					int x = e.getPos()[0]-MainFrame.screenPosition[0]+15;
+					int y = e.getPos()[1]-MainFrame.screenPosition[1]-height-20;
+
+					int[] xp = {x+20, x+35, x-10+(e.getSize()[0]/2)};
+					int[] yp = {y+height, y+height, y+height+15};
+
+					g2d.setColor(pale);
+					g2d.fillRoundRect(x, y, width, height, 30, 30);
+					g2d.setColor(dark);
+					g2d.drawRoundRect(x, y, width, height, 30, 30);
+					g2d.setColor(pale);
+					g2d.fillPolygon(xp, yp, 3);
+					g2d.setColor(dark);
+					g2d.drawLine(xp[0], yp[0], xp[2], yp[2]);
+					g2d.drawLine(xp[1], yp[1], xp[2], yp[2]);
+
+					g2d.setColor(dark);
+					for (int i = 0; i < text.length; i++)
+					{
+						g2d.drawString(text[i], x+15, y+((i+1)*20));
+					}
+				
+				}
+				else if (e.getDialogue().getType() == 1)
+				{
+					int x = e.getPos()[0]-MainFrame.screenPosition[0]-(width/2)+(e.getSize()[0]/2);
+					int y = e.getPos()[1]-MainFrame.screenPosition[1]-height-50;
+
+					g2d.setColor(pale);
+					g2d.fillRoundRect(x+(width/2)-5, y+height+35, 10, 10, 10, 10);
+					g2d.setColor(dark);
+					g2d.drawRoundRect(x+(width/2)-5, y+height+35, 10, 10, 10, 10);
+					
+					g2d.setColor(pale);
+					g2d.fillRoundRect(x+(width/2)-10, y+height+10, 20, 20, 20, 20);
+					g2d.setColor(dark);
+					g2d.drawRoundRect(x+(width/2)-10, y+height+10, 20, 20, 20, 20);
+					
+					g2d.setColor(pale);
+					g2d.fillRoundRect(x, y, width, height, 30, 30);
+					g2d.setColor(dark);
+					g2d.drawRoundRect(x, y, width, height, 30, 30);
+					g2d.setColor(pale);
+
+					g2d.setColor(dark);
+					for (int i = 0; i < text.length; i++)
+					{
+						g2d.drawString(text[i], x+15, y+((i+1)*20));
+					}
 				}
 				
 			}
@@ -204,6 +240,9 @@ public class MainFrame extends JFrame implements KeyListener{
 			if ((e.getSpriteSheet() != null) && (e.isVisible()))
 			{
 				BufferedImage i = e.getSpriteSheet();
+				
+				if (e.isDamaged())
+					i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
 
 				if (e.getPos()[2] == 1)
 				{
@@ -230,6 +269,52 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			}
 		}
+	}
+	
+	public BufferedImage deepCopy(BufferedImage bi) {
+		 ColorModel cm = bi.getColorModel();
+		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		 WritableRaster raster = bi.copyData(null);
+		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
+	
+	public BufferedImage tintImage(BufferedImage image, int minX, int minY, int maxX, int maxY)
+	{
+		BufferedImage im = deepCopy(image);
+		
+		for (int x = minX; x < maxX; x++)
+		{
+			for (int y = minY; y < maxY; y++)
+			{
+				int colour = im.getRGB(x, y);
+
+				int alpha = (colour>>24) & 0xff;
+				
+				if (alpha == 0)
+					continue;
+				
+				int blue = colour & 0xFF;
+				int green = (colour >> 8) & 0xFF;
+				int red = (colour >> 16) & 0xFF;
+				
+				blue -= 60;
+				if (blue < 0)
+					blue = 0;
+				
+				green -= 60;
+				if (green < 0)
+					green = 0;
+				
+				red += 100;
+				if (red > 250)
+					red = 250;
+				
+				im.setRGB(x, y, new Color(red, green, blue, alpha).getRGB());
+
+			}
+		}
+		
+		return im;
 	}
 
 	String [] wrapText (String text, int len)

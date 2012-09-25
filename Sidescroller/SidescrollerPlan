@@ -6,13 +6,6 @@ Character
 Can change gender as usual
 Level-up allows upgrading of skills. 1 skill point a level? Different skill effects at higher levels.
 
-Saving
-
-Save game as xml file. when game is loaded level data is loaded from file, then overwritten by data from save file.
-Character level and skills and upgrades saved at top. Also the current level
-Then data for each level saved under their own subheadings.
-Entire save file loaded into memory, then the relevant parts editted and then entire thing written back into the file replacing the old one.
-
 Scenes
 
 Box that when entering starts scene. Player dropped vertically down to ground at this point. Game zooms in to the scene location.
