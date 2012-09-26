@@ -1,6 +1,7 @@
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -10,12 +11,14 @@ import java.util.Map;
  */
 public class Main {
 	
-	public static boolean fullscreen = true;
+	public static boolean fullscreen = false;
 	
 	/**
 	 *  Game state. <p>
 	 * 0 = Close game <p>
 	 * 1 = Normal loop <p>
+	 * 2 = Load/Save
+	 * 3 = Menu
 	 * 
 	 */
 	private static int state = 1;
@@ -117,10 +120,17 @@ public class Main {
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
 				
+				ArrayList<Entity> update = new ArrayList<Entity>();
+				
 				// Update animation for entities
 				for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 				{
 					Entity e = entry.getValue();
+					update.add(e);
+				}
+				
+				for (Entity e : update)
+				{
 					e.updateTime(elapsedTime);
 				}
 			}
@@ -147,6 +157,33 @@ public class Main {
 				
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
+			}
+			else if (state == 3)
+			{
+				// Update fps every 0.5 seconds
+				if (totalTime < 500)
+				{
+					totalTime += System.currentTimeMillis() - lastTime;
+					frames++;
+				}
+				else
+				{
+					totalTime = 0;
+					framerate = frames*2;
+					frames = 0;
+				}
+				
+				// Store current time
+				lastTime = System.currentTimeMillis();
+				
+				// Paint game graphics
+				Main.mainframe.paintMenu(gc);
+				
+				// Work out time taken to draw graphics and evaluate AI
+				elapsedTime = System.currentTimeMillis() - lastTime;
+				
+				Main.gamedata.evaluateMenu(elapsedTime);
+
 			}
 		}
 	}

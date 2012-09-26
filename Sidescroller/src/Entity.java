@@ -185,6 +185,13 @@ public class Entity implements Serializable{
 	 * Whether this entity has been damaged
 	 */
 	protected boolean damaged = false;
+	
+	protected int newAnimStrip = 1;
+	
+	protected boolean isAnimating = false;
+	
+	protected Spell spellToCast = null;
+	protected int castSpellAt = 0;
 
 
 	/**
@@ -241,17 +248,17 @@ public class Entity implements Serializable{
 	 */
 	public void AI()
 	{
-		if (!this.isAlive())
-			return;
+		if (behavior[1])
+			behavior1();
 		
 		if (this.isDamaged())
 			this.setDamaged(false);
 		
+		if (!this.isAlive())
+			return;
+		
 		if (behavior[0])
 			behavior0();
-
-		if (behavior[1])
-			behavior1();
 
 		if (behavior[2])
 			behavior2();
@@ -270,23 +277,27 @@ public class Entity implements Serializable{
 		// Move left and right
 		if (MainFrame.left)
 		{
-			this.getVelocity()[0] = -3;
+			this.getVelocity()[0] = -6;
 			this.getPos()[2] = 0;
+			
 			this.setAnimate(true);
 		}
 		else if (MainFrame.right)
 		{
-			this.getVelocity()[0] = 3;
+			this.getVelocity()[0] = 6;
 			this.getPos()[2] = 1;
+			
 			this.setAnimate(true);
 		}
 		else
+		{
 			this.setAnimate(false);
+		}
 
 		// Jump
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
-			this.getVelocity()[1] -= 15;
+			this.getVelocity()[1] -= 35;
 		}
 
 		// Activate infront of Entity
@@ -325,14 +336,29 @@ public class Entity implements Serializable{
 		if (MainFrame.key1)
 		{
 			// If still in cooldown then don't allow spell casting 
-			if (spellCD > 0)
+			if ((spellCD > 0) || (isAnimating))
 				return;
 			
-			Spell s = SpellList.getSpell("Fireball", new int[]{pos[0], pos[1], pos[2]}, new int[]{7,0}, this.getName());
+			newAnimStrip = 4;
+			
+			int[] pos = {0, 0, this.getPos()[2]};
+			
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+			
+			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			
+			Spell s = SpellList.getSpell("Fireball", pos, new int[]{17,0}, this.getName());
 			
 			spellCD = s.spellCDTime;
 			
-			Main.gamedata.getGameEntities().put("Fire"+System.currentTimeMillis(), s);
+			spellToCast = s;
+			castSpellAt = 5;
 		}
 	}
 
@@ -344,8 +370,6 @@ public class Entity implements Serializable{
 	public void behavior1()
 	{
 		boolean grounded = this.isGrounded();
-
-		this.setGrounded(true);
 
 		// Scale X velocity so it can never exceed 30
 		if ((velocity[0] < 0) && (velocity[0] < -30))
@@ -418,6 +442,8 @@ public class Entity implements Serializable{
 					velocity[1] = 0;
 					applyFriction();
 					this.changePosition(npos[0], npos[1], this.getPos()[2]);
+					this.setGrounded(true);
+					updateJumpAnim(grounded);
 					return;
 				}
 			}
@@ -441,6 +467,7 @@ public class Entity implements Serializable{
 			{
 				velocity[1] = 0;
 				pos[1] = this.pos[1];
+				this.setGrounded(true);
 			}
 			// Else check if the velocity is positive. If it is then the Entity is falling
 			// and therefore the ground is somewhere between the entity position and the 
@@ -449,7 +476,6 @@ public class Entity implements Serializable{
 			{
 				velocity[1] = 0;
 				pos[1] = this.pos[1];
-				this.setGrounded(true);
 
 				for (int i = 0; i < 40; i++)
 				{
@@ -505,11 +531,27 @@ public class Entity implements Serializable{
 			Random ran = new Random();
 			String spell = spells.get(ran.nextInt(spells.size()));
 			
-			Spell s = SpellList.getSpell(spell, new int[]{pos[0], pos[1], pos[2]}, new int[]{7,0}, this.getName());
+			newAnimStrip = 4;
+			this.setAnimate(true);
 			
-			spellCD = s.spellCDTime*2;
+			int[] pos = {0, 0, this.getPos()[2]};
 			
-			Main.gamedata.getGameEntities().put("Fire"+System.currentTimeMillis(), s);
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+			
+			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			
+			Spell s = SpellList.getSpell(spell, pos, new int[]{17,0}, this.getName());
+			
+			spellCD = s.spellCDTime;
+			
+			spellToCast = s;
+			castSpellAt = 5;
 		}
 		
 	}
@@ -535,19 +577,18 @@ public class Entity implements Serializable{
 	 * @param grounded
 	 */
 	protected void updateJumpAnim(boolean grounded)
-	{
-		this.setAnimateStrip(1);
-		if (grounded == this.isGrounded())
+	{		
+		if (newAnimStrip > 2)
 		{
-			this.animChangeCtr++;
-			if ((!grounded) && (this.animChangeCtr >= 5))
-			{
-				this.setAnimateStrip(2);
-			}
+			return;
+		}
+		else if (!this.isGrounded())
+		{
+			newAnimStrip = 2;
 		}
 		else
 		{
-			this.animChangeCtr = 0;
+			newAnimStrip = 1;
 		}
 	}
 
@@ -670,17 +711,80 @@ public class Entity implements Serializable{
 			return;
 		}
 		
-		if (animate)
+		this.remainingAnimateTime -= time;
+		if (this.remainingAnimateTime <= 0)
 		{
-			this.remainingAnimateTime -= time;
-			if (this.remainingAnimateTime <= 0)
+			this.remainingAnimateTime = this.animateTime;
+			this.remainingAnimateTime = 80;
+			
+			if (isAnimating)
 			{
-				this.remainingAnimateTime = this.animateTime;
-				this.animateStage += 1;
+				this.animateStage++;
+				
+				if ((animateStrip > 3) && (animateStage == castSpellAt))
+				{
+					if (spellToCast != null)
+					{
+						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
+						spellToCast = null;
+					}
+				}
+				
 				if (this.animateStage > Entity.animStages)
 				{
+					if (animateStrip > 3)
+					{
+						isAnimating = false;
+						newAnimStrip = 1;
+					}
+					
 					this.animateStage = 1;
 				}
+				animChangeCtr = 0;
+			}
+			else if (newAnimStrip != animateStrip)
+			{
+				if (newAnimStrip == 1)
+				{
+
+					animateStrip = 1;
+				}
+				else if (newAnimStrip == 2)
+				{
+
+					animChangeCtr++;
+					if (animChangeCtr > 1)
+					{
+
+						animateStrip = 2;
+						animateStage = 1;
+					}
+				}
+				else if (newAnimStrip > 3)
+				{
+
+					animateStage = 1;
+					animateStrip = newAnimStrip;
+					isAnimating = true;
+				}
+			}
+			else if (animateStrip == 1)
+			{	
+				if (animate)
+				{
+
+					this.animateStage++;
+					
+					if (this.animateStage > Entity.animStages)
+					{					
+						this.animateStage = 1;
+					}
+					animChangeCtr = 0;
+				}
+			}
+			else if (animateStrip != 2)
+			{
+				animateStrip = 1;
 			}
 		}
 	}
@@ -928,8 +1032,6 @@ public class Entity implements Serializable{
 	 * @param animate the animate to set
 	 */
 	public void setAnimate(boolean animate) {
-		if (!animate)
-			animateStage=1;
 		this.animate = animate;
 	}
 

@@ -8,10 +8,13 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**
@@ -29,7 +32,8 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static int[] resolution = new int[2];
 	public static BufferStrategy bufferStrategy;
 	public static int[] screenPosition = new int[2];
-
+	public static Menu menu = new Menu();
+	
 	public MainFrame(GraphicsConfiguration gc)
 	{
 		// Initialise the Frame with the given graphics configuration
@@ -60,6 +64,70 @@ public class MainFrame extends JFrame implements KeyListener{
 
 		// Set the game resolution
 		MainFrame.resolution = new int[]{800, 600};
+		
+	}
+	
+	/**
+	 * Draws all the in-game graphics
+	 */
+	public void paintMenu(GraphicsConfiguration gc)
+	{
+		Graphics2D g2d = null;
+
+		try {
+
+			// Create a BufferedImage compatible with the current environment
+			BufferedImage im = gc.createCompatibleImage(resolution[0], resolution[1]);
+
+			// Get its Graphics object
+			g2d = (Graphics2D) im.getGraphics();
+			
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Draw the background to the back buffer
+			drawBackground(g2d);
+
+			// Draw all the game Entities to the back buffer
+			drawEntities(g2d);
+
+			// Draw the foreground
+			drawForeground(g2d);
+			
+			g2d.setColor(new Color(0, 0, 0, 180));
+			
+			g2d.fillRect(0, 0, resolution[0], resolution[1]);
+			
+			menu.drawMenus(g2d);
+
+			// Get the graphics object for the current setting of fullscreen
+			if (Main.fullscreen)
+			{
+				// Get a graphics object for the current backbuffer
+				g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
+			}
+			else
+			{
+				g2d = (Graphics2D) this.getGraphics();
+			}
+			
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Draw the buffered Image onto the back buffer
+			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
+
+
+		} finally {
+			// Dispose of the graphics object
+			if (Main.fullscreen)
+				g2d.dispose();
+		}
+		// Show the back buffer (Page Flipping)
+		if (Main.fullscreen)
+			bufferStrategy.show();
 	}
 
 	/**
@@ -267,8 +335,8 @@ public class MainFrame extends JFrame implements KeyListener{
 				BufferedImage i = e.getSpriteSheet();
 				
 				// If the entity has been damaged then tint the image with red
-				if (e.isDamaged())
-					i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
+				//if (e.isDamaged())
+					//i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
 
 				if (e.getPos()[2] == 1)
 				{
@@ -518,7 +586,6 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static boolean enter;
 	public static boolean key1;
 
-
 	/** I use this method to store is a key has been pressed
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
 	 */
@@ -526,7 +593,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
-			Main.setState(0);
+			Main.setState(3);
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
 		{
@@ -546,12 +613,10 @@ public class MainFrame extends JFrame implements KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
-			Main.gamedata.saveGame();
 			MainFrame.space = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			Main.gamedata.loadGame("Test3");
 			MainFrame.enter = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_1)

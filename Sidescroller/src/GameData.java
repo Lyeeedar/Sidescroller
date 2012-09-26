@@ -23,7 +23,7 @@ public class GameData {
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
-	private long gameSpeed = 10;
+	private long gameSpeed = 30;
 	/**
 	 * The remaining time before another Game Logic update
 	 */
@@ -62,7 +62,7 @@ public class GameData {
 	/**
 	 * Strength of gravity in the game
 	 */
-	public static final int gravity = 1;
+	public static final int gravity = 3;
 
 	/**
 	 * Strength of friction in the game
@@ -193,7 +193,22 @@ public class GameData {
 			}
 		}
 	}
+	
 
+	public void evaluateMenu(long time)
+	{
+		// Minus the time since last method call from the game speed timer
+		this.gameSpeedRemainder -= time;
+
+		// If the time since the last update exceeds the game speed then do an update
+		if (this.gameSpeedRemainder <= 0)
+		{
+			// Reset game speed timer
+			this.gameSpeedRemainder = this.gameSpeed;
+
+			MainFrame.menu.evaluateButtons();
+		}
+	}
 
 	/**
 	 * Method to update and evaluate the AI for every entity in the game

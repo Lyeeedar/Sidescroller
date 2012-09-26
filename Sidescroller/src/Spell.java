@@ -67,6 +67,17 @@ class Spell extends Entity
 			this.size[0] = width;
 			this.size[1] = height;
 		}
+		
+		if (this.pos[2] == 0)
+		{
+			this.pos[0] -= size[0];
+		}
+	}
+	
+	@Override
+	public void activate()
+	{
+		
 	}
 	
 	@Override
