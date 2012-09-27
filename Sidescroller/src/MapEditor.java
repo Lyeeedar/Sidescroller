@@ -61,13 +61,14 @@ class EditorFrame extends JFrame
 {
 	public static MapPanel mapPanel = new MapPanel();
 	OptionsPanel optionsPanel = new OptionsPanel();
+	public static JScrollPane sp;
 
 	public EditorFrame()
 	{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
 
-		JScrollPane sp = new JScrollPane(mapPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		sp = new JScrollPane(mapPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		this.add(sp, BorderLayout.CENTER);
 		this.add(optionsPanel, BorderLayout.NORTH);
@@ -272,7 +273,7 @@ class OptionsPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				Entity e = new Entity("Unnamed", 100, 0, new int[]{0,0,0}, new File(""), new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
+				Entity e = new Entity("Unnamed", 100, 0, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, new File(""), new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
 
 				MapEditor.gamedata.getGameEntities().put("Unnamed"+MapEditor.gamedata.getGameEntities().size(), e);
 
@@ -554,6 +555,11 @@ class EntityFrame extends JFrame
 		final JTextField name = new JTextField(10);
 		name.setText(e.getName());
 		panel.add(name);
+		
+		panel.add(new JLabel("Faction: "));
+		final JTextField faction = new JTextField(10);
+		faction.setText(e.getFaction());
+		panel.add(faction);
 
 		panel.add(new JLabel("Animation Update Time: "));
 		final JTextField animUpdate = new JTextField(5);
@@ -703,6 +709,7 @@ class EntityFrame extends JFrame
 					MapEditor.gamedata.getGameEntities().remove(e.getName());
 					e.setName(name.getText());
 					MapEditor.gamedata.getGameEntities().put(e.getName(), e);
+					e.setFaction(faction.getText());
 					e.setAnimateTime(Long.parseLong(animUpdate.getText()));
 					e.setTotalAnimateStrip(Integer.parseInt(animStrips.getText()));
 					e.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));

@@ -44,7 +44,67 @@ public class Menu {
 		}
 	}
 	
-	public void drawMenus(Graphics2D g2d)
+	private void drawOptionsMenu(Graphics2D g2d)
+	{
+		Color normal = new Color(0, 0, 0, 170);
+		Color selected = new Color(0, 50, 100, 250);
+		
+		g2d.drawImage(menuGraphics[0], 0, 0, null);
+		
+		
+		g2d.setFont(g2d.getFont().deriveFont((float) 20));
+		
+		if (selectedIndex == 0)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("Fullscreen (requires restart)   :   " + Main.fullscreen, 250, 260);
+		
+		if (selectedIndex == 1)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("", 460, 260);
+		
+		if (selectedIndex == 2)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("", 250, 318);
+		
+		if (selectedIndex == 3)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("", 460, 318);
+		
+		if (selectedIndex == 4)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("", 250, 373);
+		
+		if (selectedIndex == 5)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("", 460, 373);
+		
+		if (selectedIndex == 6)
+			g2d.setColor(selected);
+		else
+			g2d.setColor(normal);
+		
+		g2d.drawString("Back", 360, 428);
+	}
+	
+	private void drawGameMenu(Graphics2D g2d)
 	{
 		Color normal = new Color(0, 0, 0, 170);
 		Color selected = new Color(0, 50, 100, 250);
@@ -104,43 +164,61 @@ public class Menu {
 		g2d.drawString("Exit", 360, 428);
 	}
 	
-	public void evaluateButtons()
+	public void drawMenus(Graphics2D g2d)
 	{
 		if (menuType.equals("Menu"))
 		{
-			if (MainFrame.right)
-			{
-				selectedIndex++;
-				MainFrame.right = false;
-				if (selectedIndex > 6)
-					selectedIndex = 6;
-			}
-			else if (MainFrame.left)
-			{
-				selectedIndex--;
-				MainFrame.left = false;
-				if (selectedIndex < 0)
-					selectedIndex = 0;
-			}
-			else if (MainFrame.up)
-			{
-				selectedIndex -= 2;
-				MainFrame.up = false;
-				if (selectedIndex < 0)
-					selectedIndex = 0;
-			}
-			else if (MainFrame.down)
-			{
-				selectedIndex += 2;
-				MainFrame.down = false;
-				if (selectedIndex > 6)
-					selectedIndex = 6;
-			}
-			else if (MainFrame.enter)
+			drawGameMenu(g2d);
+		}
+		else if (menuType.equals("Options"))
+		{
+			drawOptionsMenu(g2d);
+		}
+	}
+	
+	public void evaluateButtons()
+	{
+		if (MainFrame.right)
+		{
+			selectedIndex++;
+			MainFrame.right = false;
+			if (selectedIndex > 6)
+				selectedIndex = 6;
+		}
+		else if (MainFrame.left)
+		{
+			selectedIndex--;
+			MainFrame.left = false;
+			if (selectedIndex < 0)
+				selectedIndex = 0;
+		}
+		else if (MainFrame.up)
+		{
+			selectedIndex -= 2;
+			MainFrame.up = false;
+			if (selectedIndex < 0)
+				selectedIndex = 0;
+		}
+		else if (MainFrame.down)
+		{
+			selectedIndex += 2;
+			MainFrame.down = false;
+			if (selectedIndex > 6)
+				selectedIndex = 6;
+		}
+		else if (MainFrame.enter)
+		{
+			if (menuType.equals("Menu"))
 			{
 				if (selectedIndex == 0)
 				{
 					Main.setState(1);
+					selectedIndex = 0;
+				}
+				if (selectedIndex == 1)
+				{
+					menuType = "Options";
+					selectedIndex = 0;
 				}
 				else if (selectedIndex == 4)
 				{
@@ -149,10 +227,23 @@ public class Menu {
 				else if (selectedIndex == 6)
 				{
 					Main.setState(0);
+					selectedIndex = 0;
 				}
 				MainFrame.enter = false;
 			}
+			else if (menuType.equals("Options"))
+			{
+				if (selectedIndex == 6)
+				{
+					menuType = "Menu";
+					selectedIndex = 1;
+				}
+				MainFrame.enter = false;
+			}
+			
 		}
+		
+		
 	}
 
 }

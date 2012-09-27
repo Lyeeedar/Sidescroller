@@ -140,7 +140,7 @@ public class Dialogue implements Serializable{
 	private String changeLevel(ArrayList<String> stagetext)
 	{
 		Main.gamedata.saveGame();
-		Main.gamedata.loadGame(stagetext.get(1));
+		Main.gamedata.loadLevel(stagetext.get(1));
 		return "Loading Level "+stagetext.get(1);
 	}
 	

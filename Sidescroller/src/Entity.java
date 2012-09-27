@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -34,6 +33,8 @@ public class Entity implements Serializable{
 	 * The internal name of the Entity
 	 */
 	protected String name;
+	
+	protected String faction;
 
 	/**
 	 *  Total animation stages
@@ -292,6 +293,9 @@ public class Entity implements Serializable{
 		else
 		{
 			this.setAnimate(false);
+			
+			if (animateStrip == 1)
+				animateStage = 1;
 		}
 
 		// Jump
@@ -354,6 +358,7 @@ public class Entity implements Serializable{
 			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
 			Spell s = SpellList.getSpell("Fireball", pos, new int[]{17,0}, this.getName());
+			s.setFaction(this.getFaction());
 			
 			spellCD = s.spellCDTime;
 			
@@ -510,26 +515,33 @@ public class Entity implements Serializable{
 	 */
 	public void behavior2()
 	{
+		
+		
 		Entity player = Main.gamedata.getGameEntities().get("Player");
 		
-		if (player.getPos()[0] < this.getPos()[0])
+		if (Main.ran.nextInt(3)  !=  1)
+		{
+			this.setAnimate(false);
+		}
+		else if (player.getPos()[0] < this.getPos()[0])
 		{
 			velocity[0] -= 2;
 			pos[2] = 0;
+			this.setAnimate(true);
 		}
 		else
 		{
 			velocity[0] += 2;
 			pos[2] = 1;
+			this.setAnimate(true);
 		}
 		
-		if (Math.abs(player.getPos()[0])-Math.abs(pos[0]) < 20)
+		if (Math.abs(player.getPos()[0]-pos[0]) < 10)
 		{
 			if (spellCD > 0)
 				return;
 			
-			Random ran = new Random();
-			String spell = spells.get(ran.nextInt(spells.size()));
+			String spell = spells.get(Main.ran.nextInt(spells.size()));
 			
 			newAnimStrip = 4;
 			this.setAnimate(true);
@@ -547,8 +559,9 @@ public class Entity implements Serializable{
 			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
 			Spell s = SpellList.getSpell(spell, pos, new int[]{17,0}, this.getName());
+			s.setFaction(this.getFaction());
 			
-			spellCD = s.spellCDTime;
+			spellCD = s.spellCDTime*15;
 			
 			spellToCast = s;
 			castSpellAt = 5;
@@ -645,7 +658,7 @@ public class Entity implements Serializable{
 		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
 			Entity e = entry.getValue();
-			if ((e.getName().equals(this.getName())) || (e.isPassable()))
+			if ((e.getName().equals(this.getName())) || (e.isPassable()) || ((e.getFaction() != null) && (e.getFaction().equals(this.getFaction()))))
 				continue;
 
 			// Create a collision box for the entity that is being checked
@@ -753,7 +766,7 @@ public class Entity implements Serializable{
 				{
 
 					animChangeCtr++;
-					if (animChangeCtr > 1)
+					if (animChangeCtr > 3)
 					{
 
 						animateStrip = 2;
@@ -1329,6 +1342,86 @@ public class Entity implements Serializable{
 	 */
 	public void setDamaged(boolean damaged) {
 		this.damaged = damaged;
+	}
+
+	/**
+	 * Returns {@link Entity#faction}
+	 * @return the faction
+	 */
+	public String getFaction() {
+		return faction;
+	}
+
+	/**
+	 * Sets {@link Entity#faction}
+	 * @param faction the faction to set
+	 */
+	public void setFaction(String faction) {
+		this.faction = faction;
+	}
+
+	/**
+	 * Returns {@link Entity#newAnimStrip}
+	 * @return the newAnimStrip
+	 */
+	public int getNewAnimStrip() {
+		return newAnimStrip;
+	}
+
+	/**
+	 * Sets {@link Entity#newAnimStrip}
+	 * @param newAnimStrip the newAnimStrip to set
+	 */
+	public void setNewAnimStrip(int newAnimStrip) {
+		this.newAnimStrip = newAnimStrip;
+	}
+
+	/**
+	 * Returns {@link Entity#isAnimating}
+	 * @return the isAnimating
+	 */
+	public boolean isAnimating() {
+		return isAnimating;
+	}
+
+	/**
+	 * Sets {@link Entity#isAnimating}
+	 * @param isAnimating the isAnimating to set
+	 */
+	public void setAnimating(boolean isAnimating) {
+		this.isAnimating = isAnimating;
+	}
+
+	/**
+	 * Returns {@link Entity#spellToCast}
+	 * @return the spellToCast
+	 */
+	public Spell getSpellToCast() {
+		return spellToCast;
+	}
+
+	/**
+	 * Sets {@link Entity#spellToCast}
+	 * @param spellToCast the spellToCast to set
+	 */
+	public void setSpellToCast(Spell spellToCast) {
+		this.spellToCast = spellToCast;
+	}
+
+	/**
+	 * Returns {@link Entity#castSpellAt}
+	 * @return the castSpellAt
+	 */
+	public int getCastSpellAt() {
+		return castSpellAt;
+	}
+
+	/**
+	 * Sets {@link Entity#castSpellAt}
+	 * @param castSpellAt the castSpellAt to set
+	 */
+	public void setCastSpellAt(int castSpellAt) {
+		this.castSpellAt = castSpellAt;
 	}
 
 }

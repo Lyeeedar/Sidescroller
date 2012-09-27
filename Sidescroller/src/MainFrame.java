@@ -8,13 +8,10 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 /**

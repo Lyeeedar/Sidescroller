@@ -1,10 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -163,7 +159,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadGame("Test4");
+			this.loadGame(new File("Data/Test4.data"));
 		}
 
 	}
@@ -293,79 +289,13 @@ public class GameData {
 	 * This method is used to save the game (state of all the entities in the current level)
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean saveGame()
 	{
 		// Set the screen to show the 'saving' message
 		this.saving = true;
 		Main.setState(2);
 
-		HashMap<String, HashMap<String, Entity>> entireGameEntities = null;
-		
-		File dir = new File("Data/Saves");
-		dir.mkdirs();
-		
-		File file = new File("Data/Saves/"+this.getGameName()+".sav");
-		
-		if (file.exists())
-		{
-			try{
-				FileInputStream fin = new FileInputStream(file);
-				ObjectInputStream in = new ObjectInputStream(fin);
-				entireGameEntities = (HashMap<String, HashMap<String, Entity>>) in.readObject();
-				in.close();
-				fin.close();
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-				this.saving = false;
-				Main.setState(1);
-				return false;
-			}
-		}
-		else
-		{
-			entireGameEntities = new HashMap<String, HashMap<String, Entity>>();
-		}
-		
-		HashMap<String, Entity> save = new HashMap<String, Entity>();
-		
-		for (Map.Entry<String, Entity> entry : this.getGameEntities().entrySet()){
-			Entity e = entry.getValue();
-			
-			if (e instanceof Spell)
-			{
-				continue;
-			}
-			else
-			{
-				save.put(entry.getKey(), entry.getValue());
-			}
-		}
-		
-		if (entireGameEntities.containsKey(this.getLevelName()))
-		{
-			entireGameEntities.remove(this.getLevelName());
-		}
-		
-		entireGameEntities.put(this.getLevelName(), save);
-		
-		try
-		{
-			FileOutputStream fileOut = new FileOutputStream(file);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(entireGameEntities);
-			out.close();
-			fileOut.close();
-		}
-		catch(IOException i)
-		{
-			i.printStackTrace();
-			this.saving = false;
-			Main.setState(1);
-			return false;
-		}
+		SaveGame.save(this);
 
 		this.saving = false;
 		Main.setState(1);
@@ -373,53 +303,24 @@ public class GameData {
 	}
 
 
-	@SuppressWarnings("unchecked")
-	public boolean loadGame(String levelName)
+	public boolean loadGame(File file)
 	{
 		this.loading = true;
 		Main.setState(2);
 		
-		Level level = Level.load(new File("Data/"+levelName+".data"));
-		HashMap<String, Entity> gameEntities = level.gameEntities;
-		this.levelName = level.name;
+		SaveGame.load(file, this);
 		
-		HashMap<String, HashMap<String, Entity>> entireGameEntities = null;
+		this.loading = false;
+		Main.setState(1);
+		return true;
+	}
+	
+	public boolean loadLevel(String levelName)
+	{
+		this.loading = true;
+		Main.setState(2);
 		
-		File dir = new File("Data/Saves");
-		dir.mkdirs();
-		
-		File file = new File("Data/Saves/"+this.getGameName()+".sav");
-		
-		if (file.exists())
-		{
-			try{
-				FileInputStream fin = new FileInputStream(file);
-				ObjectInputStream in = new ObjectInputStream(fin);
-				entireGameEntities = (HashMap<String, HashMap<String, Entity>>) in.readObject();
-				in.close();
-				fin.close();
-				
-				if (entireGameEntities.containsKey(levelName))
-					gameEntities = entireGameEntities.get(levelName);
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-				this.loading = false;
-				Main.setState(1);
-				return false;
-			}
-		}
-		
-		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
-		{
-			Entity ent = entry.getValue();
-			ent.processSpritesheet();
-		}
-		
-		this.gameEntities = gameEntities;
-		background = level.getBackground();
-		createCollisionMap();
+		SaveGame.loadLevel(levelName, this);
 		
 		this.loading = false;
 		Main.setState(1);

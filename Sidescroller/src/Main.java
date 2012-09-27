@@ -3,6 +3,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Class containing the main game data
@@ -30,6 +31,8 @@ public class Main {
 	 * The frame to draw the game onto
 	 */
 	public static MainFrame mainframe;
+	
+	public static final Random ran = new Random();
 	
 	public static void main(String[] args) {
 		
