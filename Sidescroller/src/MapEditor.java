@@ -391,7 +391,7 @@ class BackgroundFrame extends JFrame
 	{
 		panel.removeAll();
 
-		panel.setLayout(new GridLayout(4, 2));
+		panel.setLayout(new GridLayout(5, 2));
 
 
 		JButton distBtn = new JButton("Distant");
@@ -417,9 +417,12 @@ class BackgroundFrame extends JFrame
 				filechoose(1);
 
 			}});
-
-
 		panel.add(fbackBtn);
+		JTextField farTxt = new JTextField(15);
+		panel.add(farTxt);
+		farTxt.setText(MapEditor.background[1]);
+
+		
 		
 		JButton cbackBtn = new JButton("Close Background");
 		cbackBtn.addActionListener(new ActionListener(){
@@ -435,7 +438,7 @@ class BackgroundFrame extends JFrame
 
 		JTextField backTxt = new JTextField(15);
 		panel.add(backTxt);
-		backTxt.setText(MapEditor.background[1]);
+		backTxt.setText(MapEditor.background[2]);
 
 		JButton collBtn = new JButton("Collision");
 		collBtn.addActionListener(new ActionListener(){
@@ -451,7 +454,7 @@ class BackgroundFrame extends JFrame
 
 		JTextField collTxt = new JTextField(15);
 		panel.add(collTxt);
-		collTxt.setText(MapEditor.background[2]);
+		collTxt.setText(MapEditor.background[3]);
 
 		JButton foreBtn = new JButton("Foreground");
 		foreBtn.addActionListener(new ActionListener(){
@@ -467,7 +470,7 @@ class BackgroundFrame extends JFrame
 
 		JTextField foreTxt = new JTextField(15);
 		panel.add(foreTxt);
-		foreTxt.setText(MapEditor.background[3]);
+		foreTxt.setText(MapEditor.background[4]);
 
 
 		panel.revalidate();
@@ -498,7 +501,7 @@ class BackgroundFrame extends JFrame
 			MapEditor.background[index] = file.getAbsolutePath();
 			MapEditor.gamedata.getBackground()[index] = im;
 
-			if (index == 2)
+			if (index == 3)
 			{
 				MapEditor.gamedata.levelSize[0] = MapEditor.gamedata.background[0].getWidth();
 				MapEditor.gamedata.levelSize[1] = MapEditor.gamedata.background[0].getHeight();
@@ -506,6 +509,8 @@ class BackgroundFrame extends JFrame
 				MapEditor.gamedata.collisionMap = new boolean[MapEditor.gamedata.levelSize[0]][MapEditor.gamedata.levelSize[1]];
 
 				MapEditor.gamedata.createCollisionMap();
+				
+				EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.background[0].getWidth(), MapEditor.gamedata.background[0].getHeight()));
 			}
 
 			EditorFrame.mapPanel.repaint();

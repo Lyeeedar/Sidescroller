@@ -28,6 +28,10 @@ public class SpellList {
 		{
 			return new File("Data/Resources/Spells/fireball.png");
 		}
+		else if (spell.equals("EarthSpike"))
+		{
+			return new File("Data/Resources/Spells/rockspike.png");
+		}
 		
 		return null;
 	}
@@ -61,17 +65,25 @@ public class SpellList {
 	 * @param spell
 	 * @return
 	 */
-	public static Spell getSpell(String spell, int[] pos, int[] velocity, String exclude)
+	public static Spell getSpell(String spell, int[] pos, String exclude)
 	{
+		Spell s = null;
+		
 		if (spell.equals("Fireball"))
 		{
-			Spell s = new Spell("Fireball", 60, pos, new int[]{0,0,37,30},
-					new boolean[]{true}, velocity, getImage("Fireball"), 0, true, 200, 700, Entity.DAMAGE_PHYSICAL, 10, exclude);
-			s.launch(velocity);
+			s = new Spell("Fireball", 60, pos, new int[]{0,0,37,30},
+					new boolean[]{true, false}, new int[]{17, 0}, getImage("Fireball"), 0, true, 200, 700, Entity.DAMAGE_FIRE, 10, exclude);
 			
-			return s;
+		}
+		else if (spell.equals("EarthSpike"))
+		{
+			s = new Spell("EarthSpike", 100, pos, new int[]{0,15,50,30},
+					new boolean[]{false, true}, new int[]{10, 0}, getImage("EarthSpike"), 3, true, 200, 1300, Entity.DAMAGE_EARTH, 10, exclude);
 		}
 		
-		return null;
+		if (pos[2] == 0)
+			s.velocity[0] = -s.velocity[0];
+		
+		return s;
 	}
 }

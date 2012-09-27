@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class SaveGame {
 
-	String currentLevel;
-	HashMap<String, HashMap<String, Entity>> gameEntities;
-	Entity player;
+	String currentLevel = null;
+	HashMap<String, HashMap<String, Entity>> gameEntities = new HashMap<String, HashMap<String, Entity>>();
+	Entity player = null;
 
 	public static boolean save(GameData gamedata)
 	{
@@ -90,7 +90,7 @@ public class SaveGame {
 		return true;
 	}
 	
-	public static boolean load(File file, GameData gamedata)
+	public static boolean loadGame(File file, GameData gamedata)
 	{
 		SaveGame save = null;
 		
@@ -176,7 +176,7 @@ public class SaveGame {
 		}
 		else
 		{
-			return false;
+			save = new SaveGame();
 		}
 		
 		
@@ -189,12 +189,15 @@ public class SaveGame {
 		}
 		gamedata.levelName = level.name;
 		
-		Entity oldPlayer = level.gameEntities.get("Player");
-		level.gameEntities.remove("Player");
-		
-		save.player.setPos(oldPlayer.getPos());
-		
-		gameEntities.put("Player", save.player);
+		if (save.player != null)
+		{
+			Entity oldPlayer = level.gameEntities.get("Player");
+			level.gameEntities.remove("Player");
+
+			save.player.setPos(oldPlayer.getPos());
+
+			gameEntities.put("Player", save.player);
+		}
 		
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{

@@ -159,7 +159,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadGame(new File("Data/Test4.data"));
+			this.loadLevel("Test5");
 		}
 
 	}
@@ -308,7 +308,7 @@ public class GameData {
 		this.loading = true;
 		Main.setState(2);
 		
-		SaveGame.load(file, this);
+		SaveGame.loadGame(file, this);
 		
 		this.loading = false;
 		Main.setState(1);

@@ -357,7 +357,7 @@ public class Entity implements Serializable{
 			
 			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
-			Spell s = SpellList.getSpell("Fireball", pos, new int[]{17,0}, this.getName());
+			Spell s = SpellList.getSpell("EarthSpike", pos, this.getName());
 			s.setFaction(this.getFaction());
 			
 			spellCD = s.spellCDTime;
@@ -558,7 +558,7 @@ public class Entity implements Serializable{
 			
 			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
-			Spell s = SpellList.getSpell(spell, pos, new int[]{17,0}, this.getName());
+			Spell s = SpellList.getSpell(spell, pos, this.getName());
 			s.setFaction(this.getFaction());
 			
 			spellCD = s.spellCDTime*15;

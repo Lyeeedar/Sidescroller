@@ -17,32 +17,32 @@ class Spell extends Entity
 	 * Time that spell casting is locked for the entity that casts this spell.
 	 */
 	long spellCDTime;
-	
+
 	/**
 	 * The current stage of the explode animation
 	 */
 	int explode = 0;
-	
+
 	/**
 	 * The length of time this spell will exist for before exploding
 	 */
 	int aliveTime;
-	
+
 	/**
 	 *  the type of damage this spell inflicts
 	 */
 	String damageType;
-	
+
 	/**
 	 * The amount of damage this spell inflicts
 	 */
 	int damageAmount;
-	
+
 	/**
 	 * The entity to exclude from collision (normally the entity that casts the spell)
 	 */
 	String exclude;
-	
+
 	public Spell(String name, int animateTime,	int[] pos, int[] collision, boolean[] behaviour,
 			int[] velocity, BufferedImage spriteImage, int weight, boolean passable, int spellCDTime, int aliveTime,
 			String damageType, int damageAmount, String exclude) {
@@ -58,7 +58,7 @@ class Spell extends Entity
 		this.damageType = damageType;
 		this.damageAmount = damageAmount;
 		this.exclude = exclude;
-		
+
 		if (spriteSheet != null)
 		{
 			int width = spriteSheet.getWidth() / Entity.animStages;
@@ -67,19 +67,19 @@ class Spell extends Entity
 			this.size[0] = width;
 			this.size[1] = height;
 		}
-		
+
 		if (this.pos[2] == 0)
 		{
 			this.pos[0] -= size[0];
 		}
 	}
-	
+
 	@Override
 	public void activate()
 	{
-		
+
 	}
-	
+
 	@Override
 	public void animate(long time)
 	{
@@ -89,12 +89,12 @@ class Spell extends Entity
 			if (this.remainingAnimateTime <= 0)
 			{
 				this.remainingAnimateTime = this.animateTime;
-				
+
 				if (!alive)
 					animateStage = explode;
 				else
 					this.animateStage += 1;
-				
+
 				if (this.animateStage > Entity.animStages)
 				{
 					this.animateStage = 1;
@@ -102,14 +102,16 @@ class Spell extends Entity
 			}
 		}
 	}
-	
+
 	@Override
 	public void AI()
 	{
 		if (behavior[0])
 			behaviorProjectile();
+		if (behavior[1])
+			behaviorGroundHugger();
 	}
-	
+
 	/**
 	 * Method that sets the entity velocity depending on what direction its facing
 	 * @param velocity
@@ -126,48 +128,134 @@ class Spell extends Entity
 		}
 		this.velocity[1] = velocity[1];
 	}
-	
+
 	@Override
 	public void updateTime(long time)
 	{		
 		super.updateTime(time);
 		aliveTime -= time;
-		
+
 		if ((!alive) && (this.remainingAnimateTime == this.animateTime))
 		{
 			explode++;
 		}
-		
+
 		if ((aliveTime < 0) && (alive))
 		{
 			alive = false;
 			this.animateStrip = 2;
 			this.animateStage = 0;
 		}
-		
+
 		if (!alive)
 		{
 			this.animateStrip = 2;
 		}
-		
+
 	}
-	
+
+	public void behaviorGroundHugger()
+	{
+
+		// Work out positions that the entity is trying to move to
+		int[] cpos = {this.getPos()[0]+velocity[0], this.getPos()[1]};
+		
+		if (!alive)
+		{
+			//velocity[0] /= 2;
+			cpos[0] = pos[0]+(velocity[0]/4);
+		}
+		
+		String s = checkCollision(cpos);
+
+		// If there is no collision at this point then all is well and move the entity to this point
+		if (s == null)
+		{
+			while (s == null)
+			{
+				cpos[1] += 2;
+				s = checkCollision(cpos);
+			}
+			cpos[1] -= 3;
+		}
+		else
+		{
+			cpos = new int[]{this.getPos()[0], pos[1]};
+			int val = Math.abs(velocity[0]);
+			int x = val;
+			int y = 0;
+			boolean found = false;
+
+			for (int i = 1; i <= val-1; i++)
+			{
+				x = val-i;
+				y = i;
+
+				if (velocity[0] < 0)
+				{
+					cpos[0] = this.getPos()[0] - x;
+				}
+				else
+				{
+					cpos[0] = this.getPos()[0] + x;
+				}
+				cpos[1] = pos[1] - y;
+
+				s = checkCollision(cpos);
+				
+				if (s == null)
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				cpos[0] = pos[0];
+				cpos[1] = pos[1];
+			}
+		}
+		
+		if (cpos[0] == pos[0])
+		{
+			this.setAlive(false);
+		}
+		
+		this.changePosition(cpos[0], cpos[1], pos[2]);
+		
+		if ((s != null) && (!s.equals(this.getName())))
+		{
+			if (alive)
+			{
+				Main.gamedata.getGameEntities().get(s).damage(this.damageAmount, this.damageType);
+				this.setAlive(false);
+			}
+			
+			if (!alive)
+			{
+				this.changePosition(cpos[0], cpos[1], pos[2]);
+			}
+		}
+	}
+
 	/**
 	 * Method that makes the Spell act like a projectile. Moves it directly in the direction of {@link Entity#velocity} and then explodes when it hits something, damaging it.
 	 */
 	public void behaviorProjectile()
 	{
 		int[] npos = {pos[0]+velocity[0], pos[1]+velocity[1]};
-		
+
 		if (!alive)
 		{
-			npos[0] = pos[0]+(velocity[0]/5);
-			npos[1] = pos[1]+(velocity[1]/5);
+			//velocity[0] /= 2;
+			//velocity[1] /= 2;
+			npos[0] = pos[0]+(velocity[0]/4);
+			npos[1] = pos[1]+(velocity[1]/4);
 		}
-		
-		String s = this.checkCollision(npos);
-		
-		
+
+		String s = checkCollision(npos);
+
+
 		if (s == null)
 		{
 			this.changePosition(npos[0], npos[1], pos[2]);
@@ -192,10 +280,20 @@ class Spell extends Entity
 	}
 	
 	@Override
+	public void changePosition(int X, int Y, int dir)
+	{	
+		pos[0] = X;
+		pos[1] = Y;
+		pos[2] = dir;
+
+	}
+	
+	
+	@Override
 	public String checkCollision(int[] pos)
 	{
 		String s = super.checkCollision(pos);
-		
+
 		if (s == null)
 		{
 			return null;
@@ -305,5 +403,5 @@ class Spell extends Entity
 	public void setExclude(String exclude) {
 		this.exclude = exclude;
 	}
-	
+
 }
