@@ -123,6 +123,26 @@ public class Main {
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
 				
+				ArrayList<SystemMessage> newMessages = new ArrayList<SystemMessage>();
+				
+				int i = 0;
+				for (SystemMessage sys : Main.gamedata.systemMessages)
+				{
+					if (i < 10)
+						sys.aliveTime -= elapsedTime;
+					
+					if (sys.aliveTime > 0)
+						newMessages.add(sys);
+					
+					i++;
+				}
+				
+				Main.gamedata.systemMessages = newMessages;
+				
+				// Work out time taken to draw graphics and evaluate AI
+				elapsedTime = System.currentTimeMillis() - lastTime;
+				
+				
 				ArrayList<Entity> update = new ArrayList<Entity>();
 				
 				// Update animation for entities

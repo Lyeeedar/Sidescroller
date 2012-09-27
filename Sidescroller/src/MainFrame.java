@@ -161,6 +161,9 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw speech bubbles
 			drawSpeech(g2d);
 			
+			// Draw HUD
+			drawHUD(g2d, totalTime);
+			
 			if (Main.getState() == 2)
 			{
 				g2d.setColor(Color.LIGHT_GRAY);
@@ -178,13 +181,6 @@ public class MainFrame extends JFrame implements KeyListener{
 					g2d.drawString("Saving - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
 				}
 			}
-
-			// Setup fonts and colour for fps
-			g2d.setFont(g2d.getFont().deriveFont((float) 20));
-			g2d.setColor(Color.YELLOW);
-
-			// Draw fps
-			g2d.drawString(Long.toString(totalTime), 50, 50);
 
 			// Get the graphics object for the current setting of fullscreen
 			if (Main.fullscreen)
@@ -213,6 +209,34 @@ public class MainFrame extends JFrame implements KeyListener{
 		// Show the back buffer (Page Flipping)
 		if (Main.fullscreen)
 			bufferStrategy.show();
+	}
+	
+	public void drawHUD(Graphics2D g2d, long totalTime)
+	{
+		if (Main.gamedata.systemMessages.size() > 0)
+		{
+			g2d.setColor(new Color(0, 0, 0, 70));
+			g2d.fillRect(10, 30, 230, 210);
+		}
+		
+		for (int i = 0; (i < 10)&&(i < Main.gamedata.systemMessages.size()); i++)
+		{
+			g2d.setColor(new Color(255, 255, 255, (int)Main.gamedata.systemMessages.get(i).getAlpha()));
+			// Draw fps
+			g2d.drawString(Main.gamedata.systemMessages.get(i).message, 20, 50+(20*i));
+		}
+		
+		double health = ((Main.gamedata.getGameEntities().get("Player").getHealth()/Main.gamedata.getGameEntities().get("Player").getMaxHealth())*100);
+		
+		g2d.setColor(Color.RED);
+		g2d.fillRect(250, 50, (int)health, 10);
+		
+		// Setup fonts and colour for fps
+		g2d.setFont(g2d.getFont().deriveFont((float) 20));
+		g2d.setColor(Color.YELLOW);
+
+		// Draw fps
+		g2d.drawString(Long.toString(totalTime), 400, 50);
 	}
 
 	public void drawSpeech(Graphics2D g2d)
@@ -354,7 +378,7 @@ public class MainFrame extends JFrame implements KeyListener{
 
 				g2d.setColor(Color.RED);
 
-				//g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
+				g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
 				g2d.setColor(Color.YELLOW);
 

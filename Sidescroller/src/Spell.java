@@ -61,7 +61,7 @@ class Spell extends Entity
 
 		if (spriteSheet != null)
 		{
-			int width = spriteSheet.getWidth() / Entity.animStages;
+			int width = spriteSheet.getWidth() / animStages;
 			int height = spriteSheet.getHeight() / this.getTotalAnimateStrip();
 
 			this.size[0] = width;
@@ -95,7 +95,7 @@ class Spell extends Entity
 				else
 					this.animateStage += 1;
 
-				if (this.animateStage > Entity.animStages)
+				if (this.animateStage > animStages)
 				{
 					this.animateStage = 1;
 				}
@@ -356,6 +356,11 @@ class Spell extends Entity
 		this.aliveTime = aliveTime;
 	}
 
+	public void setAlive(boolean alive)
+	{
+		this.alive = alive;
+	}
+	
 	/**
 	 * Returns {@link Spell#damageType}
 	 * @return the damageType

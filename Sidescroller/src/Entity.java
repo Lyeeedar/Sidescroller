@@ -39,7 +39,7 @@ public class Entity implements Serializable{
 	/**
 	 *  Total animation stages
 	 */
-	public static final int animStages = 8;
+	public int animStages = 8;
 
 	/**
 	 *  Total time between animation updates
@@ -154,6 +154,8 @@ public class Entity implements Serializable{
 	 * Whether the entity is alive or not
 	 */
 	protected boolean alive = true;
+	
+	protected double maxHealth = 100;
 	
 	/**
 	 * The Entities current health
@@ -301,7 +303,8 @@ public class Entity implements Serializable{
 		// Jump
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
-			this.getVelocity()[1] -= 35;
+			this.getVelocity()[1] -= 25;
+			Main.gamedata.systemMessages.add(new SystemMessage("Jumped!"));
 		}
 
 		// Activate infront of Entity
@@ -325,6 +328,7 @@ public class Entity implements Serializable{
 			for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 			{
 				Entity e = entry.getValue();
+				
 				Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 						e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
@@ -357,13 +361,15 @@ public class Entity implements Serializable{
 			
 			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
-			Spell s = SpellList.getSpell("EarthSpike", pos, this.getName());
+			Spell s = SpellList.getSpell("Fireball", pos, this.getName());
 			s.setFaction(this.getFaction());
 			
 			spellCD = s.spellCDTime;
 			
 			spellToCast = s;
 			castSpellAt = 5;
+			
+			Main.gamedata.systemMessages.add(new SystemMessage("You cast Earth Spike! Boom!"));
 		}
 	}
 
@@ -536,36 +542,33 @@ public class Entity implements Serializable{
 			this.setAnimate(true);
 		}
 		
-		if (Math.abs(player.getPos()[0]-pos[0]) < 10)
-		{
-			if (spellCD > 0)
-				return;
-			
-			String spell = spells.get(Main.ran.nextInt(spells.size()));
-			
-			newAnimStrip = 4;
-			this.setAnimate(true);
-			
-			int[] pos = {0, 0, this.getPos()[2]};
-			
-			if (this.getPos()[2] == 0){
-				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
-			}
-			else
-			{
-				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
-			}
-			
-			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
-			
-			Spell s = SpellList.getSpell(spell, pos, this.getName());
-			s.setFaction(this.getFaction());
-			
-			spellCD = s.spellCDTime*15;
-			
-			spellToCast = s;
-			castSpellAt = 5;
+		if (spellCD > 0)
+			return;
+		
+		String spell = spells.get(Main.ran.nextInt(spells.size()));
+		
+		newAnimStrip = 4;
+		this.setAnimate(true);
+		
+		int[] pos = {0, 0, this.getPos()[2]};
+		
+		if (this.getPos()[2] == 0){
+			pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
 		}
+		else
+		{
+			pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+		}
+		
+		pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+		
+		Spell s = SpellList.getSpell(spell, pos, this.getName());
+		s.setFaction(this.getFaction());
+		
+		spellCD = s.spellCDTime*15;
+		
+		spellToCast = s;
+		castSpellAt = 5;
 		
 	}
 	
@@ -734,7 +737,7 @@ public class Entity implements Serializable{
 			{
 				this.animateStage++;
 				
-				if ((animateStrip > 3) && (animateStage == castSpellAt))
+				if ((animateStrip > 1) && (animateStage == castSpellAt))
 				{
 					if (spellToCast != null)
 					{
@@ -743,7 +746,7 @@ public class Entity implements Serializable{
 					}
 				}
 				
-				if (this.animateStage > Entity.animStages)
+				if (this.animateStage > animStages)
 				{
 					if (animateStrip > 3)
 					{
@@ -788,7 +791,7 @@ public class Entity implements Serializable{
 
 					this.animateStage++;
 					
-					if (this.animateStage > Entity.animStages)
+					if (this.animateStage > animStages)
 					{					
 						this.animateStage = 1;
 					}
@@ -842,7 +845,7 @@ public class Entity implements Serializable{
 		// width and height of a frame
 		if (spriteSheet != null)
 		{
-			int width = spriteSheet.getWidth() / Entity.animStages;
+			int width = spriteSheet.getWidth() / animStages;
 			int height = spriteSheet.getHeight() / this.getTotalAnimateStrip();
 
 			this.size[0] = width;
@@ -1132,7 +1135,7 @@ public class Entity implements Serializable{
 	 * Returns {@link Entity#animStages}
 	 * @return the animstages
 	 */
-	public static int getAnimstages() {
+	public int getAnimstages() {
 		return animStages;
 	}
 
@@ -1253,6 +1256,7 @@ public class Entity implements Serializable{
 	 * @return the alive
 	 */
 	public boolean isAlive() {
+		
 		return alive;
 	}
 
@@ -1261,6 +1265,10 @@ public class Entity implements Serializable{
 	 * @param alive the alive to set
 	 */
 	public void setAlive(boolean alive) {
+		
+		Item item = new Item("Chest", new int[]{pos[0], pos[1], pos[2]}, new File("Data/Resources/Items/chest.png"), new int[]{0,0,20,20}, 1);
+		Main.gamedata.getGameEntities().put("Chest"+System.currentTimeMillis(), item);
+		
 		this.alive = alive;
 	}
 
@@ -1422,6 +1430,22 @@ public class Entity implements Serializable{
 	 */
 	public void setCastSpellAt(int castSpellAt) {
 		this.castSpellAt = castSpellAt;
+	}
+
+	/**
+	 * Returns {@link Entity#maxHealth}
+	 * @return the maxHealth
+	 */
+	public double getMaxHealth() {
+		return maxHealth;
+	}
+
+	/**
+	 * Sets {@link Entity#maxHealth}
+	 * @param maxHealth the maxHealth to set
+	 */
+	public void setMaxHealth(double maxHealth) {
+		this.maxHealth = maxHealth;
 	}
 
 }

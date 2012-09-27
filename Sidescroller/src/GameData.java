@@ -19,7 +19,7 @@ public class GameData {
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
-	private long gameSpeed = 30;
+	private long gameSpeed = 40;
 	/**
 	 * The remaining time before another Game Logic update
 	 */
@@ -58,7 +58,7 @@ public class GameData {
 	/**
 	 * Strength of gravity in the game
 	 */
-	public static final int gravity = 3;
+	public static final int gravity = 2;
 
 	/**
 	 * Strength of friction in the game
@@ -75,6 +75,8 @@ public class GameData {
 	 */
 	public String gameName = "test";
 	
+	public ArrayList<SystemMessage> systemMessages = new ArrayList<SystemMessage>();
+	
 	public boolean saving = false;
 	public boolean loading = false;
 
@@ -89,7 +91,7 @@ public class GameData {
 	public void test()
 	{	
 		boolean a = true;
-		if (!a)
+		if (a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -265,6 +267,10 @@ public class GameData {
 
 				// If the Entity is a spell and has exploded and played its entire explode animation then add it to the delete array
 				if ((e instanceof Spell) && (!e.isAlive()) && (((Spell)e).explode >= 8))
+				{
+					delete.add(entry.getKey());
+				}
+				else if ((e instanceof Item) && (!e.isAlive()))
 				{
 					delete.add(entry.getKey());
 				}

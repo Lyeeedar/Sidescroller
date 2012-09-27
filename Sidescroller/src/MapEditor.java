@@ -743,6 +743,7 @@ class EntityFrame extends JFrame
 					
 					e.setDialogue(d);
 					
+					e.setMaxHealth(Double.parseDouble(health.getText()));
 					e.setHealth(Double.parseDouble(health.getText()));
 					
 					HashMap<String, Double> newDefense = new HashMap<String, Double>();
