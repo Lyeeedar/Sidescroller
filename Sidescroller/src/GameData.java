@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class GameData {
 	public void test()
 	{	
 		boolean a = true;
-		if (a)
+		if (!a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -99,7 +100,7 @@ public class GameData {
 
 			gameEntities.put("Player", e);
 
-			Entity ef = new Entity("NPC", 60, 4, new int[]{90, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, true, false}, null);
+			Entity ef = new Entity("NPC", 60, 4, new int[]{390, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, false, false}, null);
 
 			gameEntities.put("NPC", ef);	
 			//		gameEntities.add(efd);	
@@ -158,10 +159,12 @@ public class GameData {
 			background[4] = im;
 			
 			createCollisionMap();
+			
+			this.loadGame(new File("Data/Saves/test.sav"));
 		}
 		else
 		{
-			this.loadLevel("Test5");
+			this.loadGame(new File("Data/Saves/test.sav"));
 		}
 
 	}
@@ -297,40 +300,30 @@ public class GameData {
 	 */
 	public boolean saveGame()
 	{
-		// Set the screen to show the 'saving' message
-		this.saving = true;
-		Main.setState(2);
-
-		SaveGame.save(this);
-
-		this.saving = false;
-		Main.setState(1);
-		return true;
+		boolean success = SaveGame.save(this);
+		
+		this.systemMessages.add(new SystemMessage("Save Game successfully completed: "+success, Color.WHITE));
+		
+		return success;
 	}
 
 
 	public boolean loadGame(File file)
-	{
-		this.loading = true;
-		Main.setState(2);
+	{	
+		boolean success = SaveGame.loadGame(file, this);
 		
-		SaveGame.loadGame(file, this);
+		this.systemMessages.add(new SystemMessage("Load Game successfully completed: "+success, Color.WHITE));
 		
-		this.loading = false;
-		Main.setState(1);
-		return true;
+		return success;
 	}
 	
 	public boolean loadLevel(String levelName)
 	{
-		this.loading = true;
-		Main.setState(2);
+		boolean success = SaveGame.loadLevel(levelName, this);
 		
-		SaveGame.loadLevel(levelName, this);
+		this.systemMessages.add(new SystemMessage("Load Level successfully completed: "+success, Color.WHITE));
 		
-		this.loading = false;
-		Main.setState(1);
-		return true;
+		return success;
 	}
 
 

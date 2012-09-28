@@ -221,7 +221,7 @@ public class MainFrame extends JFrame implements KeyListener{
 		
 		for (int i = 0; (i < 10)&&(i < Main.gamedata.systemMessages.size()); i++)
 		{
-			g2d.setColor(new Color(255, 255, 255, (int)Main.gamedata.systemMessages.get(i).getAlpha()));
+			g2d.setColor(Main.gamedata.systemMessages.get(i).getColour());
 			// Draw fps
 			g2d.drawString(Main.gamedata.systemMessages.get(i).message, 20, 50+(20*i));
 		}

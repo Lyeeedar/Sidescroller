@@ -223,6 +223,7 @@ public class Menu {
 				else if (selectedIndex == 4)
 				{
 					Main.gamedata.saveGame();
+					Main.setState(1);
 				}
 				else if (selectedIndex == 6)
 				{

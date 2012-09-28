@@ -102,6 +102,9 @@ public class Level implements Serializable{
 	 */
 	public static Level load(File file)
 	{
+		if (!file.exists())
+			return null;
+		
 		Level level = null;
 		try{
 			FileInputStream fin = new FileInputStream(file);

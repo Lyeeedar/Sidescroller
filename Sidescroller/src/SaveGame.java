@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,8 +12,12 @@ import java.util.Map;
  * @author Lyeeedar
  *
  */
-public class SaveGame {
+public class SaveGame implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 566737083548919063L;
 	String currentLevel = null;
 	HashMap<String, HashMap<String, Entity>> gameEntities = new HashMap<String, HashMap<String, Entity>>();
 	Entity player = null;
@@ -122,6 +127,9 @@ public class SaveGame {
 		
 		
 		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
+		if (level == null)
+			return false;
+		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
 		if (save.gameEntities.containsKey(level.name))
@@ -202,6 +210,7 @@ public class SaveGame {
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
+			
 			ent.processSpritesheet();
 		}
 		

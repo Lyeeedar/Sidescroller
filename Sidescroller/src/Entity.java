@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -195,6 +196,8 @@ public class Entity implements Serializable{
 	
 	protected Spell spellToCast = null;
 	protected int castSpellAt = 0;
+	
+	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
 
 	/**
@@ -304,7 +307,6 @@ public class Entity implements Serializable{
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
 			this.getVelocity()[1] -= 25;
-			Main.gamedata.systemMessages.add(new SystemMessage("Jumped!"));
 		}
 
 		// Activate infront of Entity
@@ -368,8 +370,6 @@ public class Entity implements Serializable{
 			
 			spellToCast = s;
 			castSpellAt = 5;
-			
-			Main.gamedata.systemMessages.add(new SystemMessage("You cast Earth Spike! Boom!"));
 		}
 	}
 
@@ -869,13 +869,23 @@ public class Entity implements Serializable{
 		
 		if (health <= 0)
 		{
+			death();
 			this.setAlive(false);
 		}
 		
 		this.setDamaged(true);
 	}
 
-	
+	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
+	public void death()
+	{
+		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN));
+		
+		for (int i = 0; i < 10; i++)
+		{
+			Main.gamedata.getGameEntities().put("Chest"+System.currentTimeMillis()+i, ItemList.getItem("Chest", new int[]{pos[0], pos[1], pos[2]}, 1));
+		}
+	}
 	
 	
 	
@@ -1265,9 +1275,6 @@ public class Entity implements Serializable{
 	 * @param alive the alive to set
 	 */
 	public void setAlive(boolean alive) {
-		
-		Item item = new Item("Chest", new int[]{pos[0], pos[1], pos[2]}, new File("Data/Resources/Items/chest.png"), new int[]{0,0,20,20}, 1);
-		Main.gamedata.getGameEntities().put("Chest"+System.currentTimeMillis(), item);
 		
 		this.alive = alive;
 	}
