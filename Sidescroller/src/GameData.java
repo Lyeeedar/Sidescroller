@@ -17,6 +17,8 @@ import javax.imageio.ImageIO;
  */
 public class GameData {
 
+	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
+	
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
@@ -69,17 +71,14 @@ public class GameData {
 	/**
 	 * The name of the level
 	 */
-	public String levelName;
-	
-	/**
-	 * The name for this instance of the game, effects the name of the save file.
-	 */
-	public String gameName = "test";
+	public String levelName = "";
 	
 	public ArrayList<SystemMessage> systemMessages = new ArrayList<SystemMessage>();
 	
 	public boolean saving = false;
 	public boolean loading = false;
+	
+	public File saveFile;
 
 	public GameData()
 	{
@@ -91,18 +90,22 @@ public class GameData {
 	 */
 	public void test()
 	{	
+		Character.resetAll();
 		boolean a = true;
 		if (!a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
-			Entity e = new Entity("Player", 100, 4, new int[]{20, 20, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{true, true, false, false}, null);
+			Entity e = new Entity("Player", 100, 5, 8, new int[]{20, 20, 0}, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
 
 			gameEntities.put("Player", e);
 
-			Entity ef = new Entity("NPC", 60, 4, new int[]{390, 90, 0}, new File("Data/Resources/Spritesheets/HumanFemale.png"), new int[]{15, 0, 20, 57}, new boolean[]{false, true, false, false}, null);
+			for (int i = 0; i<20; i++)
+			{
+				Entity ef = new Entity("NPC"+i, 60, 5, 8, new int[]{300+(i*50), 90, 0}, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, false, false}, null);
 
-			gameEntities.put("NPC", ef);	
+				gameEntities.put("NPC"+i, ef);
+			}
 			//		gameEntities.add(efd);	
 			//		gameEntities.add(eff);	
 			//		gameEntities.add(efg);
@@ -160,13 +163,34 @@ public class GameData {
 			
 			createCollisionMap();
 			
-			this.loadGame(new File("Data/Saves/test.sav"));
+			//this.loadGame(new File("Data/Saves/test.sav"));
+			
+			this.saveGame(new File("Data/Saves/autosave.sav"));
 		}
 		else
 		{
-			this.loadGame(new File("Data/Saves/test.sav"));
+			this.loadLevel("test");
 		}
 
+	}
+	
+	public static BufferedImage getImage(String image)
+	{
+		if (gameImages.containsKey(image))
+			return gameImages.get(image);
+		else
+		{
+			BufferedImage im = null;
+			try{
+				im = ImageIO.read(new File(image));
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
+			gameImages.put(image, im);
+			return im;
+		}
 	}
 
 	/**
@@ -298,9 +322,9 @@ public class GameData {
 	 * This method is used to save the game (state of all the entities in the current level)
 	 * @return
 	 */
-	public boolean saveGame()
+	public boolean saveGame(File file)
 	{
-		boolean success = SaveGame.save(this);
+		boolean success = SaveGame.save(this, file);
 		
 		this.systemMessages.add(new SystemMessage("Save Game successfully completed: "+success, Color.WHITE));
 		
@@ -311,6 +335,9 @@ public class GameData {
 	public boolean loadGame(File file)
 	{	
 		boolean success = SaveGame.loadGame(file, this);
+		
+		if (success)
+			saveFile = file;
 		
 		this.systemMessages.add(new SystemMessage("Load Game successfully completed: "+success, Color.WHITE));
 		
@@ -458,22 +485,6 @@ public class GameData {
 	 */
 	public static void setLevelSize(int[] levelSize) {
 		GameData.levelSize = levelSize;
-	}
-
-	/**
-	 * Returns {@link GameData#gameName}
-	 * @return the gameName
-	 */
-	public String getGameName() {
-		return gameName;
-	}
-
-	/**
-	 * Sets {@link GameData#gameName}
-	 * @param gameName the gameName to set
-	 */
-	public void setGameName(String gameName) {
-		this.gameName = gameName;
 	}
 
 }

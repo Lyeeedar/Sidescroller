@@ -1,14 +1,10 @@
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 /**
  * Class to model a game entity. Entity behavior determined by AI packages, defined in {@link Entity#behavior}
@@ -149,7 +145,7 @@ public class Entity implements Serializable{
 	/**
 	 * File for the spritesheet.
 	 */
-	protected File spriteFile;
+	protected String spriteFile;
 	
 	/**
 	 * Whether the entity is alive or not
@@ -196,6 +192,7 @@ public class Entity implements Serializable{
 	
 	protected Spell spellToCast = null;
 	protected int castSpellAt = 0;
+	protected int[] castSpellOffset;
 	
 	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
@@ -209,7 +206,7 @@ public class Entity implements Serializable{
 	 * @param behaviour
 	 * @param dialogue
 	 */
-	public Entity(String name, long animateTime, int totalAnimateStrip, int[] pos, File spritefile, int[] collision, boolean[] behaviour, Dialogue dialogue)
+	public Entity(String name, long animateTime, int totalAnimateStrip, int totalAnimateStages, int[] pos, String spritefile, int[] collision, boolean[] behaviour, Dialogue dialogue)
 	{
 		this.name = name;
 		this.animateTime = animateTime;
@@ -221,6 +218,7 @@ public class Entity implements Serializable{
 		this.pos[1] = pos[1];
 		this.pos[2] = pos[2];
 		this.behavior = behaviour;
+		this.animStages = totalAnimateStages;
 		
 		if (dialogue != null)
 			this.dialogue = dialogue;
@@ -307,6 +305,7 @@ public class Entity implements Serializable{
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
 			this.getVelocity()[1] -= 25;
+			newAnimStrip = 2;
 		}
 
 		// Activate infront of Entity
@@ -346,7 +345,7 @@ public class Entity implements Serializable{
 		if (MainFrame.key1)
 		{
 			// If still in cooldown then don't allow spell casting 
-			if ((spellCD > 0) || (isAnimating))
+			if ((Character.spellCooldown[0] > 0) || (isAnimating))
 				return;
 			
 			newAnimStrip = 4;
@@ -354,19 +353,21 @@ public class Entity implements Serializable{
 			int[] pos = {0, 0, this.getPos()[2]};
 			
 			if (this.getPos()[2] == 0){
-				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
+				pos[0] = this.getCollisionShape()[0]-10;
 			}
 			else
 			{
-				pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
 			}
 			
-			pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
 			
-			Spell s = SpellList.getSpell("Fireball", pos, this.getName());
+			Spell s = SpellList.getSpell(Character.socketedSpells[0].name, pos, this.getName());
 			s.setFaction(this.getFaction());
 			
-			spellCD = s.spellCDTime;
+			castSpellOffset = pos;
+			
+			Character.spellCooldown[0] = s.spellCDTime;
 			
 			spellToCast = s;
 			castSpellAt = 5;
@@ -741,6 +742,14 @@ public class Entity implements Serializable{
 				{
 					if (spellToCast != null)
 					{
+						spellToCast.pos[0] = this.getPos()[0]+castSpellOffset[0];
+						spellToCast.pos[1] = this.getPos()[1]+castSpellOffset[1];
+						
+						if (spellToCast.pos[2] == 0)
+						{
+							spellToCast.pos[0] -= spellToCast.collisionShape[2];
+						}
+						
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
 						spellToCast = null;
 					}
@@ -827,19 +836,7 @@ public class Entity implements Serializable{
 		if (!visible)
 			return;
 		
-		BufferedImage im = null;
-		if (spriteFile != null)
-		{
-			try{
-				im = ImageIO.read(spriteFile);
-			}
-			catch (IOException e)
-			{
-				System.err.println("Invalid file: " + spriteFile.getAbsolutePath());
-			}
-		}
-
-		this.spriteSheet = im;
+		this.spriteSheet = GameData.getImage(spriteFile);
 
 		// If spritesheet exists (and the Entity is therefore visible) then work out
 		// width and height of a frame
@@ -1249,7 +1246,7 @@ public class Entity implements Serializable{
 	 * Returns {@link Entity#spriteFile}
 	 * @return the spriteFile
 	 */
-	public File getSpriteFile() {
+	public String getSpriteFile() {
 		return spriteFile;
 	}
 
@@ -1257,7 +1254,7 @@ public class Entity implements Serializable{
 	 * Sets {@link Entity#spriteFile}
 	 * @param spriteFile the spriteFile to set
 	 */
-	public void setSpriteFile(File spriteFile) {
+	public void setSpriteFile(String spriteFile) {
 		this.spriteFile = spriteFile;
 	}
 

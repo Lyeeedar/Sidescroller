@@ -30,7 +30,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static BufferStrategy bufferStrategy;
 	public static int[] screenPosition = new int[2];
 	public static Menu menu = new Menu();
-	
+
 	public MainFrame(GraphicsConfiguration gc)
 	{
 		// Initialise the Frame with the given graphics configuration
@@ -61,9 +61,9 @@ public class MainFrame extends JFrame implements KeyListener{
 
 		// Set the game resolution
 		MainFrame.resolution = new int[]{800, 600};
-		
+
 	}
-	
+
 	/**
 	 * Draws all the in-game graphics
 	 */
@@ -78,10 +78,10 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Get its Graphics object
 			g2d = (Graphics2D) im.getGraphics();
-			
+
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the background to the back buffer
 			drawBackground(g2d);
@@ -91,11 +91,11 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Draw the foreground
 			drawForeground(g2d);
-			
+
 			g2d.setColor(new Color(0, 0, 0, 180));
-			
+
 			g2d.fillRect(0, 0, resolution[0], resolution[1]);
-			
+
 			menu.drawMenus(g2d);
 
 			// Get the graphics object for the current setting of fullscreen
@@ -108,10 +108,10 @@ public class MainFrame extends JFrame implements KeyListener{
 			{
 				g2d = (Graphics2D) this.getGraphics();
 			}
-			
+
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the buffered Image onto the back buffer
 			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
@@ -144,10 +144,10 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Get its Graphics object
 			g2d = (Graphics2D) im.getGraphics();
-			
+
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the background to the back buffer
 			drawBackground(g2d);
@@ -157,21 +157,21 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Draw the foreground
 			drawForeground(g2d);
-			
+
 			// Draw speech bubbles
 			drawSpeech(g2d);
-			
+
 			// Draw HUD
 			drawHUD(g2d, totalTime);
-			
+
 			if (Main.getState() == 2)
 			{
 				g2d.setColor(Color.LIGHT_GRAY);
 				g2d.fillRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
-				
+
 				g2d.setColor(Color.DARK_GRAY);
 				g2d.drawRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
-				
+
 				if (Main.gamedata.loading)
 				{
 					g2d.drawString("Loading - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
@@ -192,10 +192,10 @@ public class MainFrame extends JFrame implements KeyListener{
 			{
 				g2d = (Graphics2D) this.getGraphics();
 			}
-			
+
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the buffered Image onto the back buffer
 			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
@@ -210,7 +210,7 @@ public class MainFrame extends JFrame implements KeyListener{
 		if (Main.fullscreen)
 			bufferStrategy.show();
 	}
-	
+
 	public void drawHUD(Graphics2D g2d, long totalTime)
 	{
 		if (Main.gamedata.systemMessages.size() > 0)
@@ -218,19 +218,19 @@ public class MainFrame extends JFrame implements KeyListener{
 			g2d.setColor(new Color(0, 0, 0, 70));
 			g2d.fillRect(10, 30, 230, 210);
 		}
-		
+
 		for (int i = 0; (i < 10)&&(i < Main.gamedata.systemMessages.size()); i++)
 		{
 			g2d.setColor(Main.gamedata.systemMessages.get(i).getColour());
 			// Draw fps
 			g2d.drawString(Main.gamedata.systemMessages.get(i).message, 20, 50+(20*i));
 		}
-		
+
 		double health = ((Main.gamedata.getGameEntities().get("Player").getHealth()/Main.gamedata.getGameEntities().get("Player").getMaxHealth())*100);
-		
+
 		g2d.setColor(Color.RED);
 		g2d.fillRect(250, 50, (int)health, 10);
-		
+
 		// Setup fonts and colour for fps
 		g2d.setFont(g2d.getFont().deriveFont((float) 20));
 		g2d.setColor(Color.YELLOW);
@@ -265,16 +265,16 @@ public class MainFrame extends JFrame implements KeyListener{
 					dark = new Color(0, 0, 0, alpha);
 					pale = new Color(202, 255, 255, alpha);
 				}
-				
+
 				// Calculate the width and height of the dialogue bubble depending on how much text needs to be drawn
 				int width = 20+e.getDialogue().getText().length()*6;
-				
+
 				if (width > 200)
 					width = 200;
-				
+
 				String[] text = wrapText(e.getDialogue().getText(), 34);
 				int height = text.length*25;
-				
+
 				// Is the dialogue is of the type 'Speech' then do a speech bubble.
 				if (e.getDialogue().getType() == 0)
 				{
@@ -300,7 +300,7 @@ public class MainFrame extends JFrame implements KeyListener{
 					{
 						g2d.drawString(text[i], x+15, y+((i+1)*20));
 					}
-				
+
 				}
 				// If dialogue is of the type 'Examine' do a thought bubble
 				else if (e.getDialogue().getType() == 1)
@@ -312,12 +312,12 @@ public class MainFrame extends JFrame implements KeyListener{
 					g2d.fillRoundRect(x+(width/2)-5, y+height+35, 10, 10, 10, 10);
 					g2d.setColor(dark);
 					g2d.drawRoundRect(x+(width/2)-5, y+height+35, 10, 10, 10, 10);
-					
+
 					g2d.setColor(pale);
 					g2d.fillRoundRect(x+(width/2)-10, y+height+10, 20, 20, 20, 20);
 					g2d.setColor(dark);
 					g2d.drawRoundRect(x+(width/2)-10, y+height+10, 20, 20, 20, 20);
-					
+
 					g2d.setColor(pale);
 					g2d.fillRoundRect(x, y, width, height, 30, 30);
 					g2d.setColor(dark);
@@ -330,7 +330,7 @@ public class MainFrame extends JFrame implements KeyListener{
 						g2d.drawString(text[i], x+15, y+((i+1)*20));
 					}
 				}
-				
+
 			}
 		}
 	}
@@ -354,10 +354,10 @@ public class MainFrame extends JFrame implements KeyListener{
 			if ((e.getSpriteSheet() != null) && (e.isVisible()))
 			{
 				BufferedImage i = e.getSpriteSheet();
-				
+
 				// If the entity has been damaged then tint the image with red
 				//if (e.isDamaged())
-					//i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
+				//i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
 
 				if (e.getPos()[2] == 1)
 				{
@@ -380,24 +380,29 @@ public class MainFrame extends JFrame implements KeyListener{
 
 				g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
-				g2d.setColor(Color.YELLOW);
+				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))
+				{
+					double health = (e.getHealth()/e.getMaxHealth())*20;
+
+					g2d.fillRect(e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-10, (int)health, 5);
+				}
 
 			}
 		}
 	}
-	
+
 	/**
 	 * Method that returns a deep copy of the bufferedimage
 	 * @param bi
 	 * @return
 	 */
 	public BufferedImage deepCopy(BufferedImage bi) {
-		 ColorModel cm = bi.getColorModel();
-		 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		 WritableRaster raster = bi.copyData(null);
-		 return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+		ColorModel cm = bi.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = bi.copyData(null);
+		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
-	
+
 	/**
 	 * Method that tints the supplied bufferedimage with red
 	 * @param image
@@ -410,7 +415,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	public BufferedImage tintImage(BufferedImage image, int minX, int minY, int maxX, int maxY)
 	{
 		BufferedImage im = deepCopy(image);
-		
+
 		for (int x = minX; x < maxX; x++)
 		{
 			for (int y = minY; y < maxY; y++)
@@ -418,31 +423,31 @@ public class MainFrame extends JFrame implements KeyListener{
 				int colour = im.getRGB(x, y);
 
 				int alpha = (colour>>24) & 0xff;
-				
+
 				if (alpha == 0)
 					continue;
-				
+
 				int blue = colour & 0xFF;
 				int green = (colour >> 8) & 0xFF;
 				int red = (colour >> 16) & 0xFF;
-				
+
 				blue -= 60;
 				if (blue < 0)
 					blue = 0;
-				
+
 				green -= 60;
 				if (green < 0)
 					green = 0;
-				
+
 				red += 100;
 				if (red > 250)
 					red = 250;
-				
+
 				im.setRGB(x, y, new Color(red, green, blue, alpha).getRGB());
 
 			}
 		}
-		
+
 		return im;
 	}
 
@@ -452,60 +457,60 @@ public class MainFrame extends JFrame implements KeyListener{
 	 * @param len
 	 * @return
 	 */
-	String [] wrapText (String text, int len)
+	static String [] wrapText (String text, int len)
 	{
-	  // return empty array for null text
-	  if (text == null)
-	  return new String [] {};
+		// return empty array for null text
+		if (text == null)
+			return new String [] {};
 
-	  // return text if len is zero or less
-	  if (len <= 0)
-	  return new String [] {text};
+		// return text if len is zero or less
+		if (len <= 0)
+			return new String [] {text};
 
-	  // return text if less than length
-	  if (text.length() <= len)
-	  return new String [] {text};
+		// return text if less than length
+		if (text.length() <= len)
+			return new String [] {text};
 
-	  char [] chars = text.toCharArray();
-	  Vector<String> lines = new Vector<String>();
-	  StringBuffer line = new StringBuffer();
-	  StringBuffer word = new StringBuffer();
+		char [] chars = text.toCharArray();
+		Vector<String> lines = new Vector<String>();
+		StringBuffer line = new StringBuffer();
+		StringBuffer word = new StringBuffer();
 
-	  for (int i = 0; i < chars.length; i++) {
-	    word.append(chars[i]);
+		for (int i = 0; i < chars.length; i++) {
+			word.append(chars[i]);
 
-	    if (chars[i] == ' ') {
-	      if ((line.length() + word.length()) > len) {
-	        lines.add(line.toString());
-	        line.delete(0, line.length());
-	      }
+			if (chars[i] == ' ') {
+				if ((line.length() + word.length()) > len) {
+					lines.add(line.toString());
+					line.delete(0, line.length());
+				}
 
-	      line.append(word);
-	      word.delete(0, word.length());
-	    }
-	  }
+				line.append(word);
+				word.delete(0, word.length());
+			}
+		}
 
-	  // handle any extra chars in current word
-	  if (word.length() > 0) {
-	    if ((line.length() + word.length()) > len) {
-	      lines.add(line.toString());
-	      line.delete(0, line.length());
-	    }
-	    line.append(word);
-	  }
+		// handle any extra chars in current word
+		if (word.length() > 0) {
+			if ((line.length() + word.length()) > len) {
+				lines.add(line.toString());
+				line.delete(0, line.length());
+			}
+			line.append(word);
+		}
 
-	  // handle extra line
-	  if (line.length() > 0) {
-	    lines.add(line.toString());
-	  }
+		// handle extra line
+		if (line.length() > 0) {
+			lines.add(line.toString());
+		}
 
-	  String [] ret = new String[lines.size()];
-	  int c = 0; // counter
-	  for (Enumeration<String> e = lines.elements(); e.hasMoreElements(); c++) {
-	    ret[c] = (String) e.nextElement();
-	  }
+		String [] ret = new String[lines.size()];
+		int c = 0; // counter
+		for (Enumeration<String> e = lines.elements(); e.hasMoreElements(); c++) {
+			ret[c] = (String) e.nextElement();
+		}
 
-	  return ret;
+		return ret;
 	}
 
 	/**
@@ -529,11 +534,11 @@ public class MainFrame extends JFrame implements KeyListener{
 				null);
 
 		// Close Background layer
-				g2d.drawImage(Main.gamedata.getBackground()[2],
-						0, 0, resolution[0], resolution[1],
-						screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
-						null);
-		
+		g2d.drawImage(Main.gamedata.getBackground()[2],
+				0, 0, resolution[0], resolution[1],
+				screenPosition[0], screenPosition[1], screenPosition[0]+resolution[0], screenPosition[1]+resolution[1],
+				null);
+
 		// Collision layer
 		g2d.drawImage(Main.gamedata.getBackground()[3],
 				0, 0, resolution[0], resolution[1],
@@ -605,7 +610,12 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static boolean down;
 	public static boolean space;
 	public static boolean enter;
+	public static boolean esc;
 	public static boolean key1;
+	public static boolean key2;
+	public static boolean key3;
+	public static boolean key4;
+	public static boolean key5;
 
 	/** I use this method to store is a key has been pressed
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
@@ -614,6 +624,14 @@ public class MainFrame extends JFrame implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
+			MainFrame.esc = true;
+			
+			if (Main.getState() == 1)
+			{
+				menu.changeMenu("Game");
+				MainFrame.esc = false;
+			}
+			
 			Main.setState(3);
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
@@ -644,6 +662,22 @@ public class MainFrame extends JFrame implements KeyListener{
 		{
 			MainFrame.key1 = true;
 		}
+		else if (e.getKeyCode() == KeyEvent.VK_2)
+		{
+			MainFrame.key2 = true;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_3)
+		{
+			MainFrame.key3 = true;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_4)
+		{
+			MainFrame.key4 = true;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_5)
+		{
+			MainFrame.key5 = true;
+		}
 
 	}
 
@@ -669,6 +703,10 @@ public class MainFrame extends JFrame implements KeyListener{
 		{
 			MainFrame.up = false;
 		}
+		else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			MainFrame.esc = false;
+		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
 			MainFrame.space = false;
@@ -680,6 +718,22 @@ public class MainFrame extends JFrame implements KeyListener{
 		else if (e.getKeyCode() == KeyEvent.VK_1)
 		{
 			MainFrame.key1 = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_2)
+		{
+			MainFrame.key2 = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_3)
+		{
+			MainFrame.key3 = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_4)
+		{
+			MainFrame.key4 = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_5)
+		{
+			MainFrame.key5 = false;
 		}
 
 	}

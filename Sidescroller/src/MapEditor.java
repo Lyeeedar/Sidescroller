@@ -273,7 +273,7 @@ class OptionsPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				Entity e = new Entity("Unnamed", 100, 0, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, new File(""), new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
+				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, "", new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
 
 				MapEditor.gamedata.getGameEntities().put("Unnamed"+MapEditor.gamedata.getGameEntities().size(), e);
 
@@ -525,7 +525,7 @@ class EntityFrame extends JFrame
 {
 	JPanel panel = new JPanel();
 	Entity e;
-	File spritefile;
+	String spritefile;
 	JFrame frame = this;
 	boolean[] behavior;
 	Dialogue d;
@@ -590,7 +590,7 @@ class EntityFrame extends JFrame
 
 			}});
 		panel.add(spritesheet);
-		panel.add(new JTextField(spritefile.getAbsolutePath()));
+		panel.add(new JTextField(spritefile));
 
 		panel.add(new JLabel("Collision Values: "));
 
@@ -802,7 +802,7 @@ class EntityFrame extends JFrame
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			spritefile = fc.getSelectedFile();
+			spritefile = fc.getSelectedFile().getAbsolutePath();
 
 			init();
 

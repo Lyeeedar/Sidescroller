@@ -1,4 +1,3 @@
-import java.awt.image.BufferedImage;
 
 /**
  * This class simulates a spell. It is a subclass of entity but overrides many of the methods contained within it.
@@ -44,13 +43,13 @@ class Spell extends Entity
 	String exclude;
 
 	public Spell(String name, int animateTime,	int[] pos, int[] collision, boolean[] behaviour,
-			int[] velocity, BufferedImage spriteImage, int weight, boolean passable, int spellCDTime, int aliveTime,
+			int[] velocity, String spriteFile, int weight, boolean passable, int spellCDTime, int aliveTime,
 			String damageType, int damageAmount, String exclude) {
-		super(name, animateTime, 2, pos, null, collision, behaviour, null);
+		
+		super(name, animateTime, 2, 8, pos, spriteFile, collision, behaviour, null);
 
 
 		this.velocity = velocity;
-		this.spriteSheet = spriteImage;
 		this.weight = weight;
 		this.passable = passable;
 		this.spellCDTime = spellCDTime;
@@ -58,15 +57,6 @@ class Spell extends Entity
 		this.damageType = damageType;
 		this.damageAmount = damageAmount;
 		this.exclude = exclude;
-
-		if (spriteSheet != null)
-		{
-			int width = spriteSheet.getWidth() / animStages;
-			int height = spriteSheet.getHeight() / this.getTotalAnimateStrip();
-
-			this.size[0] = width;
-			this.size[1] = height;
-		}
 
 		if (this.pos[2] == 0)
 		{

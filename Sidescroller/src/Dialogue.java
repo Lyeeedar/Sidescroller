@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -139,7 +140,7 @@ public class Dialogue implements Serializable{
 	
 	private String changeLevel(ArrayList<String> stagetext)
 	{
-		Main.gamedata.saveGame();
+		Main.gamedata.saveGame(new File("Data/Saves/autosave.sav"));
 		Main.gamedata.loadLevel(stagetext.get(1));
 		return "Loading Level "+stagetext.get(1);
 	}

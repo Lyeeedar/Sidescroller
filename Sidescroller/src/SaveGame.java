@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,18 +19,20 @@ public class SaveGame implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 566737083548919063L;
-	String currentLevel = null;
+	String currentLevel = "";
 	HashMap<String, HashMap<String, Entity>> gameEntities = new HashMap<String, HashMap<String, Entity>>();
 	Entity player = null;
+	HashMap<String, Integer> inventory = new HashMap<String, Integer>();
+	SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
+	ArrayList<ArrayList<SpellsStage>> spellTrees = new ArrayList<ArrayList<SpellsStage>>();
+	long timePlayed = 0;
 
-	public static boolean save(GameData gamedata)
+	public static boolean save(GameData gamedata, File file)
 	{
 		SaveGame save = null;
 		
 		File dir = new File("Data/Saves");
 		dir.mkdirs();
-
-		File file = new File("Data/Saves/"+gamedata.getGameName()+".sav");
 
 		if (file.exists())
 		{
@@ -77,7 +80,20 @@ public class SaveGame implements Serializable{
 		save.currentLevel = gamedata.getLevelName();
 		
 		save.player = saveMap.get("Player");
-
+		
+		save.inventory = Character.inventory;
+		
+		save.socketedSpells = Character.socketedSpells;
+		
+		save.spellTrees.add(Character.fireSpells);
+		save.spellTrees.add(Character.airSpells);
+		save.spellTrees.add(Character.earthSpells);
+		save.spellTrees.add(Character.waterSpells);
+		save.spellTrees.add(Character.deathSpells);
+		save.spellTrees.add(Character.lifeSpells);
+		
+		save.timePlayed = Character.timePlayed;
+		
 		try
 		{
 			FileOutputStream fileOut = new FileOutputStream(file);
@@ -103,7 +119,7 @@ public class SaveGame implements Serializable{
 		dir.mkdirs();
 		
 		if (file == null)
-			file = new File("Data/Saves/"+gamedata.gameName+".sav");
+			return false;
 		
 		if (file.exists())
 		{
@@ -125,7 +141,6 @@ public class SaveGame implements Serializable{
 			return false;
 		}
 		
-		
 		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
 		if (level == null)
 			return false;
@@ -138,12 +153,12 @@ public class SaveGame implements Serializable{
 		}
 		gamedata.levelName = level.name;
 		
-		Entity oldPlayer = level.gameEntities.get("Player");
-		level.gameEntities.remove("Player");
-		
-		save.player.setPos(oldPlayer.getPos());
-		
-		gameEntities.put("Player", save.player);
+//		Entity oldPlayer = level.gameEntities.get("Player");
+//		level.gameEntities.remove("Player");
+//		
+//		save.player.setPos(oldPlayer.getPos());
+//		
+//		gameEntities.put("Player", save.player);
 		
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
@@ -155,6 +170,22 @@ public class SaveGame implements Serializable{
 		gamedata.setBackground(level.getBackground());
 		gamedata.createCollisionMap();
 		
+		Character.inventory = save.inventory;
+		Character.socketedSpells = save.socketedSpells;
+		
+		Character.fireSpells = save.spellTrees.get(0);
+		Character.airSpells = save.spellTrees.get(1);
+		Character.earthSpells = save.spellTrees.get(2);
+		Character.waterSpells = save.spellTrees.get(3);
+		Character.deathSpells = save.spellTrees.get(4);
+		Character.lifeSpells = save.spellTrees.get(5);
+		
+		Character.timePlayed = save.timePlayed;
+		
+		Character.reloadAllImages();
+		
+		gamedata.systemMessages.clear();
+		
 		return true;
 	}
 	
@@ -165,7 +196,7 @@ public class SaveGame implements Serializable{
 		File dir = new File("Data/Saves");
 		dir.mkdirs();
 		
-		File file = new File("Data/Saves/"+gamedata.gameName+".sav");
+		File file = new File("Data/Saves/autosave.sav");
 		
 		if (file.exists())
 		{

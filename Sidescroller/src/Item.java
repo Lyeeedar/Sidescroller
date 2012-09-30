@@ -1,7 +1,5 @@
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.io.File;
 
 /**
  * @author Lyeeedar
@@ -25,31 +23,14 @@ public class Item extends Entity {
 	 * @param behaviour
 	 * @param dialogue
 	 */
-	public Item(String name, int[] pos, int number) {
-		super(name, 1, 1, pos, null, null, null, null);
+	public Item(String name, String spriteFile, int[] pos, int number) {
+		super(name, 1, 1, 1, pos, spriteFile, new int[]{0, 0, 10, 10}, null, null);
 		
 		this.number = number;
 		this.passable = true;
 		this.animStages = 1;
 		
 		launch();
-	}
-	
-	@Override
-	public void processSpritesheet()
-	{
-		spriteSheet = ItemList.getImage(this.getName());
-		
-		if (spriteSheet != null)
-		{
-			int width = spriteSheet.getWidth();
-			int height = spriteSheet.getHeight();
-
-			this.size[0] = width;
-			this.size[1] = height;
-			
-			this.collisionShape = new int[]{0, 0, width, height};
-		}
 	}
 	
 	public void launch()
@@ -90,6 +71,7 @@ public class Item extends Entity {
 		Rectangle pr = new Rectangle(e.pos[0]+e.collisionShape[0], e.pos[1]+e.collisionShape[1], e.collisionShape[2], e.collisionShape[3]);
 		if (tr.intersects(pr))
 		{
+			Character.addItem(this);
 			Main.gamedata.systemMessages.add(new SystemMessage("Picked up a "+this.getName()+"!", Color.YELLOW));
 			alive = false;
 		}

@@ -142,6 +142,12 @@ public class Main {
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
 				
+				for (int iii = 0; iii < 5; iii++)
+				{
+					Character.spellCooldown[iii] -= elapsedTime;
+				}
+				
+				Character.timePlayed += elapsedTime;
 				
 				ArrayList<Entity> update = new ArrayList<Entity>();
 				
