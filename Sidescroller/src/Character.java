@@ -1,5 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,20 +12,22 @@ public class Character {
 	
 	public static long timePlayed;
 
-	public static HashMap<String, Integer> inventory = new HashMap<String, Integer>();
+	public static ArrayList<HashMap<String, Item>> inventory = new ArrayList<HashMap<String, Item>>();
 	public static SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
 	
 	public static long[] spellCooldown = new long[5];
 	
 	public static void addItem(Item item)
 	{
-		int num = 0;
-		if (inventory.containsKey(item.getName()))
+		HashMap<String, Item> inventoryMap = inventory.get(item.type);
+		if (inventoryMap.containsKey(item.getName()))
 		{
-			num = inventory.get(item.getName());
-			inventory.remove(item.getName());
+			inventoryMap.get(item.getName()).number += item.number;
 		}
-		inventory.put(item.getName(), num+item.number);
+		else
+		{
+			inventoryMap.put(item.getName(), item);
+		}
 	}
 	
 	public static ArrayList<SpellsStage> fireSpells = new ArrayList<SpellsStage>();
@@ -40,6 +40,11 @@ public class Character {
 	public static void resetAll()
 	{
 		inventory.clear();
+		for (int i = 0; i < 3; i++)
+		{
+			inventory.add(new HashMap<String, Item>());
+		}
+		
 		resetSpells();
 		
 		for (int i = 0; i < 5; i++)
@@ -53,10 +58,105 @@ public class Character {
 	public static void resetSpells()
 	{
 		populateFireSpells();
+		populateAirSpells();
+		populateEarthSpells();
+		populateWaterSpells();
+		populateDeathSpells();
+		populateLifeSpells();
+	}
+	
+	public static void populateLifeSpells()
+	{
+		String[] icons = {"Data/Resources/GUI/spellIconLife.png","Data/Resources/GUI/spellIconLifeSelected.png"};
+		
+		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
+		
+		for (int i = 0 ; i < 6; i++)
+		{
+			spells.add(new SpellsStage());
+		}
+		
+		spells.get(0).spells.add(new SpellsStageEntry("Weak Heal", null, 3, new int[]{500, 100},
+				icons,
+				"Heal a little of your health."));
+		
+		lifeSpells = spells;
+	}
+	
+	public static void populateDeathSpells()
+	{
+		String[] icons = {"Data/Resources/GUI/spellIconDeath.png","Data/Resources/GUI/spellIconDeathSelected.png"};
+		
+		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
+		
+		for (int i = 0 ; i < 6; i++)
+		{
+			spells.add(new SpellsStage());
+		}
+		
+		spells.get(0).spells.add(new SpellsStageEntry("Summon imp", null, 3, new int[]{500, 100},
+				icons,
+				"Summon an imp to attack your foe."));
+		
+		deathSpells = spells;
+	}
+	
+	public static void populateWaterSpells()
+	{
+		String[] icons = {"Data/Resources/GUI/spellIconWater.png","Data/Resources/GUI/spellIconWaterSelected.png"};
+		
+		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
+		
+		for (int i = 0 ; i < 6; i++)
+		{
+			spells.add(new SpellsStage());
+		}
+		
+		spells.get(0).spells.add(new SpellsStageEntry("Ice Spike", null, 3, new int[]{500, 100},
+				icons,
+				"Send a spike of ice at your foe."));
+		
+		waterSpells = spells;
+	}
+	
+	public static void populateEarthSpells()
+	{
+		String[] icons = {"Data/Resources/GUI/spellIconEarth.png","Data/Resources/GUI/spellIconEarthSelected.png"};
+		
+		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
+		
+		for (int i = 0 ; i < 6; i++)
+		{
+			spells.add(new SpellsStage());
+		}
+		
+		spells.get(0).spells.add(new SpellsStageEntry("Rock Spike", null, 3, new int[]{500, 100},
+				icons,
+				"Send a series of rock spikes flying out in front of you."));
+		
+		earthSpells = spells;
+	}
+	
+	public static void populateAirSpells()
+	{
+		String[] airIcons = {"Data/Resources/GUI/spellIconAir.png","Data/Resources/GUI/spellIconAirSelected.png"};
+		
+		airSpells = new ArrayList<SpellsStage>();
+		
+		for (int i = 0 ; i < 6; i++)
+		{
+			airSpells.add(new SpellsStage());
+		}
+		
+		airSpells.get(0).spells.add(new SpellsStageEntry("Shock", null, 3, new int[]{500, 100},
+				airIcons,
+				"Shock a foe with a small bolt of electricity."));
 	}
 	
 	public static void populateFireSpells()
 	{
+		String[] fireIcons = {"Data/Resources/GUI/spellIconFire.png","Data/Resources/GUI/spellIconFireSelected.png"};
+		
 		fireSpells = new ArrayList<SpellsStage>();
 		
 		for (int i = 0 ; i < 6; i++)
@@ -64,23 +164,41 @@ public class Character {
 			fireSpells.add(new SpellsStage());
 		}
 		
-		fireSpells.get(0).spells.add(new SpellsStageEntry("Fireball", null, 3, new int[]{500, 100}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "A ball of burning fire. Will singe a target somewhat fierce."));
+		fireSpells.get(0).spells.add(new SpellsStageEntry("Fireball", null, 3, new int[]{500, 100},
+				fireIcons,
+				"A ball of burning fire. Will singe a target somewhat fierce."));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Fireblast", new String[]{"Fireball"}, 3, new int[]{500, 200}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "A fiery blast of fire. It's hot."));
+		fireSpells.get(1).spells.add(new SpellsStageEntry("Fireblast", new String[]{"Fireball"}, 3, new int[]{500, 200},
+				fireIcons,
+				"A fiery blast of fire. It's hot."));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Firewall", null, 3, new int[]{600, 200}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Creates a wall of fire, burning any who pass through it."));
+		fireSpells.get(1).spells.add(new SpellsStageEntry("Firewall", null, 3, new int[]{600, 200},
+				fireIcons,
+				"Creates a wall of fire, burning any who pass through it."));
 		
-		fireSpells.get(2).spells.add(new SpellsStageEntry("FireSurge", new String[]{"Fireblast", "Firewall"},3, new int[]{550, 300}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Send a surge of fire blasting up into the air."));
+		fireSpells.get(2).spells.add(new SpellsStageEntry("FireSurge", new String[]{"Fireblast", "Firewall"},3, new int[]{550, 300},
+				fireIcons,
+				"Send a surge of fire blasting up into the air."));
 
-		fireSpells.get(3).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{450, 400}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Set the ground infront of you on fire, burning all foes who step within."));
+		fireSpells.get(3).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{450, 400},
+				fireIcons,
+				"Set the ground infront of you on fire, burning all foes who step within."));
 		
-		fireSpells.get(3).spells.add(new SpellsStageEntry("FireScythe", new String[]{"FireSurge"},3, new int[]{550,400}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Cut the air around you with a burning scythe of flames."));
+		fireSpells.get(3).spells.add(new SpellsStageEntry("FireScythe", new String[]{"FireSurge"},3, new int[]{550,400},
+				fireIcons,
+				"Cut the air around you with a burning scythe of flames."));
 
-		fireSpells.get(4).spells.add(new SpellsStageEntry("Wildfire", new String[]{"Scorch"}, 0, new int[]{450, 500}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Set fire rushing out infront of you, creating a deadly line of burning flames."));
+		fireSpells.get(4).spells.add(new SpellsStageEntry("Wildfire", new String[]{"Scorch"}, 0, new int[]{450, 500},
+				fireIcons,
+				"Set fire rushing out infront of you, creating a deadly line of burning flames."));
 		
-		fireSpells.get(4).spells.add(new SpellsStageEntry("FireBlade", new String[]{"FireScythe"},2, new int[]{550, 500}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Chop down infront of you with a burning blade of fire."));
+		fireSpells.get(4).spells.add(new SpellsStageEntry("FireBlade", new String[]{"FireScythe"},2, new int[]{550, 500},
+				fireIcons,
+				"Chop down infront of you with a burning blade of fire."));
 		
-		fireSpells.get(5).spells.add(new SpellsStageEntry("FireFall", new String[]{"FireBlade"},0, new int[]{550, 600}, new String[]{"Data/Resources/Items/chest.png","Data/Resources/Items/chest.png","Data/Resources/Items/chest.png"}, "Bring a torrent of fire down upon those foolish enough to stand before you."));
+		fireSpells.get(5).spells.add(new SpellsStageEntry("FireFall", new String[]{"FireBlade"},0, new int[]{550, 600},
+				fireIcons,
+				"Bring a torrent of fire down upon those foolish enough to stand before you."));
 	
 		unlockSpells(fireSpells);
 	}
@@ -123,56 +241,6 @@ public class Character {
 		}
 	}
 	
-	public static BufferedImage getSpellTreeImage(ArrayList<SpellsStage> spells, int stage, int selected)
-	{
-		BufferedImage im = new BufferedImage(1000, 100+(spells.size()*100), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = im.createGraphics();
-		
-		g2d.setColor(Color.BLACK);
-		
-		for (int i = 0; i < spells.size(); i++)
-		{
-			SpellsStage ss = spells.get(i);
-			
-			for (SpellsStageEntry sse : ss.spells)
-			{
-				if (sse.unlocked == 3)
-				{
-					g2d.drawImage(sse.images[2], sse.pos[0]-15, sse.pos[1]-15, null);
-				}
-				else if (sse.unlocked  == 2)
-				{
-					g2d.drawImage(sse.images[1], sse.pos[0]-15, sse.pos[1]-15, null);
-				}
-				else if (sse.unlocked == 1)
-				{
-					g2d.drawImage(sse.images[0], sse.pos[0]-15, sse.pos[1]-15, null);
-				}
-				else if (sse.unlocked == 0)
-				{
-					continue;
-				}
-				
-				for (String p : sse.parents)
-				{
-					SpellsStageEntry parent = spells.get(i-1).getSpellStageEntry(p);
-					
-					g2d.drawLine(sse.pos[0], sse.pos[1], parent.pos[0], parent.pos[1]);
-				}
-			}
-		}
-		
-		g2d.setColor(Color.BLUE);
-		
-		g2d.drawRoundRect(spells.get(stage).spells.get(selected).pos[0]-15, spells.get(stage).spells.get(selected).pos[1]-15, 30, 30, 30, 30);
-		
-		g2d.dispose();
-		
-		
-		return im;
-		
-		
-	}
 	
 	public static ArrayList<SpellsStage> getSpell(String name)
 	{
@@ -298,8 +366,8 @@ class SpellsStageEntry implements Serializable
 	
 	public void loadImage()
 	{
-		images = new BufferedImage[3];
-		for (int i = 0; i < 3; i++)
+		images = new BufferedImage[2];
+		for (int i = 0; i < 2; i++)
 			images[i] = GameData.getImage(imageFiles[i]);
 	}
 	

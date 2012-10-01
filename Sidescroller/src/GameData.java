@@ -92,7 +92,7 @@ public class GameData {
 	{	
 		Character.resetAll();
 		boolean a = true;
-		if (!a)
+		if (a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 

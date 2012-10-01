@@ -85,11 +85,6 @@ public class Entity implements Serializable{
 	protected boolean grounded = false; 
 
 	/**
-	 *  Whether the Entity should be animated or not
-	 */
-	protected boolean animate = true;
-
-	/**
 	 * Number used by various methods to determine when to change the animation
 	 */
 	protected int animChangeCtr;
@@ -187,6 +182,7 @@ public class Entity implements Serializable{
 	protected boolean damaged = false;
 	
 	protected int newAnimStrip = 1;
+	protected int newAnimStage = 0;
 	
 	protected boolean isAnimating = false;
 	
@@ -284,28 +280,31 @@ public class Entity implements Serializable{
 			this.getVelocity()[0] = -6;
 			this.getPos()[2] = 0;
 			
-			this.setAnimate(true);
+			if ((animateStage != 1) && (animateStrip == 2))
+				newAnimStrip = 1;
 		}
 		else if (MainFrame.right)
 		{
 			this.getVelocity()[0] = 6;
 			this.getPos()[2] = 1;
 			
-			this.setAnimate(true);
+			if ((animateStage != 1) && (animateStrip == 2))
+				newAnimStrip = 1;
 		}
 		else
 		{
-			this.setAnimate(false);
-			
 			if (animateStrip == 1)
-				animateStage = 1;
+			{
+				newAnimStrip = 2;
+				newAnimStage = 2;
+		
+			}
 		}
 
 		// Jump
 		if ((MainFrame.up) && (this.isGrounded()))
 		{
 			this.getVelocity()[1] -= 25;
-			newAnimStrip = 2;
 		}
 
 		// Activate infront of Entity
@@ -412,7 +411,7 @@ public class Entity implements Serializable{
 		{
 			this.changePosition(cpos[0], cpos[1], this.getPos()[2]);
 			this.setGrounded(false);
-
+			
 			updateJumpAnim(grounded);
 
 			return;
@@ -522,54 +521,7 @@ public class Entity implements Serializable{
 	 */
 	public void behavior2()
 	{
-		
-		
-		Entity player = Main.gamedata.getGameEntities().get("Player");
-		
-		if (Main.ran.nextInt(3)  !=  1)
-		{
-			this.setAnimate(false);
-		}
-		else if (player.getPos()[0] < this.getPos()[0])
-		{
-			velocity[0] -= 2;
-			pos[2] = 0;
-			this.setAnimate(true);
-		}
-		else
-		{
-			velocity[0] += 2;
-			pos[2] = 1;
-			this.setAnimate(true);
-		}
-		
-		if (spellCD > 0)
-			return;
-		
-		String spell = spells.get(Main.ran.nextInt(spells.size()));
-		
-		newAnimStrip = 4;
-		this.setAnimate(true);
-		
-		int[] pos = {0, 0, this.getPos()[2]};
-		
-		if (this.getPos()[2] == 0){
-			pos[0] = this.getPos()[0]+this.getCollisionShape()[0]-10;
-		}
-		else
-		{
-			pos[0] = this.getPos()[0]+this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
-		}
-		
-		pos[1] = this.getPos()[1]+this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
-		
-		Spell s = SpellList.getSpell(spell, pos, this.getName());
-		s.setFaction(this.getFaction());
-		
-		spellCD = s.spellCDTime*15;
-		
-		spellToCast = s;
-		castSpellAt = 5;
+	
 		
 	}
 	
@@ -599,13 +551,25 @@ public class Entity implements Serializable{
 		{
 			return;
 		}
-		else if (!this.isGrounded())
+		else if (this.isGrounded())
 		{
-			newAnimStrip = 2;
+			if ((newAnimStrip != 1) && (animateStrip == 2) && (animateStage == 1))
+			{
+				newAnimStrip = 2;
+				newAnimStage = 2;
+			}
+			animChangeCtr = 0;
 		}
 		else
 		{
-			newAnimStrip = 1;
+			animChangeCtr++;
+			
+			if (animChangeCtr > 2)
+			{
+				newAnimStrip = 2;
+				newAnimStage = 1;
+				animChangeCtr = 0;
+			}
 		}
 	}
 
@@ -721,9 +685,8 @@ public class Entity implements Serializable{
 	{
 		if (!this.isAlive())
 		{
-			this.setAnimateStrip(3);
-			this.setAnimateStage(1);
-			this.setAnimate(false);
+			this.setAnimateStrip(2);
+			this.setAnimateStage(3);
 			this.setPassable(true);
 			return;
 		}
@@ -731,9 +694,10 @@ public class Entity implements Serializable{
 		this.remainingAnimateTime -= time;
 		if (this.remainingAnimateTime <= 0)
 		{
+// --------------------------------------------------------------------------------------------------------			
 			this.remainingAnimateTime = this.animateTime;
-			this.remainingAnimateTime = 80;
 			
+			// IsAnimating
 			if (isAnimating)
 			{
 				this.animateStage++;
@@ -757,7 +721,7 @@ public class Entity implements Serializable{
 				
 				if (this.animateStage > animStages)
 				{
-					if (animateStrip > 3)
+					if (animateStrip > 2)
 					{
 						isAnimating = false;
 						newAnimStrip = 1;
@@ -765,27 +729,25 @@ public class Entity implements Serializable{
 					
 					this.animateStage = 1;
 				}
-				animChangeCtr = 0;
+				//animChangeCtr = 0;
 			}
+			// IsAnimating End
+			
+			// newAnimStrip != animateStrip
 			else if (newAnimStrip != animateStrip)
 			{
 				if (newAnimStrip == 1)
 				{
-
 					animateStrip = 1;
 				}
 				else if (newAnimStrip == 2)
 				{
-
-					animChangeCtr++;
-					if (animChangeCtr > 3)
-					{
-
-						animateStrip = 2;
-						animateStage = 1;
-					}
+					animateStrip = 2;
+					animateStage = newAnimStage;
+					
+					newAnimStage = 0;
 				}
-				else if (newAnimStrip > 3)
+				else if (newAnimStrip > 2)
 				{
 
 					animateStage = 1;
@@ -793,24 +755,26 @@ public class Entity implements Serializable{
 					isAnimating = true;
 				}
 			}
+			// newAnimStrip != animateStrip End
+			
+			else if ((newAnimStage > 0) && (newAnimStage != animateStage))
+			{
+				animateStage = newAnimStage;
+				newAnimStage = 0;
+			}
+			
+			// animateStrip == 1
 			else if (animateStrip == 1)
 			{	
-				if (animate)
-				{
-
-					this.animateStage++;
-					
-					if (this.animateStage > animStages)
-					{					
-						this.animateStage = 1;
-					}
-					animChangeCtr = 0;
+				this.animateStage++;
+				
+				if (this.animateStage > animStages)
+				{					
+					this.animateStage = 1;
 				}
 			}
-			else if (animateStrip != 2)
-			{
-				animateStrip = 1;
-			}
+			// animateStrip == 1 End
+// -------------------------------------------------------------------------------------------------------------------------
 		}
 	}
 
@@ -1040,22 +1004,6 @@ public class Entity implements Serializable{
 	 */
 	public void setGrounded(boolean grounded) {
 		this.grounded = grounded;
-	}
-
-	/**
-	 * Returns {@link Entity#animate}
-	 * @return the animate
-	 */
-	public boolean isAnimate() {
-		return animate;
-	}
-
-	/**
-	 * Sets {@link Entity#animate}
-	 * @param animate the animate to set
-	 */
-	public void setAnimate(boolean animate) {
-		this.animate = animate;
 	}
 
 	/**

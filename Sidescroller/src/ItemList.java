@@ -11,7 +11,7 @@ public class ItemList {
 		
 		if (item.equals("Chest"))
 		{
-			i = new Item(item, "Data/Resources/Items/chest.png", pos, 1);			
+			i = new Item(item, "Data/Resources/Items/chest.png", pos, 1, 2);			
 		}
 		
 		return i;

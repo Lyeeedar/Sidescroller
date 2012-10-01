@@ -73,22 +73,19 @@ class Spell extends Entity
 	@Override
 	public void animate(long time)
 	{
-		if (animate)
+		this.remainingAnimateTime -= time;
+		if (this.remainingAnimateTime <= 0)
 		{
-			this.remainingAnimateTime -= time;
-			if (this.remainingAnimateTime <= 0)
+			this.remainingAnimateTime = this.animateTime;
+
+			if (!alive)
+				animateStage = explode;
+			else
+				this.animateStage += 1;
+
+			if (this.animateStage > animStages)
 			{
-				this.remainingAnimateTime = this.animateTime;
-
-				if (!alive)
-					animateStage = explode;
-				else
-					this.animateStage += 1;
-
-				if (this.animateStage > animStages)
-				{
-					this.animateStage = 1;
-				}
+				this.animateStage = 1;
 			}
 		}
 	}

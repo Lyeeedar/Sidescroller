@@ -22,7 +22,7 @@ public class SaveGame implements Serializable{
 	String currentLevel = "";
 	HashMap<String, HashMap<String, Entity>> gameEntities = new HashMap<String, HashMap<String, Entity>>();
 	Entity player = null;
-	HashMap<String, Integer> inventory = new HashMap<String, Integer>();
+	ArrayList<HashMap<String, Item>> inventory = new ArrayList<HashMap<String, Item>>();
 	SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
 	ArrayList<ArrayList<SpellsStage>> spellTrees = new ArrayList<ArrayList<SpellsStage>>();
 	long timePlayed = 0;
