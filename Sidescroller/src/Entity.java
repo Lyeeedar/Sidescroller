@@ -17,7 +17,7 @@ public class Entity implements Serializable{
 	 * 
 	 */
 	protected static final long serialVersionUID = -8723388619027762099L;
-	
+
 	public static final String DAMAGE_PHYSICAL = "DPHYS";
 	public static final String DAMAGE_FIRE = "DFIRE";
 	public static final String DAMAGE_AIR = "DAIR";
@@ -30,7 +30,7 @@ public class Entity implements Serializable{
 	 * The internal name of the Entity
 	 */
 	protected String name;
-	
+
 	protected String faction;
 
 	/**
@@ -141,19 +141,19 @@ public class Entity implements Serializable{
 	 * File for the spritesheet.
 	 */
 	protected String spriteFile;
-	
+
 	/**
 	 * Whether the entity is alive or not
 	 */
 	protected boolean alive = true;
-	
+
 	protected double maxHealth = 100;
-	
+
 	/**
 	 * The Entities current health
 	 */
 	protected double health = 100;
-	
+
 	/**
 	 * The elemental defense for the entity. Elements are: <br>
 	 * {@link Entity#DAMAGE_PHYSICAL} <br>
@@ -165,31 +165,31 @@ public class Entity implements Serializable{
 	 * {@link Entity#DAMAGE_LIFE} <br>
 	 */
 	protected HashMap<String, Double> defense = new HashMap<String, Double>();
-	
+
 	/**
 	 * Cooldown until this entity can cast a spell again
 	 */
 	protected long spellCD = 0;
-	
+
 	/**
 	 * All the spells that this entity knows
 	 */
 	protected ArrayList<String> spells = new ArrayList<String>();
-	
+
 	/**
 	 * Whether this entity has been damaged
 	 */
 	protected boolean damaged = false;
-	
+
 	protected int newAnimStrip = 1;
 	protected int newAnimStage = 0;
-	
+
 	protected boolean isAnimating = false;
-	
+
 	protected Spell spellToCast = null;
 	protected int castSpellAt = 0;
 	protected int[] castSpellOffset;
-	
+
 	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
 
@@ -215,7 +215,7 @@ public class Entity implements Serializable{
 		this.pos[2] = pos[2];
 		this.behavior = behaviour;
 		this.animStages = totalAnimateStages;
-		
+
 		if (dialogue != null)
 			this.dialogue = dialogue;
 		else
@@ -229,9 +229,9 @@ public class Entity implements Serializable{
 		processSpritesheet();
 
 		collisionShape = collision;
-		
+
 		spells.add("Fireball");
-		
+
 		defense.put(Entity.DAMAGE_PHYSICAL, (double) 0);
 		defense.put(Entity.DAMAGE_FIRE, (double) 0);
 		defense.put(Entity.DAMAGE_AIR, (double) 0);
@@ -239,7 +239,7 @@ public class Entity implements Serializable{
 		defense.put(Entity.DAMAGE_WATER, (double) 0);
 		defense.put(Entity.DAMAGE_DEATH, (double) 0);
 		defense.put(Entity.DAMAGE_LIFE, (double) 0);
-		
+
 	}
 
 	/**
@@ -250,19 +250,19 @@ public class Entity implements Serializable{
 	{
 		if (behavior[1])
 			behavior1();
-		
+
 		if (this.isDamaged())
 			this.setDamaged(false);
-		
+
 		if (!this.isAlive())
 			return;
-		
+
 		if (behavior[0])
 			behavior0();
 
 		if (behavior[2])
 			behavior2();
-		
+
 		if ((behavior.length > 3) && (behavior[3]))
 			behavior3();
 	}
@@ -279,7 +279,7 @@ public class Entity implements Serializable{
 		{
 			this.getVelocity()[0] = -6;
 			this.getPos()[2] = 0;
-			
+
 			if ((animateStage != 1) && (animateStrip == 2))
 				newAnimStrip = 1;
 		}
@@ -287,7 +287,7 @@ public class Entity implements Serializable{
 		{
 			this.getVelocity()[0] = 6;
 			this.getPos()[2] = 1;
-			
+
 			if ((animateStage != 1) && (animateStrip == 2))
 				newAnimStrip = 1;
 		}
@@ -297,7 +297,7 @@ public class Entity implements Serializable{
 			{
 				newAnimStrip = 2;
 				newAnimStage = 2;
-		
+
 			}
 		}
 
@@ -313,7 +313,7 @@ public class Entity implements Serializable{
 			// Make sure that you can super speedily iterate through all the dialogue
 			MainFrame.enter = false;
 			Rectangle r = null;
-			
+
 			// Create a rectangle representing the area to be activated
 			if (this.getPos()[2] == 0)
 			{
@@ -328,7 +328,7 @@ public class Entity implements Serializable{
 			for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 			{
 				Entity e = entry.getValue();
-				
+
 				Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 						e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
@@ -339,18 +339,18 @@ public class Entity implements Serializable{
 			}
 
 		}
-		
+
 		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
 		if (MainFrame.key1)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[0] > 0) || (isAnimating))
 				return;
-			
-			newAnimStrip = 4;
-			
+
+			newAnimStrip = 3;
+
 			int[] pos = {0, 0, this.getPos()[2]};
-			
+
 			if (this.getPos()[2] == 0){
 				pos[0] = this.getCollisionShape()[0]-10;
 			}
@@ -358,19 +358,140 @@ public class Entity implements Serializable{
 			{
 				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
 			}
-			
+
 			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
-			
+
 			Spell s = SpellList.getSpell(Character.socketedSpells[0].name, pos, this.getName());
 			s.setFaction(this.getFaction());
-			
+
 			castSpellOffset = pos;
-			
+
 			Character.spellCooldown[0] = s.spellCDTime;
-			
+
 			spellToCast = s;
 			castSpellAt = 5;
 		}
+		else if (MainFrame.key2)
+		{
+			// If still in cooldown then don't allow spell casting 
+			if ((Character.spellCooldown[1] > 0) || (isAnimating))
+				return;
+
+			newAnimStrip = 4;
+
+			int[] pos = {0, 0, this.getPos()[2]};
+
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+
+			Spell s = SpellList.getSpell(Character.socketedSpells[1].name, pos, this.getName());
+			s.setFaction(this.getFaction());
+
+			castSpellOffset = pos;
+
+			Character.spellCooldown[1] = s.spellCDTime;
+
+			spellToCast = s;
+			castSpellAt = 5;
+		}
+		else if (MainFrame.key3)
+		{
+			// If still in cooldown then don't allow spell casting 
+			if ((Character.spellCooldown[2] > 0) || (isAnimating))
+				return;
+
+			newAnimStrip = 5;
+
+			int[] pos = {0, 0, this.getPos()[2]};
+
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+
+			Spell s = SpellList.getSpell(Character.socketedSpells[2].name, pos, this.getName());
+			s.setFaction(this.getFaction());
+
+			castSpellOffset = pos;
+
+			Character.spellCooldown[2] = s.spellCDTime;
+
+			spellToCast = s;
+			castSpellAt = 5;
+		}
+		else if (MainFrame.key4)
+		{
+			// If still in cooldown then don't allow spell casting 
+			if ((Character.spellCooldown[3] > 0) || (isAnimating))
+				return;
+
+			newAnimStrip = 6;
+
+			int[] pos = {0, 0, this.getPos()[2]};
+
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+
+			Spell s = SpellList.getSpell(Character.socketedSpells[3].name, pos, this.getName());
+			s.setFaction(this.getFaction());
+
+			castSpellOffset = pos;
+
+			Character.spellCooldown[3] = s.spellCDTime;
+
+			spellToCast = s;
+			castSpellAt = 5;
+		}
+		else if (MainFrame.key5)
+		{
+			// If still in cooldown then don't allow spell casting 
+			if ((Character.spellCooldown[4] > 0) || (isAnimating))
+				return;
+
+			newAnimStrip = 7;
+
+			int[] pos = {0, 0, this.getPos()[2]};
+
+			if (this.getPos()[2] == 0){
+				pos[0] = this.getCollisionShape()[0]-10;
+			}
+			else
+			{
+				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
+			}
+
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+
+			Spell s = SpellList.getSpell(Character.socketedSpells[4].name, pos, this.getName());
+			s.setFaction(this.getFaction());
+
+			castSpellOffset = pos;
+
+			Character.spellCooldown[4] = s.spellCDTime;
+
+			spellToCast = s;
+			castSpellAt = 5;
+		}
+
 	}
 
 	/**
@@ -411,7 +532,7 @@ public class Entity implements Serializable{
 		{
 			this.changePosition(cpos[0], cpos[1], this.getPos()[2]);
 			this.setGrounded(false);
-			
+
 			updateJumpAnim(grounded);
 
 			return;
@@ -515,16 +636,16 @@ public class Entity implements Serializable{
 			this.setGrounded(false);
 		}
 	}
-	
+
 	/**
 	 * Very simple enemy AI. Just moves towards player and fires off its spells randomly.
 	 */
 	public void behavior2()
 	{
-	
-		
+
+
 	}
-	
+
 	/**
 	 * This behavior makes the entity initiate dialogue when being stepped onto by the entity 
 	 */
@@ -563,7 +684,7 @@ public class Entity implements Serializable{
 		else
 		{
 			animChangeCtr++;
-			
+
 			if (animChangeCtr > 2)
 			{
 				newAnimStrip = 2;
@@ -587,18 +708,18 @@ public class Entity implements Serializable{
 	{
 		int x = pos[0]+collisionShape[0];
 		int y = pos[1]+collisionShape[1];
-		
+
 		// If the entity is trying to move outside the bounds of the level then return to say that its colliding with the level.
 		if ((x < 0) || (x+collisionShape[2] > GameData.levelSize[0])
 				|| (y < 0) || (y+collisionShape[3] > GameData.levelSize[1]))
 		{
 			return this.getName();
 		}
-		
+
 		String s = this.collideEntities(pos);
 		if (s != null)
 			return s;
-		
+
 		// Check the collision box for this entity to see if any of the level is inside it (any non-transparent pixels)
 		for (int nx = x; nx < x+collisionShape[2]; nx++)
 		{
@@ -613,12 +734,12 @@ public class Entity implements Serializable{
 
 		return null;
 	}
-	
+
 	public String collideEntities(int[] pos)
 	{
 		int x = pos[0]+collisionShape[0];
 		int y = pos[1]+collisionShape[1];
-		
+
 		// Create a rectangle simulating the collision box of the entity
 		Rectangle r = new Rectangle(x, y, collisionShape[2], collisionShape[3]);
 
@@ -639,7 +760,7 @@ public class Entity implements Serializable{
 				return e.getName();
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -651,7 +772,7 @@ public class Entity implements Serializable{
 	{
 		if (!this.isAlive())
 			return;
-		
+
 		if (dialogue == null)
 			return;
 		if (!this.isTalking())
@@ -690,35 +811,35 @@ public class Entity implements Serializable{
 			this.setPassable(true);
 			return;
 		}
-		
+
 		this.remainingAnimateTime -= time;
 		if (this.remainingAnimateTime <= 0)
 		{
-// --------------------------------------------------------------------------------------------------------			
+			// --------------------------------------------------------------------------------------------------------			
 			this.remainingAnimateTime = this.animateTime;
-			
+
 			// IsAnimating
 			if (isAnimating)
 			{
 				this.animateStage++;
-				
+
 				if ((animateStrip > 1) && (animateStage == castSpellAt))
 				{
 					if (spellToCast != null)
 					{
 						spellToCast.pos[0] = this.getPos()[0]+castSpellOffset[0];
 						spellToCast.pos[1] = this.getPos()[1]+castSpellOffset[1];
-						
+
 						if (spellToCast.pos[2] == 0)
 						{
 							spellToCast.pos[0] -= spellToCast.collisionShape[2];
 						}
-						
+
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
 						spellToCast = null;
 					}
 				}
-				
+
 				if (this.animateStage > animStages)
 				{
 					if (animateStrip > 2)
@@ -726,13 +847,13 @@ public class Entity implements Serializable{
 						isAnimating = false;
 						newAnimStrip = 1;
 					}
-					
+
 					this.animateStage = 1;
 				}
 				//animChangeCtr = 0;
 			}
 			// IsAnimating End
-			
+
 			// newAnimStrip != animateStrip
 			else if (newAnimStrip != animateStrip)
 			{
@@ -744,7 +865,7 @@ public class Entity implements Serializable{
 				{
 					animateStrip = 2;
 					animateStage = newAnimStage;
-					
+
 					newAnimStage = 0;
 				}
 				else if (newAnimStrip > 2)
@@ -756,25 +877,25 @@ public class Entity implements Serializable{
 				}
 			}
 			// newAnimStrip != animateStrip End
-			
+
 			else if ((newAnimStage > 0) && (newAnimStage != animateStage))
 			{
 				animateStage = newAnimStage;
 				newAnimStage = 0;
 			}
-			
+
 			// animateStrip == 1
 			else if (animateStrip == 1)
 			{	
 				this.animateStage++;
-				
+
 				if (this.animateStage > animStages)
 				{					
 					this.animateStage = 1;
 				}
 			}
 			// animateStrip == 1 End
-// -------------------------------------------------------------------------------------------------------------------------
+			// -------------------------------------------------------------------------------------------------------------------------
 		}
 	}
 
@@ -796,10 +917,10 @@ public class Entity implements Serializable{
 	 */
 	public void processSpritesheet()
 	{
-	
+
 		if (!visible)
 			return;
-		
+
 		this.spriteSheet = GameData.getImage(spriteFile);
 
 		// If spritesheet exists (and the Entity is therefore visible) then work out
@@ -822,18 +943,18 @@ public class Entity implements Serializable{
 	public void damage(double amount, String type)
 	{		
 		double eleDefense = defense.get(type);
-		
+
 		if (eleDefense != 0)
 			amount -= amount/defense.get(Entity.DAMAGE_PHYSICAL);
-		
+
 		health -= amount;
-		
+
 		if (health <= 0)
 		{
 			death();
 			this.setAlive(false);
 		}
-		
+
 		this.setDamaged(true);
 	}
 
@@ -841,22 +962,22 @@ public class Entity implements Serializable{
 	public void death()
 	{
 		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN));
-		
+
 		for (int i = 0; i < 10; i++)
 		{
 			Main.gamedata.getGameEntities().put("Chest"+System.currentTimeMillis()+i, ItemList.getItem("Chest", new int[]{pos[0], pos[1], pos[2]}, 1));
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1211,7 +1332,7 @@ public class Entity implements Serializable{
 	 * @return the alive
 	 */
 	public boolean isAlive() {
-		
+
 		return alive;
 	}
 
@@ -1220,7 +1341,7 @@ public class Entity implements Serializable{
 	 * @param alive the alive to set
 	 */
 	public void setAlive(boolean alive) {
-		
+
 		this.alive = alive;
 	}
 
