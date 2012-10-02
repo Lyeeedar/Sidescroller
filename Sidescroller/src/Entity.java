@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -29,9 +30,9 @@ public class Entity implements Serializable{
 	/**
 	 * The internal name of the Entity
 	 */
-	protected String name;
+	protected String name = "";
 
-	protected String faction;
+	protected String faction = "";
 
 	/**
 	 *  Total animation stages
@@ -179,7 +180,7 @@ public class Entity implements Serializable{
 	/**
 	 * Whether this entity has been damaged
 	 */
-	protected boolean damaged = false;
+	protected int damaged = 0;
 
 	protected int newAnimStrip = 1;
 	protected int newAnimStage = 0;
@@ -192,6 +193,7 @@ public class Entity implements Serializable{
 
 	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
+	protected int speed;
 
 	/**
 	 * @param animateTime
@@ -202,7 +204,7 @@ public class Entity implements Serializable{
 	 * @param behaviour
 	 * @param dialogue
 	 */
-	public Entity(String name, long animateTime, int totalAnimateStrip, int totalAnimateStages, int[] pos, String spritefile, int[] collision, boolean[] behaviour, Dialogue dialogue)
+	public Entity(String name, long animateTime, int totalAnimateStrip, int totalAnimateStages, int[] pos, int speed, String spritefile, int[] collision, boolean[] behaviour, Dialogue dialogue)
 	{
 		this.name = name;
 		this.animateTime = animateTime;
@@ -215,6 +217,7 @@ public class Entity implements Serializable{
 		this.pos[2] = pos[2];
 		this.behavior = behaviour;
 		this.animStages = totalAnimateStages;
+		this.speed = speed;
 
 		if (dialogue != null)
 			this.dialogue = dialogue;
@@ -251,9 +254,6 @@ public class Entity implements Serializable{
 		if (behavior[1])
 			behavior1();
 
-		if (this.isDamaged())
-			this.setDamaged(false);
-
 		if (!this.isAlive())
 			return;
 
@@ -277,7 +277,7 @@ public class Entity implements Serializable{
 		// Move left and right
 		if (MainFrame.left)
 		{
-			this.getVelocity()[0] = -6;
+			this.getVelocity()[0] = -speed;
 			this.getPos()[2] = 0;
 
 			if ((animateStage != 1) && (animateStrip == 2))
@@ -285,7 +285,7 @@ public class Entity implements Serializable{
 		}
 		else if (MainFrame.right)
 		{
-			this.getVelocity()[0] = 6;
+			this.getVelocity()[0] = speed;
 			this.getPos()[2] = 1;
 
 			if ((animateStage != 1) && (animateStrip == 2))
@@ -637,12 +637,103 @@ public class Entity implements Serializable{
 		}
 	}
 
+	boolean alerted = false;
+	int patrolDistance = 300;
+	int[] lastTargetPos;
 	/**
 	 * Very simple enemy AI. Just moves towards player and fires off its spells randomly.
 	 */
 	public void behavior2()
 	{
+		if (alerted)
+		{
+			if (lastTargetPos[0] < pos[0])
+			{
+				velocity[0] = -(speed+1);
+				pos[2] = 0;
+			}
+			else
+			{
+				velocity[0] = speed+1;
+				pos[2] = 1;
+			}
+			newAnimStrip = 1;
+			
+			if ((Math.abs(pos[0] - lastTargetPos[0]) < 50) &&
+					(Math.abs(pos[1] - lastTargetPos[1]) < 50))
+			{
+				
+				if ((Character.spellCooldown[0] > 0) || (isAnimating))
+					return;
 
+				newAnimStrip = 3;
+
+				int[] pos = {0, 0, this.getPos()[2]};
+
+				Spell s = SpellList.getStrike(Entity.DAMAGE_PHYSICAL, 5, pos, name, collisionShape);
+				s.setFaction(this.getFaction());
+
+				castSpellOffset = pos;
+
+				Character.spellCooldown[0] = s.spellCDTime;
+
+				spellToCast = s;
+				castSpellAt = 5;
+				
+			}
+		}
+		else
+		{
+			if (pos[2] == 0)
+			{
+				velocity[0] = -(speed-1);
+			}
+			else
+			{
+				velocity[0] = (speed-1);
+			}
+
+			newAnimStrip = 1;
+
+			patrolDistance -= 3;
+
+			if (patrolDistance <= 0)
+			{
+				patrolDistance = (Main.ran.nextInt(3)+3)*100;
+				if (pos[2] == 0)
+				{
+					pos[2] = 1;
+				}
+				else
+				{
+					pos[2] = 0;
+				}
+			}
+
+			
+		}
+		
+		for (int i = 0; i < 8; i++)
+		{
+			int x;
+			int y = this.getPos()[1] + 100 - (25*i);
+			if (pos[2] == 0)
+			{
+				x = this.getPos()[0] - 250;
+			}
+			else
+			{
+				x = this.getPos()[0] + 250;
+			}
+
+			String s = rayCast(new int[]{x, y});
+
+			if ((s != null) && (s != this.getName()))
+			{
+				alerted = true;
+				lastTargetPos = Main.gamedata.getGameEntities().get(s).getPos();
+			}
+		}
 
 	}
 
@@ -699,6 +790,95 @@ public class Entity implements Serializable{
 		velocity[0] = 0;
 	}
 
+	public String rayCast(int[] targetpos)
+	{
+		for (int[] point : BresenhamsLineAlgorithm(pos[0]+collisionShape[0], pos[1]+collisionShape[1], targetpos[0], targetpos[1]))
+		{
+			if ((point[0] < 0) || (point[0] > GameData.levelSize[0])
+					|| (point[1] < 0) || (point[1] > GameData.levelSize[1]))
+			{
+				return this.getName();
+			}
+			else if (Main.gamedata.collisionMap[point[0]][point[1]])
+			{
+				return this.getName();
+			}
+
+			for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
+			{
+				Entity e = entry.getValue();
+				
+				if (e.isPassable())
+				{
+					continue;
+				}
+				
+				if(e.getFaction().equals(""))
+				{
+					continue;
+				}
+				
+				if (e.getFaction().equals(this.getFaction()))
+				{
+					continue;
+				}
+				
+				if (e instanceof Item)
+				{
+					continue;
+				}
+
+				Rectangle r = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
+						e.getCollisionShape()[2], e.getCollisionShape()[3]);
+
+				Point p = new Point(point[0], point[1]);
+
+				if (r.contains(p))
+				{
+					return e.getName();
+				}
+			}
+
+
+		}
+
+
+		return null;
+	}
+
+	public ArrayList<int[]> BresenhamsLineAlgorithm(int x0,int y0,int x1, int y1) {
+
+		ArrayList<int[]> points = new ArrayList<int[]>();
+
+		int dx = Math.abs(x1-x0);
+		int dy = Math.abs(y1-y0);
+
+		int sx, sy, e2;
+
+		if (x0 < x1) sx = 1; else sx = -1;
+		if (y0 < y1) sy = 1; else sy = -1;
+
+		int err = dx-dy;
+
+		while(true){
+			points.add(new int[]{x0, y0});
+			if ((x0 == x1) && (y0 == y1)) break;
+			e2 = 2*err;
+			if (e2 > -dy)
+			{
+				err = err - dy;
+				x0 = x0 + sx;
+			}
+			if (e2 <  dx) 
+			{
+				err = err + dx;
+				y0 = y0 + sy;
+			}
+		}
+
+		return points;
+	}
+
 	/**
 	 * Method to check if this entity will collide with another entity or a surface if moved to the position given. <p>
 	 * Returns null for no collision, this Entities name if theres is a collision with the level or the name of the Entity collided with.
@@ -750,6 +930,11 @@ public class Entity implements Serializable{
 			if ((e.getName().equals(this.getName())) || (e.isPassable()) || ((e.getFaction() != null) && (e.getFaction().equals(this.getFaction()))))
 				continue;
 
+			if(e.getFaction().equals(""))
+			{
+				continue;
+			}
+			
 			// Create a collision box for the entity that is being checked
 			Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 					e.getCollisionShape()[2], e.getCollisionShape()[3]);
@@ -921,7 +1106,8 @@ public class Entity implements Serializable{
 		if (!visible)
 			return;
 
-		this.spriteSheet = GameData.getImage(spriteFile);
+		if (spriteFile != null)
+			this.spriteSheet = GameData.getImage(spriteFile);
 
 		// If spritesheet exists (and the Entity is therefore visible) then work out
 		// width and height of a frame
@@ -955,7 +1141,7 @@ public class Entity implements Serializable{
 			this.setAlive(false);
 		}
 
-		this.setDamaged(true);
+		this.setDamaged(15);
 	}
 
 	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
@@ -1413,7 +1599,7 @@ public class Entity implements Serializable{
 	 * Returns {@link Entity#damaged}
 	 * @return the damaged
 	 */
-	public boolean isDamaged() {
+	public int getDamaged() {
 		return damaged;
 	}
 
@@ -1421,7 +1607,7 @@ public class Entity implements Serializable{
 	 * Sets {@link Entity#damaged}
 	 * @param damaged the damaged to set
 	 */
-	public void setDamaged(boolean damaged) {
+	public void setDamaged(int damaged) {
 		this.damaged = damaged;
 	}
 

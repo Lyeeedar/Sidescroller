@@ -30,7 +30,7 @@ public class Item extends Entity {
 	 * @param dialogue
 	 */
 	public Item(String name, String spriteFile, int[] pos, int number, int type) {
-		super(name, 1, 1, 1, pos, spriteFile, new int[]{0, 0, 10, 10}, null, null);
+		super(name, 1, 1, 1, pos, 0, spriteFile, new int[]{0, 0, 10, 10}, null, null);
 		
 		this.number = number;
 		this.passable = true;

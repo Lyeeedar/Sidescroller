@@ -114,7 +114,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 		{
 			Entity e = entry.getValue();
 			g.setColor(Color.BLACK);
-			g.drawString(e.getName(), e.getPos()[0], e.getPos()[1]-10);
+			g.drawString(e.getName(), e.getPos()[0], e.getPos()[1]-30);
+			g.drawString(e.faction, e.getPos()[0], e.getPos()[1]-10);
 
 			if (e.isPassable())
 			{
@@ -273,7 +274,7 @@ class OptionsPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, "", new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
+				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, 0, "", new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
 
 				MapEditor.gamedata.getGameEntities().put("Unnamed"+MapEditor.gamedata.getGameEntities().size(), e);
 
@@ -612,6 +613,11 @@ class EntityFrame extends JFrame
 
 		panel.add(collision);
 
+		panel.add(new JLabel("Speed: "));
+		final JTextField speed = new JTextField(5);
+		speed.setText(Integer.toString(e.speed));
+		panel.add(speed);
+		
 		panel.add(new JLabel("Passable: "));
 		final JCheckBox passable = new JCheckBox("");
 		passable.setSelected(e.isPassable());
@@ -717,6 +723,7 @@ class EntityFrame extends JFrame
 					e.setFaction(faction.getText());
 					e.setAnimateTime(Long.parseLong(animUpdate.getText()));
 					e.setTotalAnimateStrip(Integer.parseInt(animStrips.getText()));
+					e.speed = Integer.parseInt(speed.getText());
 					e.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));
 					e.setWeight(Integer.parseInt(weight.getText()));
 					e.setSpriteFile(spritefile);

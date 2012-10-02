@@ -356,9 +356,12 @@ public class MainFrame extends JFrame implements KeyListener{
 				BufferedImage i = e.getSpriteSheet();
 
 				// If the entity has been damaged then tint the image with red
-				//if (e.isDamaged())
-				//i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
-
+				if (e.getDamaged() > 0)
+				{
+					e.damaged--;
+					i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
+				}
+					
 				if (e.getPos()[2] == 1)
 				{
 					// Draw only a single frame from the spritesheet onto the Graphics object
@@ -380,6 +383,11 @@ public class MainFrame extends JFrame implements KeyListener{
 
 				g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
+				if (e.alerted)
+				{
+					g2d.drawString("!", e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-30);
+				}
+				
 				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))
 				{
 					double health = (e.getHealth()/e.getMaxHealth())*20;

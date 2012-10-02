@@ -46,7 +46,7 @@ class Spell extends Entity
 			int[] velocity, String spriteFile, int weight, boolean passable, int spellCDTime, int aliveTime,
 			String damageType, int damageAmount, String exclude) {
 		
-		super(name, animateTime, 2, 8, pos, spriteFile, collision, behaviour, null);
+		super(name, animateTime, 2, 8, pos, 0, spriteFile, collision, behaviour, null);
 
 
 		this.velocity = velocity;
@@ -92,11 +92,13 @@ class Spell extends Entity
 
 	@Override
 	public void AI()
-	{
+	{	
 		if (behavior[0])
 			behaviorProjectile();
 		if (behavior[1])
 			behaviorGroundHugger();
+		if (behavior[2])
+			behaviorStrike();
 	}
 
 	/**
@@ -264,6 +266,32 @@ class Spell extends Entity
 				this.changePosition(npos[0], npos[1], pos[2]);
 			}
 		}
+	}
+	
+	public void behaviorStrike()
+	{
+		if (!alive)
+		{
+			return;
+		}
+		
+		if (pos[2] == 0)
+		{
+			pos[0] -= collisionShape[2]/2;
+		}
+		else
+		{
+			pos[0] += 2*collisionShape[2]/2;
+		}
+		
+		String s = super.collideEntities(pos);
+		
+		if ((s != null) && (!s.equals(this.getName())))
+		{
+			Main.gamedata.getGameEntities().get(s).damage(damageAmount, damageType);
+		}
+		
+		this.setAlive(false);
 	}
 	
 	@Override

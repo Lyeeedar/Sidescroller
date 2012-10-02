@@ -96,14 +96,16 @@ public class GameData {
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
-			Entity e = new Entity("Player", 100, 5, 8, new int[]{20, 20, 0}, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
+			Entity e = new Entity("Player", 100, 5, 8, new int[]{20, 20, 0}, 6, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
 
 			gameEntities.put("Player", e);
+			e.setFaction("Player");
 
-			for (int i = 0; i<20; i++)
+			for (int i = 0; i<2; i++)
 			{
-				Entity ef = new Entity("NPC"+i, 60, 5, 8, new int[]{300+(i*50), 90, 0}, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, false, false}, null);
+				Entity ef = new Entity("NPC"+i, 60, 5, 8, new int[]{300+(i*50), 90, 0}, 3, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
 
+				ef.setFaction("Enemy");
 				gameEntities.put("NPC"+i, ef);
 			}
 			//		gameEntities.add(efd);	
