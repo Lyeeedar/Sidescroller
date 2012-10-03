@@ -19,7 +19,7 @@ public class Character {
 	 *  0 = female
 	 *  1 = male
 	 */
-	public static int gender = 0;
+	public static int gender = 1;
 	public static long genderSwapCD = 0;
 	
 	public static int genderSwapAnimStage = 0;

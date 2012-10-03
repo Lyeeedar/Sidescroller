@@ -679,7 +679,7 @@ public class Entity implements Serializable{
 				{
 					alerted = false;
 				}
-				if ((Character.spellCooldown[0] > 0) || (isAnimating))
+				if ((this.spellCD > 0) || (isAnimating))
 					return;
 
 				newAnimStrip = 3;
@@ -691,7 +691,7 @@ public class Entity implements Serializable{
 
 				castSpellOffset = pos;
 
-				Character.spellCooldown[0] = s.spellCDTime;
+				this.spellCD = s.spellCDTime;
 
 				spellToCast = s;
 				castSpellAt = 5;
@@ -1037,6 +1037,7 @@ public class Entity implements Serializable{
 						}
 
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
+						
 						spellToCast = null;
 					}
 				}

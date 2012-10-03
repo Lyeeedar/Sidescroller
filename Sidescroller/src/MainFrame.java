@@ -29,6 +29,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static int[] resolution = new int[2];
 	public static BufferStrategy bufferStrategy;
 	public static int[] screenPosition = new int[2];
+	public BufferedImage[] HUDImages = new BufferedImage[4];
 	public static Menu menu = new Menu();
 
 	public MainFrame(GraphicsConfiguration gc)
@@ -61,6 +62,11 @@ public class MainFrame extends JFrame implements KeyListener{
 
 		// Set the game resolution
 		MainFrame.resolution = new int[]{800, 600};
+		
+		HUDImages[0] = GameData.getImage("Data/Resources/GUI/HUD.png");
+		HUDImages[1] = GameData.getImage("Data/Resources/GUI/spellIconBase.png");
+		HUDImages[2] = GameData.getImage("Data/Resources/GUI/HUDMale.png");
+		HUDImages[3] = GameData.getImage("Data/Resources/GUI/HUDFemale.png");
 
 	}
 
@@ -164,24 +170,6 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw HUD
 			drawHUD(g2d, totalTime);
 
-			if (Main.getState() == 2)
-			{
-				g2d.setColor(Color.LIGHT_GRAY);
-				g2d.fillRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
-
-				g2d.setColor(Color.DARK_GRAY);
-				g2d.drawRect((resolution[0]/2)-100, (resolution[1]/2)-30, 200, 60);
-
-				if (Main.gamedata.loading)
-				{
-					g2d.drawString("Loading - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
-				}
-				else if (Main.gamedata.saving)
-				{
-					g2d.drawString("Saving - Please Wait", (resolution[0]/2)-70, (resolution[1]/2)+5);
-				}
-			}
-
 			// Get the graphics object for the current setting of fullscreen
 			if (Main.fullscreen)
 			{
@@ -225,18 +213,100 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw fps
 			g2d.drawString(Main.gamedata.systemMessages.get(i).message, 20, 50+(20*i));
 		}
+		
 
 		double health = ((Main.gamedata.getGameEntities().get("Player").getHealth()/Main.gamedata.getGameEntities().get("Player").getMaxHealth())*100);
 
-		g2d.setColor(Color.RED);
-		g2d.fillRect(250, 50, (int)health, 10);
+		if (health > 66)
+		{
+			g2d.setColor(Color.GREEN);
+		}
+		else if (health > 33)
+		{
+			g2d.setColor(Color.YELLOW);
+		}
+		else
+		{
+			g2d.setColor(Color.RED);
+		}
+		
+		int x = 260;
+		int y = 30;
+		
+		health = health*1.24;
+		
+		g2d.fillRect(x+58, y+18, (int)health, 25);
+		
+		g2d.drawImage(HUDImages[0], x, y, null);
+		
+		for (int i = 0; i < 5; i++)
+		{
+			g2d.drawImage(HUDImages[1], x+(i*40), y+59, null);
+			
+			if (Character.socketedSpells[i].unlocked == 3)
+			{
+				g2d.drawImage(Character.socketedSpells[i].images[1], x+(i*40), y+59, null);
+			}
+			else
+			{
+				g2d.drawImage(Character.socketedSpells[i].images[0], x+(i*40), y+59, null);
+			}
+			
+			if (Character.spellCooldown[i] < 1)
+			{
+				
+			}
+			else if (Character.spellCooldown[i] > 2550)
+			{
+				g2d.setColor(Color.BLACK);
+				
+				g2d.fillRoundRect(x+(i*40), y+59, 40, 40, 40, 40);
+			}
+			else
+			{
+				double trans = 0.1 * Character.spellCooldown[i];
+				
+				g2d.setColor(new Color(0, 0, 0, (int)trans));
+				
+				g2d.fillRoundRect(x+(i*40), y+59, 40, 40, 40, 40);
+			}
 
+		}
+		
+		if (Character.gender == 0)
+		{
+			g2d.drawImage(HUDImages[3], x+8, y+3, null);
+		}
+		else if (Character.gender == 1)
+		{
+			g2d.drawImage(HUDImages[2], x+8, y+3, null);
+		}
+		
+		if (Character.genderSwapCD < 1)
+		{
+			
+		}
+		else if (Character.genderSwapCD > 2550)
+		{
+			g2d.setColor(Color.BLACK);
+			
+			g2d.fillRoundRect(x+16, y+11, 40, 40, 40, 40);
+		}
+		else
+		{
+			double trans = 0.1 * Character.genderSwapCD;
+			
+			g2d.setColor(new Color(0, 0, 0, (int)trans));
+			
+			g2d.fillRoundRect(x+16, y+11, 40, 40, 40, 40);
+		}
+		
 		// Setup fonts and colour for fps
 		g2d.setFont(g2d.getFont().deriveFont((float) 20));
 		g2d.setColor(Color.YELLOW);
 
 		// Draw fps
-		g2d.drawString(Long.toString(totalTime), 400, 50);
+		g2d.drawString(Long.toString(totalTime), 750, 50);
 	}
 
 	public void drawSpeech(Graphics2D g2d)

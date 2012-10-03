@@ -685,7 +685,14 @@ class SpellMenu extends MenuScreen
 
 		if (MainFrame.esc)
 		{
-			menu.changeMenu("Game");
+			if (treeSelected)
+			{
+				treeSelected = false;
+			}
+			else
+			{
+				menu.changeMenu("Game");
+			}
 			MainFrame.esc = false;
 		}
 
@@ -938,6 +945,11 @@ class SpellMenu extends MenuScreen
 					if (newIndex > Character.getSpell(element).get(newStage).spells.size()-1)
 					{
 						newIndex = Character.getSpell(element).get(newStage).spells.size()-1;
+					}
+					
+					if (newIndex < 0)
+					{
+						return;
 					}
 
 					SpellsStageEntry sse = Character.getSpell(element).get(newStage).spells.get(newIndex);
