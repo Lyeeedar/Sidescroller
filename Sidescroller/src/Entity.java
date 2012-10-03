@@ -746,8 +746,12 @@ public class Entity implements Serializable{
 
 			if ((s != null) && (s != this.getName()))
 			{
-				alerted = true;
-				lastTargetPos = Main.gamedata.getGameEntities().get(s).getPos();
+				Entity e = Main.gamedata.getGameEntities().get(s);
+				if (e != null)
+				{
+					alerted = true;
+					lastTargetPos = e.getPos();
+				}
 			}
 		}
 
@@ -1166,9 +1170,13 @@ public class Entity implements Serializable{
 	{
 		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN));
 
-		for (int i = 0; i < 10; i++)
+		for (Map.Entry<String, Integer> entry : dropList.entrySet())
 		{
-			Main.gamedata.getGameEntities().put("Chest"+System.currentTimeMillis()+i, ItemList.getItem("Chest", new int[]{pos[0], pos[1], pos[2]}, 1));
+			if (Main.ran.nextInt(100) < entry.getValue())
+			{
+				Main.gamedata.getGameEntities().put(entry.getKey()+System.currentTimeMillis(), ItemList.getItem(entry.getKey(), new int[]{pos[0], pos[1], pos[2]}, 1));
+			}
+			
 		}
 	}
 

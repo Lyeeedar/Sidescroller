@@ -249,9 +249,17 @@ public class Character {
 				fireIcons,
 				"A ball of burning fire. Will singe a target somewhat fierce."));
 		
+		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 3, new int[]{400, 200},
+				fireIcons,
+				"Sets fire to a spot, scorching all who enter it."));
+		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", null, 3, new int[]{600, 200},
 				fireIcons,
 				"Creates a wall of fire, burning any who pass through it."));
+		
+		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 3, new int[]{400, 300},
+				fireIcons,
+				"Sets fire to a line, scorching all who enter it."));
 
 	
 		unlockSpells(fireSpells);

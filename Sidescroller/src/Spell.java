@@ -99,6 +99,10 @@ class Spell extends Entity
 			behaviorGroundHugger();
 		if (behavior[2])
 			behaviorStrike();
+		if (behavior[3])
+			behaviorAreaEffect();
+		if (behavior[4])
+			behaviorSpreadAreaEffect();
 	}
 
 	/**
@@ -145,85 +149,31 @@ class Spell extends Entity
 
 	public void behaviorGroundHugger()
 	{
-
-		// Work out positions that the entity is trying to move to
-		int[] cpos = {this.getPos()[0]+velocity[0], this.getPos()[1]};
-		
+		int npos = pos[0];
 		if (!alive)
 		{
-			//velocity[0] /= 2;
-			cpos[0] = pos[0]+(velocity[0]/4);
+			npos += velocity[0]/4;
 		}
 		
-		String s = checkCollision(cpos);
-
-		// If there is no collision at this point then all is well and move the entity to this point
-		if (s == null)
-		{
-			while (s == null)
-			{
-				cpos[1] += 2;
-				s = checkCollision(cpos);
-			}
-			cpos[1] -= 3;
-		}
-		else
-		{
-			cpos = new int[]{this.getPos()[0], pos[1]};
-			int val = Math.abs(velocity[0]);
-			int x = val;
-			int y = 0;
-			boolean found = false;
-
-			for (int i = 1; i <= val-1; i++)
-			{
-				x = val-i;
-				y = i;
-
-				if (velocity[0] < 0)
-				{
-					cpos[0] = this.getPos()[0] - x;
-				}
-				else
-				{
-					cpos[0] = this.getPos()[0] + x;
-				}
-				cpos[1] = pos[1] - y;
-
-				s = checkCollision(cpos);
-				
-				if (s == null)
-				{
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-			{
-				cpos[0] = pos[0];
-				cpos[1] = pos[1];
-			}
-		}
+		npos += velocity[0];
 		
-		if (cpos[0] == pos[0])
+		int[] cpos = {npos, this.pos[1]-size[1], this.pos[2]};
+		
+		cpos = findGround(cpos, this.collisionShape[2]);
+		
+		cpos[1] -= collisionShape[1]+collisionShape[3];
+	
+		pos = cpos;
+		
+		if (!alive)
+			return;
+		
+		String s = super.collideEntities(pos);
+		
+		if ((s != null) && (!s.equals(this.name)))
 		{
+			Main.gamedata.getGameEntities().get(s).damage(damageAmount, damageType);
 			this.setAlive(false);
-		}
-		
-		this.changePosition(cpos[0], cpos[1], pos[2]);
-		
-		if ((s != null) && (!s.equals(this.getName())))
-		{
-			if (alive)
-			{
-				Main.gamedata.getGameEntities().get(s).damage(this.damageAmount, this.damageType);
-				this.setAlive(false);
-			}
-			
-			if (!alive)
-			{
-				this.changePosition(cpos[0], cpos[1], pos[2]);
-			}
 		}
 	}
 
@@ -292,6 +242,57 @@ class Spell extends Entity
 		}
 		
 		this.setAlive(false);
+	}
+	
+	public void behaviorAreaEffect()
+	{
+		String s = super.collideEntities(pos);
+		
+		if ((s != null) && (!s.equals(this.getName())))
+		{
+			Main.gamedata.getGameEntities().get(s).damage(damageAmount, damageType);
+		}
+	}
+	
+	public void behaviorSpreadAreaEffect()
+	{
+		if (!alive)
+			return;
+		
+		this.setVisible(false);
+		pos[0] += velocity[0];
+		
+		int[] npos = {this.pos[0], this.pos[1]+collisionShape[1]+collisionShape[3], this.pos[2]};
+		
+		npos = findGround(pos, this.collisionShape[2]);
+		
+		npos[1] -= collisionShape[1]+collisionShape[3];
+		
+		Spell s = new Spell(name+" Effect", (int)this.animateTime, npos, collisionShape,
+				new boolean[]{false, false, false, true, false}, new int[]{0, 0}, this.spriteFile, 3, true, 0, 1000, this.damageType, this.damageAmount, this.exclude);
+		s.setFaction(faction);
+		
+		Main.gamedata.getGameEntities().put(s.name+System.currentTimeMillis(), s);
+		
+	}
+	
+	public int[] findGround(int[] npos, int width)
+	{
+		boolean ground = Main.gamedata.collisionMap[npos[0]][npos[1]];
+		
+		while (!ground)
+		{
+			npos[1]++;
+			
+			ground = Main.gamedata.collisionMap[npos[0]][npos[1]];
+			
+			if (!ground)
+			{
+				ground = Main.gamedata.collisionMap[npos[0]+width][npos[1]];
+			}
+		}
+		
+		return npos;
 	}
 	
 	@Override
