@@ -22,7 +22,7 @@ public class Main {
 	 * 3 = Menu
 	 * 
 	 */
-	private static int state = 1;
+	private static int state = 3;
 	/**
 	 * Holds all the data used by the Game
 	 */
@@ -142,12 +142,10 @@ public class Main {
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
 				
-				for (int iii = 0; iii < 5; iii++)
-				{
-					Character.spellCooldown[iii] -= elapsedTime;
-				}
+				Character.updateTime(elapsedTime);
 				
 				Character.timePlayed += elapsedTime;
+				Character.genderSwapCD -= elapsedTime;
 				
 				ArrayList<Entity> update = new ArrayList<Entity>();
 				

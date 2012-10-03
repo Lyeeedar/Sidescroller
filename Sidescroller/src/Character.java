@@ -15,7 +15,80 @@ public class Character {
 	public static ArrayList<HashMap<String, Item>> inventory = new ArrayList<HashMap<String, Item>>();
 	public static SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
 	
+	/**
+	 *  0 = female
+	 *  1 = male
+	 */
+	public static int gender = 0;
+	public static long genderSwapCD = 0;
+	
+	public static int genderSwapAnimStage = 0;
+	public static int genderSwapAnimCD = 0;
+	public static boolean genderSwapAnimating = false;
+	public static BufferedImage genderSwapSprite = GameData.getImage("Data/Resources/Spritesheets/transform.png");
+	
 	public static long[] spellCooldown = new long[5];
+	
+	public static void updateTime(long elapsedTime)
+	{
+		timePlayed += elapsedTime;
+		genderSwapCD -= elapsedTime;
+		
+		for (int i = 0; i < 5; i++)
+		{
+			spellCooldown[i] -= elapsedTime;
+		}
+		
+		if (genderSwapAnimating)
+		{
+			genderSwapAnimCD -= elapsedTime;
+			
+			if (genderSwapAnimCD < 0)
+			{
+				genderSwapAnimCD = 50;
+				genderSwapAnimStage += 1;
+				
+				if (genderSwapAnimStage == 3)
+				{
+					swapGender();
+				}
+				
+				if (genderSwapAnimStage > 7)
+				{
+					genderSwapAnimStage = 0;
+					genderSwapAnimating = false;
+				}
+			}
+		}
+	}
+	
+	public static void beginGenderSwap()
+	{
+		if (genderSwapCD > 0)
+			return;
+
+		genderSwapCD = 5000;
+		
+		genderSwapAnimating = true;
+	}
+	
+	public static void swapGender()
+	{
+		
+		if (gender == 0)
+		{
+			gender = 1;
+			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Data/Resources/Spritesheets/male.png"));
+			Main.gamedata.getGameEntities().get("Player").setSpriteFile("Data/Resources/Spritesheets/male.png");
+		}
+		else
+		{
+			gender = 0;
+			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Data/Resources/Spritesheets/female.png"));
+			Main.gamedata.getGameEntities().get("Player").setSpriteFile("Data/Resources/Spritesheets/female.png");
+		}
+		
+	}
 	
 	public static void addItem(Item item)
 	{
@@ -112,7 +185,7 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Ice Spike", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 3, new int[]{500, 100},
 				icons,
 				"Send a spike of ice at your foe."));
 		
@@ -130,9 +203,17 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Rock Spike", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 3, new int[]{500, 100},
 				icons,
 				"Send a series of rock spikes flying out in front of you."));
+		
+		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 3, new int[]{400, 200},
+				icons,
+				"Raise a wall of rock from the ground to stop foes."));
+		
+		spells.get(1).spells.add(new SpellsStageEntry("RockShot", null, 3, new int[]{600, 200},
+				icons,
+				"Send a large rock flying at an opponent."));
 		
 		earthSpells = spells;
 	}
@@ -148,9 +229,9 @@ public class Character {
 			airSpells.add(new SpellsStage());
 		}
 		
-		airSpells.get(0).spells.add(new SpellsStageEntry("Shock", null, 3, new int[]{500, 100},
+		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 3, new int[]{500, 100},
 				airIcons,
-				"Shock a foe with a small bolt of electricity."));
+				"Slice a foe with a blade of air."));
 	}
 	
 	public static void populateFireSpells()
@@ -164,41 +245,14 @@ public class Character {
 			fireSpells.add(new SpellsStage());
 		}
 		
-		fireSpells.get(0).spells.add(new SpellsStageEntry("Fireball", null, 3, new int[]{500, 100},
+		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 3, new int[]{500, 100},
 				fireIcons,
 				"A ball of burning fire. Will singe a target somewhat fierce."));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Fireblast", new String[]{"Fireball"}, 3, new int[]{500, 200},
-				fireIcons,
-				"A fiery blast of fire. It's hot."));
-		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Firewall", null, 3, new int[]{600, 200},
+		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", null, 3, new int[]{600, 200},
 				fireIcons,
 				"Creates a wall of fire, burning any who pass through it."));
-		
-		fireSpells.get(2).spells.add(new SpellsStageEntry("FireSurge", new String[]{"Fireblast", "Firewall"},3, new int[]{550, 300},
-				fireIcons,
-				"Send a surge of fire blasting up into the air."));
 
-		fireSpells.get(3).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{450, 400},
-				fireIcons,
-				"Set the ground infront of you on fire, burning all foes who step within."));
-		
-		fireSpells.get(3).spells.add(new SpellsStageEntry("FireScythe", new String[]{"FireSurge"},3, new int[]{550,400},
-				fireIcons,
-				"Cut the air around you with a burning scythe of flames."));
-
-		fireSpells.get(4).spells.add(new SpellsStageEntry("Wildfire", new String[]{"Scorch"}, 0, new int[]{450, 500},
-				fireIcons,
-				"Set fire rushing out infront of you, creating a deadly line of burning flames."));
-		
-		fireSpells.get(4).spells.add(new SpellsStageEntry("FireBlade", new String[]{"FireScythe"},2, new int[]{550, 500},
-				fireIcons,
-				"Chop down infront of you with a burning blade of fire."));
-		
-		fireSpells.get(5).spells.add(new SpellsStageEntry("FireFall", new String[]{"FireBlade"},0, new int[]{550, 600},
-				fireIcons,
-				"Bring a torrent of fire down upon those foolish enough to stand before you."));
 	
 		unlockSpells(fireSpells);
 	}

@@ -26,6 +26,7 @@ public class SaveGame implements Serializable{
 	SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
 	ArrayList<ArrayList<SpellsStage>> spellTrees = new ArrayList<ArrayList<SpellsStage>>();
 	long timePlayed = 0;
+	int gender = 0;
 
 	public static boolean save(GameData gamedata, File file)
 	{
@@ -93,6 +94,7 @@ public class SaveGame implements Serializable{
 		save.spellTrees.add(Character.lifeSpells);
 		
 		save.timePlayed = Character.timePlayed;
+		save.gender = Character.gender;
 		
 		try
 		{
@@ -181,6 +183,7 @@ public class SaveGame implements Serializable{
 		Character.lifeSpells = save.spellTrees.get(5);
 		
 		Character.timePlayed = save.timePlayed;
+		Character.gender = save.gender;
 		
 		Character.reloadAllImages();
 		

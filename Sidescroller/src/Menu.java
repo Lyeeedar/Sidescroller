@@ -40,7 +40,7 @@ public class Menu {
 	 *	8	9	10		|		/	\
 	 *		11
 	 */
-	MenuScreen menu;
+	MenuScreen menu = new MainMenu(this);
 
 	public void drawMenus(Graphics2D g2d)
 	{
@@ -73,6 +73,14 @@ public class Menu {
 		else if (menu.equals("Load"))
 		{
 			this.menu = new LoadMenu(this);
+		}
+		else if (menu.equals("Main"))
+		{
+			this.menu = new MainMenu(this);
+		}
+		else if (menu.equals("MainLoad"))
+		{
+			this.menu = new MainLoadMenu(this);
 		}
 	}
 
@@ -211,13 +219,13 @@ class GameMenu extends MenuScreen
 		{
 			g2d.drawImage(images[2], 490, 350, null);
 			g2d.setColor(selected);
-			g2d.drawString("Exit", 600, 415);
+			g2d.drawString("Main Menu", 600, 415);
 		}
 		else
 		{
 			g2d.drawImage(images[1], 490, 350, null);
 			g2d.setColor(normal);
-			g2d.drawString("Exit", 600, 415);
+			g2d.drawString("Main Menu", 600, 415);
 		}
 	}
 
@@ -272,6 +280,10 @@ class GameMenu extends MenuScreen
 			else if (selectedIndex == 4)
 			{
 				menu.changeMenu("Char");
+			}
+			else if (selectedIndex == 5)
+			{
+				menu.changeMenu("Main");
 			}
 
 			MainFrame.enter = false;
@@ -1345,7 +1357,7 @@ class LoadMenu extends MenuScreen
 		{
 			saves[i] = loadFile(files[i]);
 		}
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesText.png");
+		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
 	}
 	
 	@Override
@@ -1396,7 +1408,7 @@ class LoadMenu extends MenuScreen
 				Main.gamedata.loadGame(files[selectedIndex]);
 				Main.setState(1);
 			}
-			else if (selectedIndex == files.length+1)
+			else if (selectedIndex == files.length)
 			{
 				menu.changeMenu("Game");
 			}
@@ -1408,9 +1420,521 @@ class LoadMenu extends MenuScreen
 		{
 			selectedIndex = 0;
 		}
-		if (selectedIndex > files.length+1)
+		if (selectedIndex > files.length)
 		{
-			selectedIndex = files.length+1;
+			selectedIndex = files.length;
+		}
+	}
+	
+	public SaveGame loadFile(File file)
+	{
+		SaveGame save = null;
+		
+		try{
+			FileInputStream fin = new FileInputStream(file);
+			ObjectInputStream oin = new ObjectInputStream(fin);
+			save = (SaveGame) oin.readObject();
+			oin.close();
+			fin.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return save;
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawLeft(Graphics2D g2d) {
+		if (selectedIndex < files.length)
+		{
+			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+			Calendar calendar = Calendar.getInstance();
+	        calendar.setTimeInMillis(files[selectedIndex].lastModified());
+	        
+	        String timePlayed = String.format("%d min, %d sec", 
+	        	    TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
+	        	    TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
+	        	    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+	        	);
+			
+	        g2d.setColor(Color.BLACK);
+			g2d.drawString("Filename:", 70, 190);
+			g2d.drawString(files[selectedIndex].getName(), 200, 190);
+			g2d.drawString("Last Saved:", 70, 210);
+			g2d.drawString(formatter.format(calendar.getTime()), 200, 210);
+			g2d.drawString("Current Level:", 70, 240);
+			g2d.drawString(saves[selectedIndex].currentLevel, 200, 240);
+			g2d.drawString("Time Played:", 70, 270);
+			g2d.drawString(timePlayed, 200, 270);
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+
+		int filePos = selectedIndex;
+		
+		if (filePos >= files.length)
+		{
+			filePos = files.length-1;
+		}
+
+		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
+		
+		
+		if (selectedIndex == files.length)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Back", 610, 545);
+	}
+	
+	private BufferedImage getImage()
+	{
+		BufferedImage im = new BufferedImage(270, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = im.createGraphics();
+		
+		for (int i = 0; i < files.length; i++)
+		{
+			if (selectedIndex == i)
+			{
+				g2d.setColor(Color.BLUE);
+			}
+			else
+			{
+				g2d.setColor(Color.BLACK);
+			}
+			
+			g2d.drawString(files[i].getName(), 15, 30+(i*20));
+		}
+		
+		g2d.dispose();
+		
+		return im;
+	}
+	
+}
+
+
+class CharacterMenu extends MenuScreen
+{
+
+	int selectedIndex = 0;
+	int selectedType = 2;
+	int selectedItem = 0;
+	boolean itemSelected = false;
+	
+	BufferedImage[] images = new BufferedImage[3];
+	
+	public CharacterMenu(Menu menu) {
+		super(menu);
+
+		images[0] = GameData.getImage("Data/Resources/GUI/spellbookCharText.png");
+		images[1] = GameData.getImage("Data/Resources/GUI/spellbookCharItems.png");
+		images[2] = GameData.getImage("Data/Resources/GUI/spellbookCharItemsSelected.png");
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		if (MainFrame.up)
+		{
+			selectedIndex--;
+			
+			MainFrame.up = false;
+		}
+		else if (MainFrame.down)
+		{
+			selectedIndex++;
+			
+			MainFrame.down = false;
+		}
+		else if (MainFrame.left)
+		{
+			selectedIndex--;
+			
+			MainFrame.left = false;
+		}
+		else if (MainFrame.right)
+		{
+			selectedIndex++;
+			
+			MainFrame.right = false;
+		}
+		else if (MainFrame.esc)
+		{
+			menu.changeMenu("Game");
+			MainFrame.esc = false;
+		}
+		
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		else if (selectedIndex > 3)
+			selectedIndex = 3;
+	}
+	
+	protected void drawBackground(Graphics2D g2d)
+	{
+		super.drawBackground(g2d);
+		g2d.drawImage(images[0], 0, 0, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawLeft(Graphics2D g2d) {
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		if (selectedIndex == 3)
+		{
+			if (itemSelected)
+			{
+				g2d.drawImage(images[2], 0, 0, null);
+			}
+			else
+			{
+				g2d.drawImage(images[1], 0, 0, null);
+			}
+		}
+		
+		g2d.drawImage(getImage(), 520, 210, 663, 472, 0, -100+(selectedItem*20), 143, -100+(selectedItem*20)+262, null);
+	}
+	
+	private BufferedImage getImage()
+	{
+		BufferedImage im = new BufferedImage(143, 40+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = im.createGraphics();
+		
+		int i = 0;
+		for (Map.Entry<String, Item> entry : Character.inventory.get(selectedType).entrySet())
+		{
+			Item item = entry.getValue();
+			
+			if (i == selectedItem)
+			{
+				g2d.setColor(Color.BLUE);
+			}
+			else
+			{
+				g2d.setColor(Color.BLACK);
+			}
+			g2d.drawString(item.name, 10, 20+(i*20));
+			g2d.drawString(Integer.toString(item.number), 100, 20+(i*20));
+			
+			
+			i++;
+		}
+		
+		return im;
+	}
+	
+}
+
+class MainMenu extends MenuScreen
+{
+	BufferedImage[] images = new BufferedImage[3];
+	
+	/**
+	 * @param menu
+	 */
+	public MainMenu(Menu menu) {
+		super(menu);
+
+		images[0] = GameData.getImage("Data/Resources/GUI/spellbookGameText.png");
+		images[1] = GameData.getImage("Data/Resources/GUI/spellbookButton.png");
+		images[2] = GameData.getImage("Data/Resources/GUI/spellbookButtonSelected.png");
+	}
+
+	int selectedIndex;
+
+	@Override
+	protected void drawBackground(Graphics2D g2d)
+	{
+		super.drawBackground(g2d);
+		
+		g2d.drawImage(images[0], 0, 0, null);
+	}
+	
+	protected void drawLeft(Graphics2D g2d)
+	{
+		//110 , 65
+		Color normal = new Color(0, 0, 0, 170);
+		Color selected = new Color(54, 4, 89, 190);
+
+		g2d.setFont(g2d.getFont().deriveFont((float) 20));
+
+		if (selectedIndex == 0)
+		{
+			g2d.drawImage(images[2], 90, 90, null);
+			g2d.setColor(selected);
+			g2d.drawString("Continue", 200, 155);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 90, 90, null);
+			g2d.setColor(normal);
+			g2d.drawString("Continue", 200, 155);
+		}
+
+		if (selectedIndex == 1)
+		{
+			g2d.drawImage(images[2], 490, 90, null);
+			g2d.setColor(selected);
+			g2d.drawString("Credits", 600, 155);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 490, 90, null);
+			g2d.setColor(normal);
+			g2d.drawString("Credits", 600, 155);
+		}
+
+		if (selectedIndex == 2)
+		{
+			g2d.drawImage(images[2], 90, 220, null);
+			g2d.setColor(selected);
+			g2d.drawString("New Game", 200, 285);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 90, 220, null);
+			g2d.setColor(normal);
+			g2d.drawString("New Game", 200, 285);
+		}
+
+		if (selectedIndex == 3)
+		{
+			g2d.drawImage(images[2], 490, 220, null);
+			g2d.setColor(selected);
+			g2d.drawString("Tutorial", 600, 285);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 490, 220, null);
+			g2d.setColor(normal);
+			g2d.drawString("Tutorial", 600, 285);
+		}
+
+		if (selectedIndex == 4)
+		{
+			g2d.drawImage(images[2], 90, 350, null);
+			g2d.setColor(selected);
+			g2d.drawString("Load Game", 200, 415);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 90, 350, null);
+			g2d.setColor(normal);
+			g2d.drawString("Load Game", 200, 415);
+		}
+
+		if (selectedIndex == 5)
+		{
+			g2d.drawImage(images[2], 490, 350, null);
+			g2d.setColor(selected);
+			g2d.drawString("Quit", 600, 415);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 490, 350, null);
+			g2d.setColor(normal);
+			g2d.drawString("Quit", 600, 415);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see Menu#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		if (MainFrame.up)
+		{
+			selectedIndex -= 2;
+			MainFrame.up = false;
+		}
+		else if (MainFrame.right)
+		{
+			selectedIndex++;
+			MainFrame.right = false;
+		}
+		else if (MainFrame.left)
+		{
+			selectedIndex--;
+			MainFrame.left = false;
+		}
+		else if (MainFrame.down)
+		{
+			selectedIndex += 2;
+			MainFrame.down = false;
+		}
+		else if (MainFrame.enter)
+		{
+			if (selectedIndex == 0)
+			{
+				File directory = new File("Data/Saves");
+				File[] files = directory.listFiles();
+				Arrays.sort(files, new Comparator<File>(){
+				    public int compare(File f1, File f2)
+				    {
+				        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+				    } });
+				
+				Main.gamedata.loadGame(files[0]);
+				Main.setState(1);
+			}
+			else if (selectedIndex == 2)
+			{
+				Main.gamedata.test();
+				Main.setState(1);
+			}
+			else if (selectedIndex == 4)
+			{
+				menu.changeMenu("MainLoad");
+			}
+			else if (selectedIndex == 5)
+			{
+				Main.setState(0);
+			}
+
+			MainFrame.enter = false;
+		}
+
+		if (selectedIndex < 0)
+		{
+			selectedIndex = 0;
+		}
+		else if (selectedIndex > 5)
+		{
+			selectedIndex = 5;
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+
+class MainLoadMenu extends MenuScreen
+{
+
+	int selectedIndex = 0;
+	File[] files;
+	SaveGame[] saves;
+	BufferedImage[] images = new BufferedImage[1];
+	
+	public MainLoadMenu(Menu menu) {
+		super(menu);
+
+		File directory = new File("Data/Saves");
+		files = directory.listFiles();
+		Arrays.sort(files, new Comparator<File>(){
+		    public int compare(File f1, File f2)
+		    {
+		        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+		    } });
+		
+		saves = new SaveGame[files.length];
+		
+		for (int i = 0; i < files.length; i++)
+		{
+			saves[i] = loadFile(files[i]);
+		}
+		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
+	}
+	
+	@Override
+	protected void drawBackground(Graphics2D g2d)
+	{
+		super.drawBackground(g2d);
+		
+		g2d.drawImage(images[0], 0, 0, null);
+	}
+	/* (non-Javadoc)
+	 * @see MenuScreen#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		if (MainFrame.up)
+		{
+			selectedIndex--;
+			
+			MainFrame.up = false;
+		}
+		else if (MainFrame.down)
+		{
+			selectedIndex++;
+			
+			MainFrame.down = false;
+		}
+		else if (MainFrame.left)
+		{
+			selectedIndex--;
+			
+			MainFrame.left = false;
+		}
+		else if (MainFrame.right)
+		{
+			selectedIndex++;
+			
+			MainFrame.right = false;
+		}
+		else if (MainFrame.esc)
+		{
+			menu.changeMenu("Main");
+			MainFrame.esc = false;
+		}
+		else if (MainFrame.enter)
+		{
+			if (selectedIndex < files.length)
+			{
+				Main.gamedata.loadGame(files[selectedIndex]);
+				Main.setState(1);
+			}
+			else if (selectedIndex == files.length)
+			{
+				menu.changeMenu("Main");
+			}
+			
+			MainFrame.enter = false;
+		}
+		
+		if (selectedIndex < 0)
+		{
+			selectedIndex = 0;
+		}
+		if (selectedIndex > files.length)
+		{
+			selectedIndex = files.length;
 		}
 	}
 	
@@ -1487,17 +2011,6 @@ class LoadMenu extends MenuScreen
 			g2d.setColor(Color.BLACK);
 		}
 		
-		g2d.drawString("New Save", 495, 545);
-		
-		if (selectedIndex == files.length+1)
-		{
-			g2d.setColor(Color.BLUE);
-		}
-		else
-		{
-			g2d.setColor(Color.BLACK);
-		}
-		
 		g2d.drawString("Back", 610, 545);
 	}
 	
@@ -1521,81 +2034,6 @@ class LoadMenu extends MenuScreen
 		}
 		
 		g2d.dispose();
-		
-		return im;
-	}
-	
-}
-
-
-class CharacterMenu extends MenuScreen
-{
-
-	int selectedIndex = 0;
-	int selectedType = 2;
-	int selectedItem = 0;
-	
-	public CharacterMenu(Menu menu) {
-		super(menu);
-		// TODO Auto-generated constructor stub
-	}
-
-	/* (non-Javadoc)
-	 * @see MenuScreen#evaluateButtons()
-	 */
-	@Override
-	void evaluateButtons() {
-		if (MainFrame.esc)
-		{
-			menu.changeMenu("Game");
-			MainFrame.esc = false;
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
-	 */
-	@Override
-	protected void drawLeft(Graphics2D g2d) {
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
-	 */
-	@Override
-	protected void drawRight(Graphics2D g2d) {
-		g2d.setColor(Color.BLACK);
-		
-		g2d.drawRect(460, 50, 270, 400);
-		
-		g2d.drawImage(getImage(), 460, 50, 730, 450, 0, -40+(selectedItem*20), 270, -40+(selectedItem*20)+440, null);
-	}
-	
-	private BufferedImage getImage()
-	{
-		BufferedImage im = new BufferedImage(270, 40+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = im.createGraphics();
-		
-		int i = 0;
-		for (Map.Entry<String, Item> entry : Character.inventory.get(selectedType).entrySet())
-		{
-			Item item = entry.getValue();
-			
-			if (i == selectedItem)
-			{
-				g2d.setColor(Color.BLUE);
-			}
-			else
-			{
-				g2d.setColor(Color.BLACK);
-			}
-			g2d.drawString(item.name, 10, 20+(i*20));
-			g2d.drawString(Integer.toString(item.number), 100, 20+(i*20));
-			
-			
-			i++;
-		}
 		
 		return im;
 	}

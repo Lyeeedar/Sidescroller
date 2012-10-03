@@ -397,6 +397,14 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			}
 		}
+		
+		if (Character.genderSwapAnimating)
+		{
+			Entity e = Main.gamedata.getGameEntities().get("Player");
+			g2d.drawImage(Character.genderSwapSprite, e.getPos()[0]-MainFrame.screenPosition[0], e.getPos()[1]-MainFrame.screenPosition[1],
+					e.getPos()[0]-MainFrame.screenPosition[0]+e.getSize()[0], e.getPos()[1]-MainFrame.screenPosition[1]+e.getSize()[1],
+					(113*Character.genderSwapAnimStage), 0, (113*(Character.genderSwapAnimStage+1)), 100, null);
+		}
 	}
 
 	/**
@@ -624,6 +632,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static boolean key3;
 	public static boolean key4;
 	public static boolean key5;
+	public static boolean tab;
 
 	/** I use this method to store is a key has been pressed
 	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
@@ -686,6 +695,10 @@ public class MainFrame extends JFrame implements KeyListener{
 		{
 			MainFrame.key5 = true;
 		}
+		else if (e.getKeyCode() == KeyEvent.VK_TAB)
+		{
+			MainFrame.tab = true;
+		}
 
 	}
 
@@ -742,6 +755,10 @@ public class MainFrame extends JFrame implements KeyListener{
 		else if (e.getKeyCode() == KeyEvent.VK_5)
 		{
 			MainFrame.key5 = false;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_TAB)
+		{
+			MainFrame.tab = false;
 		}
 
 	}

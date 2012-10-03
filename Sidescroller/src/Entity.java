@@ -339,6 +339,13 @@ public class Entity implements Serializable{
 			}
 
 		}
+		
+		if (MainFrame.space)
+		{
+			Character.beginGenderSwap();
+			
+			MainFrame.tab = false;
+		}
 
 		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
 		if (MainFrame.key1)
@@ -359,7 +366,7 @@ public class Entity implements Serializable{
 				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
 			}
 
-			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-50;
 
 			Spell s = SpellList.getSpell(Character.socketedSpells[0].name, pos, this.getName());
 			s.setFaction(this.getFaction());
@@ -449,7 +456,7 @@ public class Entity implements Serializable{
 				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
 			}
 
-			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-15;
 
 			Spell s = SpellList.getSpell(Character.socketedSpells[3].name, pos, this.getName());
 			s.setFaction(this.getFaction());
@@ -479,7 +486,7 @@ public class Entity implements Serializable{
 				pos[0] =this.getCollisionShape()[0]+this.getCollisionShape()[2]+10;
 			}
 
-			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-45;
+			pos[1] = this.getCollisionShape()[1]+(this.getCollisionShape()[3]/2)-15;
 
 			Spell s = SpellList.getSpell(Character.socketedSpells[4].name, pos, this.getName());
 			s.setFaction(this.getFaction());
@@ -659,10 +666,19 @@ public class Entity implements Serializable{
 			}
 			newAnimStrip = 1;
 			
+			if ((Main.ran.nextInt(340) == 1) && (grounded))
+			{
+				velocity[1] -= 15;
+			}
+			
 			if ((Math.abs(pos[0] - lastTargetPos[0]) < 50) &&
 					(Math.abs(pos[1] - lastTargetPos[1]) < 50))
 			{
-				
+				if ((Math.abs(pos[0] - lastTargetPos[0]) < 10) &&
+						(Math.abs(pos[1] - lastTargetPos[1]) < 10))
+				{
+					alerted = false;
+				}
 				if ((Character.spellCooldown[0] > 0) || (isAnimating))
 					return;
 
@@ -719,11 +735,11 @@ public class Entity implements Serializable{
 			int y = this.getPos()[1] + 100 - (25*i);
 			if (pos[2] == 0)
 			{
-				x = this.getPos()[0] - 250;
+				x = this.getPos()[0] - 400;
 			}
 			else
 			{
-				x = this.getPos()[0] + 250;
+				x = this.getPos()[0] + 400;
 			}
 
 			String s = rayCast(new int[]{x, y});

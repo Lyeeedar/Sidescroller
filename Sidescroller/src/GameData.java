@@ -96,7 +96,7 @@ public class GameData {
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
-			Entity e = new Entity("Player", 100, 5, 8, new int[]{20, 20, 0}, 6, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
+			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
 
 			gameEntities.put("Player", e);
 			e.setFaction("Player");

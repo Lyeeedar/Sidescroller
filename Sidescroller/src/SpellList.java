@@ -15,16 +15,40 @@ public class SpellList {
 	{
 		Spell s = null;
 		
-		if (spell.equals("Fireball"))
+		if (spell.equals("FireBall"))
 		{
-			s = new Spell("Fireball", 60, pos, new int[]{0,0,37,30},
-					new boolean[]{true, false, false}, new int[]{17, 0}, "Data/Resources/Spells/fireball.png", 0, true, 2000, 700, Entity.DAMAGE_FIRE, 90, exclude);
-			
+			s = new Spell("FireBall", 60, pos, new int[]{0,0,37,30},
+					new boolean[]{true, false, false}, new int[]{17, 0}, "Data/Resources/Spells/fireball.png", 0, true, 2000, 700, Entity.DAMAGE_FIRE, 50, exclude);	
 		}
-		else if (spell.equals("EarthSpike"))
+		else if (spell.equals("RockSpike"))
 		{
-			s = new Spell("EarthSpike", 100, pos, new int[]{0,15,50,30},
-					new boolean[]{false, true, false}, new int[]{10, 0}, "Data/Resources/Spells/rockspike.png", 3, true, 200, 1300, Entity.DAMAGE_EARTH, 10, exclude);
+			s = new Spell("RockSpike", 100, pos, new int[]{0,15,50,30},
+					new boolean[]{false, true, false}, new int[]{10, 0}, "Data/Resources/Spells/rockspike.png", 3, true, 2000, 1300, Entity.DAMAGE_EARTH, 50, exclude);
+		}
+		else if (spell.equals("FlameWall"))
+		{
+			s = new Spell("FlameWall", 100, pos, new int[]{0,50,0,30},
+					new boolean[]{false, true, false}, new int[]{4, 0}, "Data/Resources/Spells/flamewall.png", 3, true, 2000, 1300, Entity.DAMAGE_FIRE, 50, exclude);
+		}
+		else if (spell.equals("WindBlade"))
+		{
+			s = new Spell("WindBlade", 100, pos, new int[]{0,15,50,30},
+					new boolean[]{true, false, false}, new int[]{15, 0}, "Data/Resources/Spells/windblade.png", 0, true, 2000, 700, Entity.DAMAGE_AIR, 50, exclude);
+		}
+		else if (spell.equals("IceSpike"))
+		{
+			s = new Spell("IceSpike", 100, pos, new int[]{0,15,50,30},
+					new boolean[]{true, false, false}, new int[]{16, 0}, "Data/Resources/Spells/icespike.png", 3, true, 2000, 700, Entity.DAMAGE_WATER, 50, exclude);
+		}
+		else if (spell.equals("RockShot"))
+		{
+			s = new Spell("RockShot", 100, pos, new int[]{0,15,50,30},
+					new boolean[]{true, false, false}, new int[]{17, 0}, "Data/Resources/Spells/rockshot.png", 3, true, 2000, 700, Entity.DAMAGE_EARTH, 50, exclude);
+		}
+		else if (spell.equals("RockWall"))
+		{
+			s = new Spell("RockWall", 100, pos, new int[]{0,50,0,30},
+					new boolean[]{false, true, false}, new int[]{0, 0}, "Data/Resources/Spells/rockwall.png", 3, false, 2000, 1300, Entity.DAMAGE_EARTH, 0, exclude);
 		}
 		
 		if (pos[2] == 0)
