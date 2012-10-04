@@ -69,6 +69,65 @@ public class MainFrame extends JFrame implements KeyListener{
 		HUDImages[3] = GameData.getImage("Data/Resources/GUI/HUDFemale.png");
 
 	}
+	
+	public void paintLoad(GraphicsConfiguration gc)
+	{
+		Graphics2D g2d = null;
+
+		try {
+
+			// Create a BufferedImage compatible with the current environment
+			BufferedImage im = gc.createCompatibleImage(resolution[0], resolution[1]);
+
+			// Get its Graphics object
+			g2d = (Graphics2D) im.getGraphics();
+
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+
+			g2d.setColor(Color.DARK_GRAY);
+			
+			g2d.fillRect(0, 0, resolution[0], resolution[1]);
+			
+			g2d.setColor(Color.GREEN);
+			for (int i = 0; i < Main.gamedata.loadStage; i++)
+			{
+				g2d.fillRect(200+(20*i), 300, 20, 50);
+			}
+			
+			g2d.setColor(Color.WHITE);
+			
+			g2d.drawString(Main.gamedata.loadText, 250, 450);
+			
+			// Get the graphics object for the current setting of fullscreen
+			if (Main.fullscreen)
+			{
+				// Get a graphics object for the current backbuffer
+				g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
+			}
+			else
+			{
+				g2d = (Graphics2D) this.getGraphics();
+			}
+
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Draw the buffered Image onto the back buffer
+			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
+
+
+		} finally {
+			// Dispose of the graphics object
+			if (Main.fullscreen)
+				g2d.dispose();
+		}
+		// Show the back buffer (Page Flipping)
+		if (Main.fullscreen)
+			bufferStrategy.show();
+	}
 
 	/**
 	 * Draws all the in-game graphics
@@ -468,8 +527,23 @@ public class MainFrame extends JFrame implements KeyListener{
 				
 				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))
 				{
-					double health = (e.getHealth()/e.getMaxHealth())*20;
+					double health = (e.getHealth()/e.getMaxHealth())*100;
+					
+					if (health > 66)
+					{
+						g2d.setColor(Color.GREEN);
+					}
+					else if (health > 33)
+					{
+						g2d.setColor(Color.YELLOW);
+					}
+					else
+					{
+						g2d.setColor(Color.RED);
+					}
 
+					health /= 5;
+						
 					g2d.fillRect(e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-10, (int)health, 5);
 				}
 

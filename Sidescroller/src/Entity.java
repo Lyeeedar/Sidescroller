@@ -659,12 +659,12 @@ public class Entity implements Serializable{
 		{
 			if (lastTargetPos[0] < pos[0])
 			{
-				velocity[0] = -(speed+1);
+				velocity[0] = -(speed+2);
 				pos[2] = 0;
 			}
 			else
 			{
-				velocity[0] = speed+1;
+				velocity[0] = speed+2;
 				pos[2] = 1;
 			}
 			newAnimStrip = 1;
@@ -754,12 +754,15 @@ public class Entity implements Serializable{
 	 */
 	public void behavior3()
 	{
-		String s = this.collideEntities(pos);
-		if (s == null)
-		{
-			return;
-		}
-		else if (s.equals("Player"))
+		Entity p = Main.gamedata.getGameEntities().get("Player");
+		
+		Rectangle rp = new Rectangle(p.getPos()[0]+p.getCollisionShape()[0], p.getPos()[1]+p.getCollisionShape()[1],
+				p.getCollisionShape()[2], p.getCollisionShape()[3]);
+		
+		Rectangle re = new Rectangle(getPos()[0]+getCollisionShape()[0], getPos()[1]+getCollisionShape()[1],
+				getCollisionShape()[2], getCollisionShape()[3]);
+		
+		if (re.intersects(rp))
 		{
 			this.activate();
 		}

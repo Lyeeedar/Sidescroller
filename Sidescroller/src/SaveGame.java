@@ -123,6 +123,8 @@ public class SaveGame implements Serializable{
 		if (file == null)
 			return false;
 		
+		Main.gamedata.loadStage = 1;
+		Main.gamedata.loadText = "Loading old file";
 		if (file.exists())
 		{
 			try {
@@ -143,12 +145,16 @@ public class SaveGame implements Serializable{
 			return false;
 		}
 		
+		Main.gamedata.loadStage = 2;
+		Main.gamedata.loadText = "Loading level";
 		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
 		if (level == null)
 			return false;
 		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
+		Main.gamedata.loadStage = 3;
+		Main.gamedata.loadText = "Overwriting game entities";
 		if (save.gameEntities.containsKey(level.name))
 		{
 			gameEntities = save.gameEntities.get(level.name);
@@ -162,16 +168,25 @@ public class SaveGame implements Serializable{
 //		
 //		gameEntities.put("Player", save.player);
 		
+		Main.gamedata.loadStage = 4;
+		Main.gamedata.loadText = "Processing spritesheets";
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
 			ent.processSpritesheet();
 		}
 		
+		Main.gamedata.loadStage = 5;
+		Main.gamedata.loadText = "Loading background";
 		gamedata.setGameEntities(gameEntities);
 		gamedata.setBackground(level.getBackground());
+		
+		Main.gamedata.loadStage = 6;
+		Main.gamedata.loadText = "Generating Collision Map";
 		gamedata.createCollisionMap();
 		
+		Main.gamedata.loadStage = 7;
+		Main.gamedata.loadText = "Setting references";
 		Character.inventory = save.inventory;
 		Character.socketedSpells = save.socketedSpells;
 		
@@ -185,6 +200,8 @@ public class SaveGame implements Serializable{
 		Character.timePlayed = save.timePlayed;
 		Character.gender = save.gender;
 		
+		Main.gamedata.loadStage = 8;
+		Main.gamedata.loadText = "Reloading character images";
 		Character.reloadAllImages();
 		
 		gamedata.systemMessages.clear();
@@ -201,6 +218,8 @@ public class SaveGame implements Serializable{
 		
 		File file = new File("Data/Saves/autosave.sav");
 		
+		Main.gamedata.loadStage = 1;
+		Main.gamedata.loadText = "Loading old file";
 		if (file.exists())
 		{
 			try {
@@ -221,16 +240,22 @@ public class SaveGame implements Serializable{
 			save = new SaveGame();
 		}
 		
-		
+		Main.gamedata.loadStage = 2;
+		Main.gamedata.loadText = "Loading new level";
 		Level level = Level.load(new File("Data/"+levelName+".data"));
+		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
+		Main.gamedata.loadStage = 3;
+		Main.gamedata.loadText = "Overwriting game entities";
 		if (save.gameEntities.containsKey(level.name))
 		{
 			gameEntities = save.gameEntities.get(level.name);
 		}
 		gamedata.levelName = level.name;
 		
+		Main.gamedata.loadStage = 4;
+		Main.gamedata.loadText = "Updating player stats";
 		if (save.player != null)
 		{
 			Entity oldPlayer = level.gameEntities.get("Player");
@@ -241,6 +266,8 @@ public class SaveGame implements Serializable{
 			gameEntities.put("Player", save.player);
 		}
 		
+		Main.gamedata.loadStage = 5;
+		Main.gamedata.loadText = "Processing entity images";
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
@@ -248,8 +275,13 @@ public class SaveGame implements Serializable{
 			ent.processSpritesheet();
 		}
 		
+		Main.gamedata.loadStage = 6;
+		Main.gamedata.loadText = "Loading background";
 		gamedata.setGameEntities(gameEntities);
 		gamedata.setBackground(level.getBackground());
+		
+		Main.gamedata.loadStage = 7;
+		Main.gamedata.loadText = "Calculating collision map";
 		gamedata.createCollisionMap();
 		
 		return true;

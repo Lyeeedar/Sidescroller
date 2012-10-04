@@ -710,6 +710,11 @@ class EntityFrame extends JFrame
 		final JTextField armorLife = new JTextField(5);
 		armorLife.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_LIFE)));
 		panel.add(armorLife);
+		
+		panel.add(new JLabel("EXP"));
+		final JTextField exp = new JTextField(5);
+		exp.setText(Integer.toString(e.expAmount));
+		panel.add(exp);
 
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -717,6 +722,8 @@ class EntityFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				try{
+					e.expAmount = Integer.parseInt(exp.getText());
+					
 					MapEditor.gamedata.getGameEntities().remove(e.getName());
 					e.setName(name.getText());
 					MapEditor.gamedata.getGameEntities().put(e.getName(), e);
@@ -1142,7 +1149,7 @@ class DialogueBlockFrame extends JFrame
 	
 	public void changeLevel()
 	{
-		while (block.size() < 2)
+		while (block.size() < 5)
 		{
 			block.add("");
 		}
@@ -1154,6 +1161,20 @@ class DialogueBlockFrame extends JFrame
 		target.setText(block.get(1));
 		panel.add(target);
 		
+		panel.add(new JLabel("Pos X: "));
+		final JTextField posx = new JTextField(10);
+		posx.setText(block.get(2));
+		panel.add(posx);
+		
+		panel.add(new JLabel("Pos Y: "));
+		final JTextField posy = new JTextField(10);
+		posy.setText(block.get(3));
+		panel.add(posy);
+		
+		panel.add(new JLabel("Direction: "));
+		final JTextField dir = new JTextField(10);
+		dir.setText(block.get(4));
+		panel.add(dir);
 		
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -1162,6 +1183,9 @@ class DialogueBlockFrame extends JFrame
 			public void actionPerformed(ActionEvent e) {
 
 				block.set(1, target.getText());
+				block.set(2, posx.getText());
+				block.set(3, posy.getText());
+				block.set(4, dir.getText());
 				
 				frame.dispose();
 				

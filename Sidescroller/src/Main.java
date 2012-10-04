@@ -180,7 +180,7 @@ public class Main {
 				lastTime = System.currentTimeMillis();
 				
 				// Paint game graphics
-				Main.mainframe.paintGame(framerate, gc);
+				Main.mainframe.paintLoad(gc);
 				
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;

@@ -142,6 +142,16 @@ public class Dialogue implements Serializable{
 	{
 		Main.gamedata.saveGame(new File("Data/Saves/autosave.sav"));
 		Main.gamedata.loadLevel(stagetext.get(1));
+		
+		int posX = Integer.parseInt(stagetext.get(2));
+		int posY = Integer.parseInt(stagetext.get(3));
+		int dir = Integer.parseInt(stagetext.get(4));
+		
+		Main.gamedata.getGameEntities().get("Player").setPos(new int[]{posX, posY, dir});
+		
+		stage = 0;
+		internalstage = 0;
+		
 		return "Loading Level "+stagetext.get(1);
 	}
 	
@@ -164,6 +174,9 @@ public class Dialogue implements Serializable{
 		{
 			incrKill();
 		}
+		
+		if (stage > this.getQuest().size()-1)
+			stage = getQuest().size()-1;
 	}
 	
 	/**

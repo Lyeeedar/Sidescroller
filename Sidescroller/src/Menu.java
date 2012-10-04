@@ -1417,8 +1417,8 @@ class LoadMenu extends MenuScreen
 		{
 			if (selectedIndex < files.length)
 			{
-				Main.gamedata.loadGame(files[selectedIndex]);
 				Main.setState(1);
+				Main.gamedata.loadGame(files[selectedIndex]);
 			}
 			else if (selectedIndex == files.length)
 			{
@@ -1819,8 +1819,8 @@ class MainMenu extends MenuScreen
 			}
 			else if (selectedIndex == 2)
 			{
-				Main.gamedata.test();
 				Main.setState(1);
+				Main.gamedata.test();
 			}
 			else if (selectedIndex == 4)
 			{
@@ -1929,8 +1929,8 @@ class MainLoadMenu extends MenuScreen
 		{
 			if (selectedIndex < files.length)
 			{
-				Main.gamedata.loadGame(files[selectedIndex]);
 				Main.setState(1);
+				Main.gamedata.loadGame(files[selectedIndex]);
 			}
 			else if (selectedIndex == files.length)
 			{
