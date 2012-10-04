@@ -107,6 +107,7 @@ public class GameData {
 
 				ef.setFaction("Enemy");
 				gameEntities.put("NPC"+i, ef);
+				ef.expAmount = 10;
 			}
 			//		gameEntities.add(efd);	
 			//		gameEntities.add(eff);	
@@ -328,7 +329,7 @@ public class GameData {
 	{
 		boolean success = SaveGame.save(this, file);
 		
-		this.systemMessages.add(new SystemMessage("Save Game successfully completed: "+success, Color.WHITE));
+		this.systemMessages.add(new SystemMessage("Save Game successfully completed: "+success, Color.WHITE, 10000));
 		
 		return success;
 	}
@@ -341,7 +342,7 @@ public class GameData {
 		if (success)
 			saveFile = file;
 		
-		this.systemMessages.add(new SystemMessage("Load Game successfully completed: "+success, Color.WHITE));
+		this.systemMessages.add(new SystemMessage("Load Game successfully completed: "+success, Color.WHITE, 10000));
 		
 		return success;
 	}
@@ -350,7 +351,7 @@ public class GameData {
 	{
 		boolean success = SaveGame.loadLevel(levelName, this);
 		
-		this.systemMessages.add(new SystemMessage("Load Level successfully completed: "+success, Color.WHITE));
+		this.systemMessages.add(new SystemMessage("Load Level successfully completed: "+success, Color.WHITE, 10000));
 		
 		return success;
 	}

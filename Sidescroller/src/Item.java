@@ -51,7 +51,7 @@ public class Item extends Entity {
 	}
 	
 
-	public void move()
+	protected void move()
 	{	
 		velocity[1] += 2;
 		
@@ -79,7 +79,7 @@ public class Item extends Entity {
 		if (tr.intersects(pr))
 		{
 			Character.addItem(this);
-			Main.gamedata.systemMessages.add(new SystemMessage("Picked up a "+this.getName()+"!", Color.YELLOW));
+			Main.gamedata.systemMessages.add(new SystemMessage("Picked up a "+this.getName()+"!", Color.YELLOW, 10000));
 			alive = false;
 		}
 	}

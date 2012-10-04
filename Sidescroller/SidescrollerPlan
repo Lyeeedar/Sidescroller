@@ -1,45 +1,19 @@
 Stuff to be done:
 
 Code:
+
 Character Menu
-Gender Switching
+drop list in editor
+exp in editor
 Spell unlock code
-
-Graphics:
-4 new attack anims
-male spritesheet
-HUD
-new spells for each element
-
+confirm menu option
+fixed scene changing
+dialogues play animations
+tested serialized save games + levels on both linux and windows
 
 
 ------------------------------------------------
 
-
-Style menus like a spell book.
-
-skill menu = 
-
-		o				|		O
-	o		o			|		|	\
-	o		o			|		O	O
-						|		|	/
-F	A	E	W			|		O
-	D	L				|		/	\
-
-Attack types:
-
-Punch
-Kick
-Shout
-stomp
-spin flip
-
-Character
-
-4 elements, 5 skills for each, mapped to 1-5 (or user set)
-Can change gender as usual
-Level-up allows upgrading of skills. 1 skill point a level? Different skill effects at higher levels.
 
 Scenes
 

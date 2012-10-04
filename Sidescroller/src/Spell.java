@@ -278,6 +278,12 @@ class Spell extends Entity
 	
 	public int[] findGround(int[] npos, int width)
 	{
+		if (npos[0] < 0)
+			npos[0] = 0;
+		
+		if (npos[0] > Main.gamedata.collisionMap.length-1-width)
+			npos[0] = Main.gamedata.collisionMap.length-1-width;
+		
 		boolean ground = Main.gamedata.collisionMap[npos[0]][npos[1]];
 		
 		while (!ground)

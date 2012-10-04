@@ -12,8 +12,9 @@ public class SystemMessage {
 	
 	public static final float step = (float) 0.1275;
 	
-	public SystemMessage(String message, Color colour)
+	public SystemMessage(String message, Color colour, int aliveTime)
 	{
+		this.aliveTime = aliveTime;
 		this.message = message;
 		this.colour = colour;
 	}

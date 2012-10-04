@@ -452,10 +452,18 @@ public class MainFrame extends JFrame implements KeyListener{
 				g2d.setColor(Color.RED);
 
 				g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
-
-				if (e.alerted)
+//
+//				if (e.alerted)
+//				{
+//					g2d.drawString("!", e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-30);
+//				}
+				
+				for (SystemMessage sysM : e.getInfoText())
 				{
-					g2d.drawString("!", e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-30);
+					int yPos = (3000 - sysM.aliveTime)/100;
+					g2d.setColor(sysM.colour);
+					
+					g2d.drawString(sysM.message, e.getPos()[0]-MainFrame.screenPosition[0]+e.getCollisionShape()[0], e.getPos()[1]-MainFrame.screenPosition[1]+e.getCollisionShape()[1]-yPos);
 				}
 				
 				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))

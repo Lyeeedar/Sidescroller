@@ -29,6 +29,11 @@ public class Character {
 	
 	public static long[] spellCooldown = new long[5];
 	
+	public static void addEXP(int amount)
+	{
+		
+	}
+	
 	public static void updateTime(long elapsedTime)
 	{
 		timePlayed += elapsedTime;

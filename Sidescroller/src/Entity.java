@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -190,11 +189,15 @@ public class Entity implements Serializable{
 	protected Spell spellToCast = null;
 	protected int castSpellAt = 0;
 	protected int[] castSpellOffset;
+	protected int castSpellIndex;
 
 	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
 	protected int speed;
+	
+	protected int expAmount = 0;
 
+	protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
 	/**
 	 * @param animateTime
 	 * @param totalAnimateStrip
@@ -373,7 +376,7 @@ public class Entity implements Serializable{
 
 			castSpellOffset = pos;
 
-			Character.spellCooldown[0] = s.spellCDTime;
+			castSpellIndex = 0;
 
 			spellToCast = s;
 			castSpellAt = 5;
@@ -403,7 +406,7 @@ public class Entity implements Serializable{
 
 			castSpellOffset = pos;
 
-			Character.spellCooldown[1] = s.spellCDTime;
+			castSpellIndex = 1;
 
 			spellToCast = s;
 			castSpellAt = 5;
@@ -433,7 +436,7 @@ public class Entity implements Serializable{
 
 			castSpellOffset = pos;
 
-			Character.spellCooldown[2] = s.spellCDTime;
+			castSpellIndex = 2;
 
 			spellToCast = s;
 			castSpellAt = 5;
@@ -463,7 +466,7 @@ public class Entity implements Serializable{
 
 			castSpellOffset = pos;
 
-			Character.spellCooldown[3] = s.spellCDTime;
+			castSpellIndex = 3;
 
 			spellToCast = s;
 			castSpellAt = 5;
@@ -493,7 +496,7 @@ public class Entity implements Serializable{
 
 			castSpellOffset = pos;
 
-			Character.spellCooldown[4] = s.spellCDTime;
+			castSpellIndex = 4;
 
 			spellToCast = s;
 			castSpellAt = 5;
@@ -561,7 +564,7 @@ public class Entity implements Serializable{
 			int x = val;
 			int y = 0;
 
-			for (int i = 1; i <= val-1; i++)
+			for (int i = 1; i <= val-2; i++)
 			{
 				x = val-i;
 				y = i;
@@ -674,8 +677,7 @@ public class Entity implements Serializable{
 			if ((Math.abs(pos[0] - lastTargetPos[0]) < 50) &&
 					(Math.abs(pos[1] - lastTargetPos[1]) < 50))
 			{
-				if ((Math.abs(pos[0] - lastTargetPos[0]) < 10) &&
-						(Math.abs(pos[1] - lastTargetPos[1]) < 10))
+				if (Math.abs(pos[0] - lastTargetPos[0]) < 50)
 				{
 					alerted = false;
 				}
@@ -702,11 +704,11 @@ public class Entity implements Serializable{
 		{
 			if (pos[2] == 0)
 			{
-				velocity[0] = -(speed-1);
+				velocity[0] = -(speed);
 			}
 			else
 			{
-				velocity[0] = (speed-1);
+				velocity[0] = (speed);
 			}
 
 			newAnimStrip = 1;
@@ -729,30 +731,20 @@ public class Entity implements Serializable{
 			
 		}
 		
-		for (int i = 0; i < 8; i++)
+		String s = enemyRayCast();
+
+		if ((s != null) && (s != this.getName()))
 		{
-			int x;
-			int y = this.getPos()[1] + 100 - (25*i);
-			if (pos[2] == 0)
+			Entity e = Main.gamedata.getGameEntities().get(s);
+			if (e != null)
 			{
-				x = this.getPos()[0] - 400;
+				alerted = true;
+				lastTargetPos = e.getPos();
 			}
-			else
-			{
-				x = this.getPos()[0] + 400;
-			}
-
-			String s = rayCast(new int[]{x, y});
-
-			if ((s != null) && (s != this.getName()))
-			{
-				Entity e = Main.gamedata.getGameEntities().get(s);
-				if (e != null)
-				{
-					alerted = true;
-					lastTargetPos = e.getPos();
-				}
-			}
+		}
+		else
+		{
+			alerted = false;
 		}
 
 	}
@@ -809,61 +801,82 @@ public class Entity implements Serializable{
 	{
 		velocity[0] = 0;
 	}
-
-	public String rayCast(int[] targetpos)
+	
+	public String enemyRayCast()
 	{
-		for (int[] point : BresenhamsLineAlgorithm(pos[0]+collisionShape[0], pos[1]+collisionShape[1], targetpos[0], targetpos[1]))
+		int totDist = 250*250;
+		
+		ArrayList<Entity> rayEntities = new ArrayList<Entity>();
+		
+		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
-			if ((point[0] < 0) || (point[0] > GameData.levelSize[0])
-					|| (point[1] < 0) || (point[1] > GameData.levelSize[1]))
+			Entity e = entry.getValue();
+			
+			if ((!e.getFaction().equals("")) && (!e.getFaction().equals(faction)) && (!e.getName().equals(name)) && (!e.isPassable()))
 			{
-				return this.getName();
-			}
-			else if (Main.gamedata.collisionMap[point[0]][point[1]])
-			{
-				return this.getName();
-			}
-
-			for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
-			{
-				Entity e = entry.getValue();
-				
-				if (e.isPassable())
+				if (pos[2] == 0)
 				{
-					continue;
+					if (e.getPos()[0] < pos[0])
+					{
+						if (((e.getPos()[0]-pos[0])*(e.getPos()[0]-pos[0]))+((e.getPos()[1]-pos[1])*(e.getPos()[1]-pos[1])) < totDist)
+						{
+							rayEntities.add(e);
+						}
+					}
 				}
-				
-				if(e.getFaction().equals(""))
+				else
 				{
-					continue;
-				}
-				
-				if (e.getFaction().equals(this.getFaction()))
-				{
-					continue;
-				}
-				
-				if (e instanceof Item)
-				{
-					continue;
-				}
-
-				Rectangle r = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
-						e.getCollisionShape()[2], e.getCollisionShape()[3]);
-
-				Point p = new Point(point[0], point[1]);
-
-				if (r.contains(p))
-				{
-					return e.getName();
+					if (e.getPos()[0] > pos[0])
+					{
+						if (((e.getPos()[0]-pos[0])*(e.getPos()[0]-pos[0]))+((e.getPos()[1]-pos[1])*(e.getPos()[1]-pos[1])) < totDist)
+						{
+							rayEntities.add(e);
+						}
+					}
 				}
 			}
+		}
+		
+		String s = null;
+		
+		int minDist = totDist;
+		
+		for (Entity e : rayEntities)
+		{
+			if (rayCast(e.getPos()))
+			{
+				if (((e.getPos()[0]-pos[0])*(e.getPos()[0]-pos[0]))+((e.getPos()[1]-pos[1])*(e.getPos()[1]-pos[1])) < minDist)
+				{
+					s = e.getName();
+					minDist = ((e.getPos()[0]-pos[0])*(e.getPos()[0]-pos[0]))+((e.getPos()[1]-pos[1])*(e.getPos()[1]-pos[1]));
+				}
+			}
+		}
+		
+		return s;
+	}
 
+	public boolean rayCast(int[] targetpos)
+	{
+		ArrayList<int[]> pointList = BresenhamsLineAlgorithm(pos[0]+collisionShape[0], pos[1]+collisionShape[1], targetpos[0], targetpos[1]);
+		
+		for (int[] point : pointList)
+		{
+			if ((point[0] < 0) || (point[0] > Main.gamedata.collisionMap.length)
+					|| (point[1] < 0) || (point[1] > Main.gamedata.collisionMap[0].length))
+			{
+				return false;
+			}
+			
+			if (Main.gamedata.collisionMap[point[0]][point[1]])
+			{
+				return false;
+			}
 
 		}
 
 
-		return null;
+		return true;
 	}
 
 	public ArrayList<int[]> BresenhamsLineAlgorithm(int x0,int y0,int x1, int y1) {
@@ -920,10 +933,10 @@ public class Entity implements Serializable{
 		if (s != null)
 			return s;
 
-		// Check the collision box for this entity to see if any of the level is inside it (any non-transparent pixels)
+		// Check base
 		for (int nx = x; nx < x+collisionShape[2]; nx++)
 		{
-			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
+			for (int ny = y+collisionShape[3]-1; ny >= y+collisionShape[3]-4; ny--)
 			{
 				if (nx >= Main.gamedata.getCollisionMap().length)
 					return this.getName();
@@ -931,6 +944,58 @@ public class Entity implements Serializable{
 					return this.getName();
 			}
 		}
+		
+		// Check top
+		for (int nx = x; nx < x+collisionShape[2]; nx++)
+		{
+			for (int ny = y; ny < y+3; ny++)
+			{
+				if (nx >= Main.gamedata.getCollisionMap().length)
+					return this.getName();
+				else if (Main.gamedata.getCollisionMap()[nx][ny])
+					return this.getName();
+			}
+		}
+		
+		//Check side
+		if (this.pos[2] == 0)
+		{
+			for (int nx = x; nx < x+3; nx++)
+			{
+				for (int ny = y; ny < y+collisionShape[3]; ny++)
+				{
+					if (nx >= Main.gamedata.getCollisionMap().length)
+						return this.getName();
+					else if (Main.gamedata.getCollisionMap()[nx][ny])
+						return this.getName();
+				}
+			}
+		}
+		else
+		{
+			for (int nx = x+collisionShape[2]; nx > x+collisionShape[2]-4; nx--)
+			{
+				for (int ny = y; ny < y+collisionShape[3]; ny++)
+				{
+					if (nx >= Main.gamedata.getCollisionMap().length)
+						return this.getName();
+					else if (Main.gamedata.getCollisionMap()[nx][ny])
+						return this.getName();
+				}
+			}
+		}
+		
+//		// Check the collision box for this entity to see if any of the level is inside it (any non-transparent pixels)
+//		for (int nx = x; nx < x+collisionShape[2]; nx++)
+//		{
+//			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
+//			{
+//				if (nx >= Main.gamedata.getCollisionMap().length)
+//					return this.getName();
+//				else if (Main.gamedata.getCollisionMap()[nx][ny])
+//					return this.getName();
+//			}
+//		}
 
 		return null;
 	}
@@ -1001,6 +1066,17 @@ public class Entity implements Serializable{
 	{
 		this.spellCD -= time;
 		animate(time);
+		
+		ArrayList<SystemMessage> newInfoText = new ArrayList<SystemMessage>();
+		for (SystemMessage sysM : infoText)
+		{
+			sysM.aliveTime -= time;
+			if (sysM.aliveTime > 0)
+			{
+				newInfoText.add(sysM);
+			}
+		}
+		infoText = newInfoText;
 	}
 
 	/**
@@ -1041,6 +1117,9 @@ public class Entity implements Serializable{
 						}
 
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
+						
+						if (name.equals("Player"))
+							Character.spellCooldown[castSpellIndex] = spellToCast.spellCDTime;
 						
 						spellToCast = null;
 					}
@@ -1156,6 +1235,8 @@ public class Entity implements Serializable{
 
 		health -= amount;
 
+		infoText.add(new SystemMessage("-"+amount, Color.RED, 3000));
+		
 		if (health <= 0)
 		{
 			death();
@@ -1168,7 +1249,7 @@ public class Entity implements Serializable{
 	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
 	public void death()
 	{
-		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN));
+		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN, 10000));
 
 		for (Map.Entry<String, Integer> entry : dropList.entrySet())
 		{
@@ -1177,6 +1258,16 @@ public class Entity implements Serializable{
 				Main.gamedata.getGameEntities().put(entry.getKey()+System.currentTimeMillis(), ItemList.getItem(entry.getKey(), new int[]{pos[0], pos[1], pos[2]}, 1));
 			}
 			
+		}
+		
+		int orbExp = this.expAmount/5;
+		
+		if (orbExp > 0)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				Main.gamedata.getGameEntities().put("EXP"+System.currentTimeMillis()+i, new EXPOrb(new int[]{pos[0], pos[1], pos[2]}, orbExp));
+			}
 		}
 	}
 
@@ -1730,6 +1821,166 @@ public class Entity implements Serializable{
 	 */
 	public void setMaxHealth(double maxHealth) {
 		this.maxHealth = maxHealth;
+	}
+
+	/**
+	 * Returns {@link Entity#animStages}
+	 * @return the animStages
+	 */
+	public int getAnimStages() {
+		return animStages;
+	}
+
+	/**
+	 * Sets {@link Entity#animStages}
+	 * @param animStages the animStages to set
+	 */
+	public void setAnimStages(int animStages) {
+		this.animStages = animStages;
+	}
+
+	/**
+	 * Returns {@link Entity#newAnimStage}
+	 * @return the newAnimStage
+	 */
+	public int getNewAnimStage() {
+		return newAnimStage;
+	}
+
+	/**
+	 * Sets {@link Entity#newAnimStage}
+	 * @param newAnimStage the newAnimStage to set
+	 */
+	public void setNewAnimStage(int newAnimStage) {
+		this.newAnimStage = newAnimStage;
+	}
+
+	/**
+	 * Returns {@link Entity#castSpellOffset}
+	 * @return the castSpellOffset
+	 */
+	public int[] getCastSpellOffset() {
+		return castSpellOffset;
+	}
+
+	/**
+	 * Sets {@link Entity#castSpellOffset}
+	 * @param castSpellOffset the castSpellOffset to set
+	 */
+	public void setCastSpellOffset(int[] castSpellOffset) {
+		this.castSpellOffset = castSpellOffset;
+	}
+
+	/**
+	 * Returns {@link Entity#castSpellIndex}
+	 * @return the castSpellIndex
+	 */
+	public int getCastSpellIndex() {
+		return castSpellIndex;
+	}
+
+	/**
+	 * Sets {@link Entity#castSpellIndex}
+	 * @param castSpellIndex the castSpellIndex to set
+	 */
+	public void setCastSpellIndex(int castSpellIndex) {
+		this.castSpellIndex = castSpellIndex;
+	}
+
+	/**
+	 * Returns {@link Entity#dropList}
+	 * @return the dropList
+	 */
+	public HashMap<String, Integer> getDropList() {
+		return dropList;
+	}
+
+	/**
+	 * Sets {@link Entity#dropList}
+	 * @param dropList the dropList to set
+	 */
+	public void setDropList(HashMap<String, Integer> dropList) {
+		this.dropList = dropList;
+	}
+
+	/**
+	 * Returns {@link Entity#speed}
+	 * @return the speed
+	 */
+	public int getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * Sets {@link Entity#speed}
+	 * @param speed the speed to set
+	 */
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	/**
+	 * Returns {@link Entity#infoText}
+	 * @return the infoText
+	 */
+	public ArrayList<SystemMessage> getInfoText() {
+		return infoText;
+	}
+
+	/**
+	 * Sets {@link Entity#infoText}
+	 * @param infoText the infoText to set
+	 */
+	public void setInfoText(ArrayList<SystemMessage> infoText) {
+		this.infoText = infoText;
+	}
+
+	/**
+	 * Returns {@link Entity#alerted}
+	 * @return the alerted
+	 */
+	public boolean isAlerted() {
+		return alerted;
+	}
+
+	/**
+	 * Sets {@link Entity#alerted}
+	 * @param alerted the alerted to set
+	 */
+	public void setAlerted(boolean alerted) {
+		this.alerted = alerted;
+	}
+
+	/**
+	 * Returns {@link Entity#patrolDistance}
+	 * @return the patrolDistance
+	 */
+	public int getPatrolDistance() {
+		return patrolDistance;
+	}
+
+	/**
+	 * Sets {@link Entity#patrolDistance}
+	 * @param patrolDistance the patrolDistance to set
+	 */
+	public void setPatrolDistance(int patrolDistance) {
+		this.patrolDistance = patrolDistance;
+	}
+
+	/**
+	 * Returns {@link Entity#lastTargetPos}
+	 * @return the lastTargetPos
+	 */
+	public int[] getLastTargetPos() {
+		return lastTargetPos;
+	}
+
+	/**
+	 * Sets {@link Entity#lastTargetPos}
+	 * @param lastTargetPos the lastTargetPos to set
+	 */
+	public void setLastTargetPos(int[] lastTargetPos) {
+		this.lastTargetPos = lastTargetPos;
 	}
 
 }
