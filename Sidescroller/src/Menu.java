@@ -96,7 +96,7 @@ abstract class MenuScreen
 	public MenuScreen(Menu menu)
 	{
 		this.menu = menu;
-		
+
 		backImage = GameData.getImage("Data/Resources/GUI/Spellbook.png");
 	}
 
@@ -120,7 +120,7 @@ abstract class MenuScreen
 class GameMenu extends MenuScreen
 {
 	BufferedImage[] images = new BufferedImage[3];
-	
+
 	/**
 	 * @param menu
 	 */
@@ -138,10 +138,10 @@ class GameMenu extends MenuScreen
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
-		
+
 		g2d.drawImage(images[0], 0, 0, null);
 	}
-	
+
 	protected void drawLeft(Graphics2D g2d)
 	{
 		//110 , 65
@@ -332,7 +332,7 @@ class SpellMenu extends MenuScreen
 		super.drawBackground(g2d);
 		g2d.drawImage(images[2], 0, 0, null);
 	}
-	
+
 	boolean treeSelected = false;
 	int selectedIndex = 0;
 
@@ -342,20 +342,20 @@ class SpellMenu extends MenuScreen
 	String element = "Fire";
 
 	final int[] size = {240, 302};
-	
+
 	final String[] sockets = {"Shout", "Punch", "Strike", "Kick", "Stomp"};
 
 	private BufferedImage getSpellTreeImage(ArrayList<SpellsStage> spells, int stage, int selected)
 	{
 		BufferedImage im = new BufferedImage(1000, 100+(spells.size()*100), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
-		
+
 		g2d.setColor(Color.BLACK);
-		
+
 		for (int i = 0; i < spells.size(); i++)
 		{
 			SpellsStage ss = spells.get(i);
-			
+
 			for (int ii = 0; ii < ss.spells.size(); ii++)
 			{
 				SpellsStageEntry sse = ss.spells.get(ii);
@@ -370,7 +370,7 @@ class SpellMenu extends MenuScreen
 						g2d.drawImage(images[0], sse.pos[0]-15, sse.pos[1]-15, null);
 					}
 				}
-				
+
 				if (sse.unlocked == 3)
 				{
 					g2d.drawImage(sse.images[1], sse.pos[0]-15, sse.pos[1]-15, null);
@@ -383,22 +383,22 @@ class SpellMenu extends MenuScreen
 				{
 					continue;
 				}
-				
+
 				for (String p : sse.parents)
 				{
 					SpellsStageEntry parent = spells.get(i-1).getSpellStageEntry(p);
-					
+
 					g2d.drawLine(sse.pos[0], sse.pos[1], parent.pos[0], parent.pos[1]);
 				}
 			}
 		}
 
 		g2d.dispose();
-		
-		
+
+
 		return im;
 	}
-	
+
 	protected void drawRight(Graphics2D g2d)
 	{
 		BufferedImage im = getSpellTreeImage(Character.getSpell(element), spellStage, spellIndex);
@@ -499,11 +499,11 @@ class SpellMenu extends MenuScreen
 		{
 			g2d.drawImage(images[0], 175, 60, null);
 		}
-		
+
 		SpellsStageEntry sse = null;
-		
+
 		sse = Character.socketedSpells[0];
-		
+
 		if (sse.unlocked == 3)
 		{
 			g2d.drawImage(sse.images[1], 175, 60, null);
@@ -530,9 +530,9 @@ class SpellMenu extends MenuScreen
 		{
 			g2d.drawImage(images[0], 125, 140, null);
 		}
-		
+
 		sse = Character.socketedSpells[1];
-		
+
 		if (sse.unlocked == 3)
 		{
 			g2d.drawImage(sse.images[1], 125, 140, null);
@@ -541,7 +541,7 @@ class SpellMenu extends MenuScreen
 		{
 			g2d.drawImage(sse.images[0], 125, 140,null);
 		}
-			
+
 		if (selectedIndex == 2)
 		{
 			g2d.drawImage(images[1], 218, 133, null);
@@ -551,7 +551,7 @@ class SpellMenu extends MenuScreen
 			g2d.drawImage(images[0], 225, 140, null);
 		}
 		sse = Character.socketedSpells[2];
-		
+
 		if (sse.unlocked == 3)
 		{
 			g2d.drawImage(sse.images[1], 225, 140, null);
@@ -571,7 +571,7 @@ class SpellMenu extends MenuScreen
 			g2d.drawImage(images[0], 125, 260, null);
 		}
 		sse = Character.socketedSpells[3];
-		
+
 		if (sse.unlocked == 3)
 		{
 			g2d.drawImage(sse.images[1], 125, 260, null);
@@ -591,7 +591,7 @@ class SpellMenu extends MenuScreen
 			g2d.drawImage(images[0], 225, 260, null);
 		}
 		sse = Character.socketedSpells[4];
-		
+
 		if (sse.unlocked == 3)
 		{
 			g2d.drawImage(sse.images[1], 225, 260, null);
@@ -745,7 +745,7 @@ class SpellMenu extends MenuScreen
 			}
 			else if (MainFrame.left)
 			{
-				
+
 				if (selectedIndex == 12)
 				{
 					selectedIndex = 4;
@@ -754,7 +754,7 @@ class SpellMenu extends MenuScreen
 				{
 					selectedIndex--;
 				}
-					
+
 				MainFrame.left = false;
 			}
 			else if (MainFrame.right)
@@ -776,7 +776,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Fire"))
 					{
-						
+
 					}
 					else
 					{
@@ -789,7 +789,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Air"))
 					{
-						
+
 					}
 					else
 					{
@@ -802,7 +802,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Earth"))
 					{
-						
+
 					}
 					else
 					{
@@ -815,7 +815,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Water"))
 					{
-						
+
 					}
 					else
 					{
@@ -828,7 +828,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Death"))
 					{
-						
+
 					}
 					else
 					{
@@ -841,7 +841,7 @@ class SpellMenu extends MenuScreen
 				{
 					if (element.equals("Life"))
 					{
-						
+
 					}
 					else
 					{
@@ -946,7 +946,7 @@ class SpellMenu extends MenuScreen
 					{
 						newIndex = Character.getSpell(element).get(newStage).spells.size()-1;
 					}
-					
+
 					if (newIndex < 0)
 					{
 						return;
@@ -1063,12 +1063,7 @@ class SpellMenu extends MenuScreen
 
 				MainFrame.right = false;
 			}
-			else if (MainFrame.enter)
-			{
-				treeSelected = false;
 
-				MainFrame.enter = false;
-			}
 			if (Character.getSpell(element).get(spellStage).spells.get(spellIndex).unlocked > 1)
 			{
 				if (MainFrame.key1)
@@ -1136,33 +1131,33 @@ class SaveMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
-	
+
 	public SaveMenu(Menu menu) {
 		super(menu);
 
 		File directory = new File("Data/Saves");
 		files = directory.listFiles();
 		Arrays.sort(files, new Comparator<File>(){
-		    public int compare(File f1, File f2)
-		    {
-		        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-		    } });
-		
+			public int compare(File f1, File f2)
+			{
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			} });
+
 		saves = new SaveGame[files.length];
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			saves[i] = loadFile(files[i]);
 		}
-		
+
 		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesText.png");
 	}
-	
+
 	@Override
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
-		
+
 		g2d.drawImage(images[0], 0, 0, null);
 	}
 
@@ -1174,25 +1169,25 @@ class SaveMenu extends MenuScreen
 		if (MainFrame.up)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.up = false;
 		}
 		else if (MainFrame.down)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.down = false;
 		}
 		else if (MainFrame.left)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.left = false;
 		}
 		else if (MainFrame.right)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.right = false;
 		}
 		else if (MainFrame.esc)
@@ -1217,10 +1212,10 @@ class SaveMenu extends MenuScreen
 			{
 				menu.changeMenu("Game");
 			}
-			
+
 			MainFrame.enter = false;
 		}
-		
+
 		if (selectedIndex < 0)
 		{
 			selectedIndex = 0;
@@ -1230,11 +1225,11 @@ class SaveMenu extends MenuScreen
 			selectedIndex = files.length+1;
 		}
 	}
-	
+
 	public SaveGame loadFile(File file)
 	{
 		SaveGame save = null;
-		
+
 		try{
 			FileInputStream fin = new FileInputStream(file);
 			ObjectInputStream oin = new ObjectInputStream(fin);
@@ -1246,7 +1241,7 @@ class SaveMenu extends MenuScreen
 		{
 			e.printStackTrace();
 		}
-		
+
 		return save;
 	}
 
@@ -1259,14 +1254,14 @@ class SaveMenu extends MenuScreen
 		{
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-	        calendar.setTimeInMillis(files[selectedIndex].lastModified());
-	        
-	        String timePlayed = String.format("%d min, %d sec", 
-	        	    TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-	        	    TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-	        	    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
-	        	);
-			
+			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+
+			String timePlayed = String.format("%d min, %d sec", 
+					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					);
+
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
 			g2d.drawString(files[selectedIndex].getName(), 200, 190);
@@ -1277,7 +1272,7 @@ class SaveMenu extends MenuScreen
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -1285,16 +1280,16 @@ class SaveMenu extends MenuScreen
 	 */
 	@Override
 	protected void drawRight(Graphics2D g2d) {
-		
+
 		int filePos = selectedIndex;
-		
+
 		if (filePos >= files.length)
 		{
 			filePos = files.length-1;
 		}
 
 		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
-		
+
 		if (selectedIndex == files.length)
 		{
 			g2d.setColor(Color.BLUE);
@@ -1303,9 +1298,9 @@ class SaveMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
+
 		g2d.drawString("New Save", 495, 545);
-		
+
 		if (selectedIndex == files.length+1)
 		{
 			g2d.setColor(Color.BLUE);
@@ -1314,15 +1309,15 @@ class SaveMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
+
 		g2d.drawString("Back", 610, 545);
 	}
-	
+
 	private BufferedImage getImage()
 	{
 		BufferedImage im = new BufferedImage(195, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			if (selectedIndex == i)
@@ -1333,15 +1328,15 @@ class SaveMenu extends MenuScreen
 			{
 				g2d.setColor(Color.BLACK);
 			}
-			
+
 			g2d.drawString(files[i].getName(), 15, 30+(i*20));
 		}
-		
+
 		g2d.dispose();
-		
+
 		return im;
 	}
-	
+
 }
 
 class LoadMenu extends MenuScreen
@@ -1351,32 +1346,32 @@ class LoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
-	
+
 	public LoadMenu(Menu menu) {
 		super(menu);
 
 		File directory = new File("Data/Saves");
 		files = directory.listFiles();
 		Arrays.sort(files, new Comparator<File>(){
-		    public int compare(File f1, File f2)
-		    {
-		        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-		    } });
-		
+			public int compare(File f1, File f2)
+			{
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			} });
+
 		saves = new SaveGame[files.length];
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			saves[i] = loadFile(files[i]);
 		}
 		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
 	}
-	
+
 	@Override
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
-		
+
 		g2d.drawImage(images[0], 0, 0, null);
 	}
 	/* (non-Javadoc)
@@ -1387,25 +1382,25 @@ class LoadMenu extends MenuScreen
 		if (MainFrame.up)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.up = false;
 		}
 		else if (MainFrame.down)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.down = false;
 		}
 		else if (MainFrame.left)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.left = false;
 		}
 		else if (MainFrame.right)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.right = false;
 		}
 		else if (MainFrame.esc)
@@ -1424,10 +1419,10 @@ class LoadMenu extends MenuScreen
 			{
 				menu.changeMenu("Game");
 			}
-			
+
 			MainFrame.enter = false;
 		}
-		
+
 		if (selectedIndex < 0)
 		{
 			selectedIndex = 0;
@@ -1437,11 +1432,11 @@ class LoadMenu extends MenuScreen
 			selectedIndex = files.length;
 		}
 	}
-	
+
 	public SaveGame loadFile(File file)
 	{
 		SaveGame save = null;
-		
+
 		try{
 			FileInputStream fin = new FileInputStream(file);
 			ObjectInputStream oin = new ObjectInputStream(fin);
@@ -1453,7 +1448,7 @@ class LoadMenu extends MenuScreen
 		{
 			e.printStackTrace();
 		}
-		
+
 		return save;
 	}
 
@@ -1466,15 +1461,15 @@ class LoadMenu extends MenuScreen
 		{
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-	        calendar.setTimeInMillis(files[selectedIndex].lastModified());
-	        
-	        String timePlayed = String.format("%d min, %d sec", 
-	        	    TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-	        	    TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-	        	    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
-	        	);
-			
-	        g2d.setColor(Color.BLACK);
+			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+
+			String timePlayed = String.format("%d min, %d sec", 
+					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					);
+
+			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
 			g2d.drawString(files[selectedIndex].getName(), 200, 190);
 			g2d.drawString("Last Saved:", 70, 210);
@@ -1484,7 +1479,7 @@ class LoadMenu extends MenuScreen
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -1494,15 +1489,15 @@ class LoadMenu extends MenuScreen
 	protected void drawRight(Graphics2D g2d) {
 
 		int filePos = selectedIndex;
-		
+
 		if (filePos >= files.length)
 		{
 			filePos = files.length-1;
 		}
 
 		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
-		
-		
+
+
 		if (selectedIndex == files.length)
 		{
 			g2d.setColor(Color.BLUE);
@@ -1511,15 +1506,15 @@ class LoadMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
+
 		g2d.drawString("Back", 610, 545);
 	}
-	
+
 	private BufferedImage getImage()
 	{
 		BufferedImage im = new BufferedImage(270, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			if (selectedIndex == i)
@@ -1530,15 +1525,15 @@ class LoadMenu extends MenuScreen
 			{
 				g2d.setColor(Color.BLACK);
 			}
-			
+
 			g2d.drawString(files[i].getName(), 15, 30+(i*20));
 		}
-		
+
 		g2d.dispose();
-		
+
 		return im;
 	}
-	
+
 }
 
 
@@ -1547,17 +1542,75 @@ class CharacterMenu extends MenuScreen
 
 	int selectedIndex = 0;
 	int selectedType = 2;
-	int selectedItem = 0;
+	//	int selectedItem = 0;
 	boolean itemSelected = false;
-	
+	int itemIndex = 0;
+
+	ArrayList<Sigil> sigils = new ArrayList<Sigil>();
+	ArrayList<Item> scrolls = new ArrayList<Item>();
+	ArrayList<Item> misc = new ArrayList<Item>();
+
+	ArrayList<Sigil> fire = new ArrayList<Sigil>();
+	ArrayList<Sigil> air = new ArrayList<Sigil>();
+	ArrayList<Sigil> earth = new ArrayList<Sigil>();
+	ArrayList<Sigil> water = new ArrayList<Sigil>();
+	ArrayList<Sigil> death = new ArrayList<Sigil>();
+	ArrayList<Sigil> life = new ArrayList<Sigil>();
+
 	BufferedImage[] images = new BufferedImage[3];
-	
+
 	public CharacterMenu(Menu menu) {
 		super(menu);
 
 		images[0] = GameData.getImage("Data/Resources/GUI/spellbookCharText.png");
 		images[1] = GameData.getImage("Data/Resources/GUI/spellbookCharItems.png");
 		images[2] = GameData.getImage("Data/Resources/GUI/spellbookCharItemsSelected.png");
+
+		for (Map.Entry<String, Item> entry : Character.inventory.get(selectedType).entrySet())
+		{
+			Item item = entry.getValue();
+
+			if (item.type == 0)
+			{
+				sigils.add((Sigil) item);
+			}
+			else if (item.type == 1)
+			{
+				scrolls.add(item);
+			}
+			else if (item.type == 2)
+			{
+				misc.add(item);
+			}
+		}
+
+		for (Sigil sigil : sigils)
+		{
+			if (sigil.element.equals("Fire"))
+			{
+				fire.add(sigil);
+			}
+			else if (sigil.element.equals("Air"))
+			{
+				air.add(sigil);
+			}
+			else if (sigil.element.equals("Earth"))
+			{
+				earth.add(sigil);
+			}
+			else if (sigil.element.equals("Water"))
+			{
+				water.add(sigil);
+			}
+			else if (sigil.element.equals("Death"))
+			{
+				death.add(sigil);
+			}
+			else if (sigil.element.equals("Life"))
+			{
+				life.add(sigil);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1567,40 +1620,115 @@ class CharacterMenu extends MenuScreen
 	void evaluateButtons() {
 		if (MainFrame.up)
 		{
-			selectedIndex--;
-			
+			if (itemSelected)
+			{
+				itemIndex--;
+			}
+			else
+			{
+				selectedIndex--;
+			}
+
 			MainFrame.up = false;
 		}
 		else if (MainFrame.down)
 		{
-			selectedIndex++;
-			
+			if (itemSelected)
+			{
+				itemIndex++;
+			}
+			else
+			{
+				selectedIndex++;
+			}
+
 			MainFrame.down = false;
 		}
 		else if (MainFrame.left)
 		{
-			selectedIndex--;
-			
+			if (itemSelected)
+			{
+				itemIndex--;
+			}
+			else
+			{
+				selectedIndex--;
+			}
+
 			MainFrame.left = false;
 		}
 		else if (MainFrame.right)
 		{
-			selectedIndex++;
-			
+			if (itemSelected)
+			{
+				itemIndex++;
+			}
+			else
+			{
+				selectedIndex++;
+			}
+
 			MainFrame.right = false;
 		}
 		else if (MainFrame.esc)
 		{
-			menu.changeMenu("Game");
+			if (itemSelected)
+			{
+				itemSelected = false;
+			}
+			else
+			{
+				menu.changeMenu("Game");
+			}
 			MainFrame.esc = false;
 		}
-		
+		else if (MainFrame.enter)
+		{
+			if (selectedIndex < 3)
+			{
+				selectedType = selectedIndex;
+				itemIndex = 0;
+			}
+			else if (selectedIndex == 3)
+			{
+				if (itemSelected)
+				{
+
+				}
+				else
+				{
+					itemSelected = true;
+				}
+			}
+
+			MainFrame.enter = false;
+		}
+
 		if (selectedIndex < 0)
 			selectedIndex = 0;
 		else if (selectedIndex > 3)
 			selectedIndex = 3;
+
+		if (itemIndex < 0)
+			itemIndex = 0;
+
+		if (selectedType == 0)
+		{
+			if (itemIndex > sigils.size()-1)
+				itemIndex = sigils.size()-1;
+		}
+		else if (selectedType == 1)
+		{
+			if (itemIndex > scrolls.size()-1)
+				itemIndex = scrolls.size()-1;
+		}
+		else if (selectedType == 2)
+		{
+			if (itemIndex > misc.size()-1)
+				itemIndex = misc.size()-1;
+		}
 	}
-	
+
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
@@ -1612,7 +1740,44 @@ class CharacterMenu extends MenuScreen
 	 */
 	@Override
 	protected void drawLeft(Graphics2D g2d) {
-		
+		//140 350
+
+		g2d.setColor(Color.BLACK);
+
+		Item item = null;
+
+		if (selectedType == 0)
+		{
+			if (sigils.size() > 0)
+				item = sigils.get(itemIndex);
+		}
+		else if (selectedType == 1)
+		{
+			if (scrolls.size() > 0)
+				item = scrolls.get(itemIndex);
+		}
+		else if (selectedType == 2)
+		{
+			if (misc.size() > 0)
+				item = misc.get(itemIndex);
+		}
+
+		if (item == null)
+			return;
+
+		int y = 350;
+
+		g2d.drawString(item.getName(), 120, y);
+
+		y += 25;
+
+		String[] desc = MainFrame.wrapText(item.description, 40);
+
+		for (int i = 0; i < desc.length; i++)
+		{
+			g2d.drawString(desc[i], 130, y);
+			y += 25;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1620,6 +1785,36 @@ class CharacterMenu extends MenuScreen
 	 */
 	@Override
 	protected void drawRight(Graphics2D g2d) {
+		if (selectedIndex == 0)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Sigil", 490, 100);
+
+		if (selectedIndex == 1)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Scrolls", 575, 100);
+
+		if (selectedIndex == 2)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Misc", 660, 100);
+
 		if (selectedIndex == 3)
 		{
 			if (itemSelected)
@@ -1631,44 +1826,188 @@ class CharacterMenu extends MenuScreen
 				g2d.drawImage(images[1], 0, 0, null);
 			}
 		}
-		
-		g2d.drawImage(getImage(), 520, 210, 663, 472, 0, -100+(selectedItem*20), 143, -100+(selectedItem*20)+262, null);
+
+		g2d.drawImage(getImage(), 520, 210, 663, 472, 0, -50+(itemIndex*20), 143, -50+(itemIndex*20)+262, null);
 	}
-	
+
 	private BufferedImage getImage()
 	{
-		BufferedImage im = new BufferedImage(143, 40+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(143, 240+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
-		
-		int i = 0;
-		for (Map.Entry<String, Item> entry : Character.inventory.get(selectedType).entrySet())
+
+		if (selectedType == 0)
 		{
-			Item item = entry.getValue();
+			int i = 0;
 			
-			if (i == selectedItem)
-			{
-				g2d.setColor(Color.BLUE);
-			}
-			else
-			{
-				g2d.setColor(Color.BLACK);
-			}
-			g2d.drawString(item.name, 10, 20+(i*20));
-			g2d.drawString(Integer.toString(item.number), 100, 20+(i*20));
-			
-			
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Fire Sigils", 5, 20+(i*20));
 			i++;
+			for (Sigil sigil : fire)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+			i++;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Air Sigils", 5, 20+(i*20));
+			i++;
+			for (Sigil sigil : air)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+			i++;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Earth Sigils", 5, 20+(i*20));
+			i++;
+			for (Sigil sigil : earth)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+			i++;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Water Sigils", 5, 20+(i*20));
+			i++;
+			for (Sigil sigil : water)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+			i++;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Death Sigils", 5, 20+(i*20));
+			i++;
+			for (Sigil sigil : death)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+			i++;
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("Life Sigils", 5, 20+(i*20));
+			i++;
+			for (Sigil sigil : life)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(sigil.name, 15, 20+(i*20));
+				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+
+
+				i++;
+			}
 		}
-		
+		else
+		{
+
+			ArrayList<Item> items = null;
+			
+			if (selectedType == 1)
+			{
+				items = scrolls;
+			}
+			else if (selectedType == 2)
+			{
+				items = misc;
+			}
+
+			int i = 0;
+			for (Item item : items)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(item.name, 10, 20+(i*20));
+				g2d.drawString(Integer.toString(item.number), 100, 20+(i*20));
+
+
+				i++;
+			}
+		}
+
 		return im;
 	}
-	
+
 }
 
 class MainMenu extends MenuScreen
 {
 	BufferedImage[] images = new BufferedImage[3];
-	
+
 	/**
 	 * @param menu
 	 */
@@ -1686,10 +2025,10 @@ class MainMenu extends MenuScreen
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
-		
+
 		g2d.drawImage(images[0], 0, 0, null);
 	}
-	
+
 	protected void drawLeft(Graphics2D g2d)
 	{
 		//110 , 65
@@ -1809,11 +2148,11 @@ class MainMenu extends MenuScreen
 				File directory = new File("Data/Saves");
 				File[] files = directory.listFiles();
 				Arrays.sort(files, new Comparator<File>(){
-				    public int compare(File f1, File f2)
-				    {
-				        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-				    } });
-				
+					public int compare(File f1, File f2)
+					{
+						return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+					} });
+
 				Main.gamedata.loadGame(files[0]);
 				Main.setState(1);
 			}
@@ -1863,32 +2202,32 @@ class MainLoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
-	
+
 	public MainLoadMenu(Menu menu) {
 		super(menu);
 
 		File directory = new File("Data/Saves");
 		files = directory.listFiles();
 		Arrays.sort(files, new Comparator<File>(){
-		    public int compare(File f1, File f2)
-		    {
-		        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-		    } });
-		
+			public int compare(File f1, File f2)
+			{
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			} });
+
 		saves = new SaveGame[files.length];
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			saves[i] = loadFile(files[i]);
 		}
 		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
 	}
-	
+
 	@Override
 	protected void drawBackground(Graphics2D g2d)
 	{
 		super.drawBackground(g2d);
-		
+
 		g2d.drawImage(images[0], 0, 0, null);
 	}
 	/* (non-Javadoc)
@@ -1899,25 +2238,25 @@ class MainLoadMenu extends MenuScreen
 		if (MainFrame.up)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.up = false;
 		}
 		else if (MainFrame.down)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.down = false;
 		}
 		else if (MainFrame.left)
 		{
 			selectedIndex--;
-			
+
 			MainFrame.left = false;
 		}
 		else if (MainFrame.right)
 		{
 			selectedIndex++;
-			
+
 			MainFrame.right = false;
 		}
 		else if (MainFrame.esc)
@@ -1936,10 +2275,10 @@ class MainLoadMenu extends MenuScreen
 			{
 				menu.changeMenu("Main");
 			}
-			
+
 			MainFrame.enter = false;
 		}
-		
+
 		if (selectedIndex < 0)
 		{
 			selectedIndex = 0;
@@ -1949,11 +2288,11 @@ class MainLoadMenu extends MenuScreen
 			selectedIndex = files.length;
 		}
 	}
-	
+
 	public SaveGame loadFile(File file)
 	{
 		SaveGame save = null;
-		
+
 		try{
 			FileInputStream fin = new FileInputStream(file);
 			ObjectInputStream oin = new ObjectInputStream(fin);
@@ -1965,7 +2304,7 @@ class MainLoadMenu extends MenuScreen
 		{
 			e.printStackTrace();
 		}
-		
+
 		return save;
 	}
 
@@ -1978,15 +2317,15 @@ class MainLoadMenu extends MenuScreen
 		{
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-	        calendar.setTimeInMillis(files[selectedIndex].lastModified());
-	        
-	        String timePlayed = String.format("%d min, %d sec", 
-	        	    TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-	        	    TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-	        	    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
-	        	);
-			
-	        g2d.setColor(Color.BLACK);
+			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+
+			String timePlayed = String.format("%d min, %d sec", 
+					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					);
+
+			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
 			g2d.drawString(files[selectedIndex].getName(), 200, 190);
 			g2d.drawString("Last Saved:", 70, 210);
@@ -1996,7 +2335,7 @@ class MainLoadMenu extends MenuScreen
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -2006,14 +2345,14 @@ class MainLoadMenu extends MenuScreen
 	protected void drawRight(Graphics2D g2d) {
 
 		int filePos = selectedIndex;
-		
+
 		if (filePos >= files.length)
 		{
 			filePos = files.length-1;
 		}
 
 		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
-		
+
 		if (selectedIndex == files.length)
 		{
 			g2d.setColor(Color.BLUE);
@@ -2022,15 +2361,15 @@ class MainLoadMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
+
 		g2d.drawString("Back", 610, 545);
 	}
-	
+
 	private BufferedImage getImage()
 	{
 		BufferedImage im = new BufferedImage(270, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			if (selectedIndex == i)
@@ -2041,13 +2380,13 @@ class MainLoadMenu extends MenuScreen
 			{
 				g2d.setColor(Color.BLACK);
 			}
-			
+
 			g2d.drawString(files[i].getName(), 15, 30+(i*20));
 		}
-		
+
 		g2d.dispose();
-		
+
 		return im;
 	}
-	
+
 }

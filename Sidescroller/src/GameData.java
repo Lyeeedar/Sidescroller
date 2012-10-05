@@ -106,7 +106,7 @@ public class GameData {
 	{	
 		Character.resetAll();
 		boolean a = true;
-		if (!a)
+		if (a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -122,6 +122,7 @@ public class GameData {
 				ef.setFaction("Enemy");
 				gameEntities.put("NPC"+i, ef);
 				ef.expAmount = 10;
+				ef.getDropList().put("Chest", 100);
 			}
 			//		gameEntities.add(efd);	
 			//		gameEntities.add(eff);	
@@ -186,7 +187,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadLevel("level1");
+			this.loadLevel("level2");
 		}
 
 	}
@@ -342,6 +343,7 @@ public class GameData {
 	public void saveGame(File file)
 	{
 		SaveGame.save(this, file);
+		System.gc();
 	}
 	
 	volatile int loadStage = 0;
@@ -360,6 +362,7 @@ public class GameData {
 				Main.setState(2);
 				SaveGame.loadGame(file, gd);
 				Main.setState(state);
+				System.gc();
 			}
 		}.start();	
 	}
@@ -377,6 +380,7 @@ public class GameData {
 				Main.setState(2);
 				SaveGame.loadLevel(levelName, gd);
 				Main.setState(state);
+				System.gc();
 			}
 		}.start();	
 		

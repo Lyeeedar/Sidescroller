@@ -18,6 +18,7 @@ public class Item extends Entity {
 	 * 2 = other
 	 */
 	int type = 0;
+	String description;
 	
 	/**
 	 * @param name
@@ -29,9 +30,10 @@ public class Item extends Entity {
 	 * @param behaviour
 	 * @param dialogue
 	 */
-	public Item(String name, String spriteFile, int[] pos, int number, int type) {
+	public Item(String name, String description, String spriteFile, int[] pos, int number, int type) {
 		super(name, 1, 1, 1, pos, 0, spriteFile, new int[]{0, 0, 10, 10}, null, null);
 		
+		this.description = description;
 		this.number = number;
 		this.passable = true;
 		this.animStages = 1;
