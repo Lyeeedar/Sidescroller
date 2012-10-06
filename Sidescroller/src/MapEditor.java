@@ -59,6 +59,10 @@ public class MapEditor {
 
 class EditorFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static MapPanel mapPanel = new MapPanel();
 	OptionsPanel optionsPanel = new OptionsPanel();
 	public static JScrollPane sp;
@@ -86,6 +90,10 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Entity controlled = null;
 
 	public MapPanel()
@@ -251,6 +259,11 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 
 class OptionsPanel extends JPanel
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public OptionsPanel()
 	{
 		this.add(new JLabel("Level Name"));
@@ -376,6 +389,10 @@ class OptionsPanel extends JPanel
 
 class BackgroundFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel panel = new JPanel();
 
 	public BackgroundFrame()
@@ -524,16 +541,23 @@ class BackgroundFrame extends JFrame
 
 class EntityFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel panel = new JPanel();
 	Entity e;
 	String spritefile;
 	JFrame frame = this;
 	boolean[] behavior;
 	Dialogue d;
+	HashMap<String, Integer> dropList;
 
 	public EntityFrame(Entity e)
 	{
 		this.e = e;
+		
+		dropList = e.dropList;
 		d = e.getDialogue().copy();
 		spritefile = e.getSpriteFile();
 
@@ -715,6 +739,16 @@ class EntityFrame extends JFrame
 		final JTextField exp = new JTextField(5);
 		exp.setText(Integer.toString(e.expAmount));
 		panel.add(exp);
+		
+		final JButton drops = new JButton("Drops");
+		drops.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				DropListFrame dropFrame = new DropListFrame(dropList);
+
+			}});
+		panel.add(drops);
 
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -722,6 +756,7 @@ class EntityFrame extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				try{
+					e.dropList = dropList;
 					e.expAmount = Integer.parseInt(exp.getText());
 					
 					MapEditor.gamedata.getGameEntities().remove(e.getName());
@@ -826,6 +861,10 @@ class EntityFrame extends JFrame
 
 class BehaviorFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	boolean[] behavior;
 	JPanel panel = new JPanel();
 	JFrame frame = this;
@@ -907,6 +946,10 @@ class BehaviorFrame extends JFrame
 
 class DialogueFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Dialogue d;
 	JPanel panel = new JPanel();
 	JPanel dialoguePanel = new JPanel();
@@ -996,6 +1039,10 @@ class DialogueFrame extends JFrame
 
 class DialogueBlockFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	ArrayList<String> block;
 	JFrame frame = this;
 	JPanel panel = new JPanel();
@@ -1191,5 +1238,109 @@ class DialogueBlockFrame extends JFrame
 				
 			}});
 		panel.add(apply);
+	}
+}
+
+class DropListFrame extends JFrame
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	ArrayList<JTextField[]> drops = new ArrayList<JTextField[]>();
+	JPanel panel = new JPanel();
+	HashMap<String, Integer> dropsHash;
+	JFrame frame = this;
+	
+	public DropListFrame(HashMap<String, Integer> dropsHash)
+	{
+		this.dropsHash = dropsHash;
+		
+		for (Map.Entry<String, Integer> entry : dropsHash.entrySet())
+		{
+			JTextField dropName = new JTextField(10);
+			dropName.setText(entry.getKey());
+			
+			JTextField dropChance = new JTextField(10);
+			dropChance.setText(Integer.toString(entry.getValue()));
+			
+			this.drops.add(new JTextField[]{dropName, dropChance});
+		}
+		
+		init();
+		
+		this.add(panel);
+		this.setSize(600, 400);
+		this.setVisible(true);
+	}
+	
+	public void init()
+	{
+		panel.removeAll();
+		panel.setLayout(new GridLayout(2, 1));
+		
+		JPanel dropPanel = new JPanel();
+		dropPanel.setLayout(new GridLayout(10, 1));
+		
+		for (JTextField[] drop : drops)
+		{
+			JPanel singleDrop = new JPanel();
+			
+			singleDrop.add(drop[0]);
+			singleDrop.add(drop[1]);
+			
+			dropPanel.add(singleDrop);
+		}
+		
+		panel.add(dropPanel);
+		
+		JPanel buttons = new JPanel();
+		
+		JButton newDrop = new JButton("New");
+		newDrop.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JTextField dropName = new JTextField(10);
+				JTextField dropChance = new JTextField(10);
+				drops.add(new JTextField[]{dropName, dropChance});
+				
+				init();
+				
+			}});
+		buttons.add(newDrop);
+		
+		JButton delete = new JButton("Delete");
+		delete.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (drops.size() == 0)
+					return;
+				
+				drops.remove(drops.size()-1);
+				
+				init();
+				
+			}});
+		buttons.add(delete);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (JTextField[] drop : drops)
+				{
+					dropsHash.put(drop[0].getText(), Integer.parseInt(drop[1].getText()));
+				}
+				
+				frame.dispose();
+				
+			}});
+		buttons.add(apply);
+		
+		panel.add(buttons);
+		panel.revalidate();
 	}
 }
