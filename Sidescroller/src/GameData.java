@@ -106,7 +106,7 @@ public class GameData {
 	{	
 		Character.resetAll();
 		boolean a = true;
-		if (a)
+		if (!a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -123,6 +123,8 @@ public class GameData {
 				gameEntities.put("NPC"+i, ef);
 				ef.expAmount = 10;
 				ef.getDropList().put("Chest", 100);
+				ef.getDropList().put("Speed Sigil - Fire", 100);
+				ef.getDropList().put("Speed Sigil - Life", 100);
 			}
 			//		gameEntities.add(efd);	
 			//		gameEntities.add(eff);	
@@ -187,7 +189,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadLevel("level2");
+			this.loadLevel("test");
 		}
 
 	}
@@ -356,15 +358,10 @@ public class GameData {
 		final int state = Main.getState();
 		final GameData gd = this;
 		
-		new Thread(){
-			public void run()
-			{
-				Main.setState(2);
-				SaveGame.loadGame(file, gd);
-				Main.setState(state);
-				System.gc();
-			}
-		}.start();	
+		Main.setState(2);
+		SaveGame.loadGame(file, gd);
+		Main.setState(state);
+		System.gc();	
 	}
 	
 	public void loadLevel(final String levelName)
@@ -374,15 +371,10 @@ public class GameData {
 		final int state = Main.getState();
 		final GameData gd = this;
 		
-		new Thread(){
-			public void run()
-			{
-				Main.setState(2);
-				SaveGame.loadLevel(levelName, gd);
-				Main.setState(state);
-				System.gc();
-			}
-		}.start();	
+		Main.setState(2);
+		SaveGame.loadLevel(levelName, gd);
+		Main.setState(state);
+		System.gc();	
 		
 	}
 

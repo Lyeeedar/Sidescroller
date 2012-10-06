@@ -34,6 +34,8 @@ public class Main {
 	
 	public static final Random ran = new Random();
 	
+	public static GraphicsConfiguration gc = null;
+	
 	public static void main(String[] args) {
 		
 		// Create the game
@@ -47,7 +49,7 @@ public class Main {
         	// Get the current screen device for the current graphics environment
             device = env.getDefaultScreenDevice();
             // Get the graphics configuration for the current screen device
-            GraphicsConfiguration gc = device.getDefaultConfiguration();
+            gc = device.getDefaultConfiguration();
             
             // Create the Main Frame
             mainframe = new MainFrame(gc);

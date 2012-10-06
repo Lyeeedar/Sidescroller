@@ -97,7 +97,7 @@ abstract class MenuScreen
 	{
 		this.menu = menu;
 
-		backImage = GameData.getImage("Data/Resources/GUI/Spellbook.png");
+		backImage = GameData.getImage("Data/Resources/GUI/SpellbookBack.png");
 	}
 
 	public void draw(Graphics2D g2d)
@@ -1541,8 +1541,7 @@ class CharacterMenu extends MenuScreen
 {
 
 	int selectedIndex = 0;
-	int selectedType = 2;
-	//	int selectedItem = 0;
+	int selectedType = 0;
 	boolean itemSelected = false;
 	int itemIndex = 0;
 
@@ -1566,47 +1565,50 @@ class CharacterMenu extends MenuScreen
 		images[1] = GameData.getImage("Data/Resources/GUI/spellbookCharItems.png");
 		images[2] = GameData.getImage("Data/Resources/GUI/spellbookCharItemsSelected.png");
 
-		for (Map.Entry<String, Item> entry : Character.inventory.get(selectedType).entrySet())
+		for (Map.Entry<String, Item> entry : Character.inventory.get(0).entrySet())
+		{
+			Sigil item = (Sigil) entry.getValue();
+			
+			sigils.add(item);
+		}
+		
+		for (Map.Entry<String, Item> entry : Character.inventory.get(1).entrySet())
 		{
 			Item item = entry.getValue();
-
-			if (item.type == 0)
-			{
-				sigils.add((Sigil) item);
-			}
-			else if (item.type == 1)
-			{
-				scrolls.add(item);
-			}
-			else if (item.type == 2)
-			{
-				misc.add(item);
-			}
+			
+			scrolls.add(item);
 		}
-
+		
+		for (Map.Entry<String, Item> entry : Character.inventory.get(2).entrySet())
+		{
+			Item item = entry.getValue();
+			
+			misc.add(item);
+		}
+		
 		for (Sigil sigil : sigils)
 		{
-			if (sigil.element.equals("Fire"))
+			if (sigil.element.equals(Entity.DAMAGE_FIRE))
 			{
 				fire.add(sigil);
 			}
-			else if (sigil.element.equals("Air"))
+			else if (sigil.element.equals(Entity.DAMAGE_AIR))
 			{
 				air.add(sigil);
 			}
-			else if (sigil.element.equals("Earth"))
+			else if (sigil.element.equals(Entity.DAMAGE_EARTH))
 			{
 				earth.add(sigil);
 			}
-			else if (sigil.element.equals("Water"))
+			else if (sigil.element.equals(Entity.DAMAGE_WATER))
 			{
 				water.add(sigil);
 			}
-			else if (sigil.element.equals("Death"))
+			else if (sigil.element.equals(Entity.DAMAGE_DEATH))
 			{
 				death.add(sigil);
 			}
-			else if (sigil.element.equals("Life"))
+			else if (sigil.element.equals(Entity.DAMAGE_LIFE))
 			{
 				life.add(sigil);
 			}
@@ -1693,7 +1695,23 @@ class CharacterMenu extends MenuScreen
 			{
 				if (itemSelected)
 				{
-
+					if (selectedType == 0)
+					{
+						Sigil sigil = this.getSelectedSigil();
+						
+						if (sigil == null)
+						{
+							
+						}
+						else if (sigil.equipped)
+						{
+							Character.unequipSigil(sigil);
+						}
+						else
+						{
+							Character.equipSigil(sigil);
+						}
+					}
 				}
 				else
 				{
@@ -1735,12 +1753,199 @@ class CharacterMenu extends MenuScreen
 		g2d.drawImage(images[0], 0, 0, null);
 	}
 
+	protected Sigil getSelectedSigil()
+	{
+		int itemValue = itemIndex;
+		
+		if (itemIndex == -1)
+		{
+			return null;
+		}
+		
+		if (itemValue < fire.size())
+		{
+			return fire.get(itemValue);
+		}
+		itemValue -= fire.size();
+		
+		if (itemValue < air.size())
+		{
+			return air.get(itemValue);
+		}
+		itemValue -= air.size();
+		
+		if (itemValue < earth.size())
+		{
+			return earth.get(itemValue);
+		}
+		itemValue -= earth.size();
+		
+		if (itemValue < water.size())
+		{
+			return water.get(itemValue);
+		}
+		itemValue -= water.size();
+		
+		if (itemValue < death.size())
+		{
+			return death.get(itemValue);
+		}
+		itemValue -= death.size();
+		
+		if (itemValue < life.size())
+		{
+			return life.get(itemValue);
+		}
+		
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
 	 */
 	@Override
 	protected void drawLeft(Graphics2D g2d) {
 		//140 350
+		Entity p = Main.gamedata.getGameEntities().get("Player");
+
+		g2d.setColor(Color.BLACK);
+		int y = 350;
+		
+		g2d.drawString("Health: ", 90, y);
+		g2d.drawString(Double.toString(p.health), 150, y);
+		g2d.drawString("/", 210, y);
+		g2d.drawString(Double.toString(p.maxHealth), 230, y);
+		
+		y += 25;
+		
+		g2d.drawString("Speed: ", 90, y);
+		g2d.drawString(Integer.toString(p.speed), 150, y);
+		
+		y += 25;
+		
+		g2d.drawString("Defenses: ", 90, y);
+		
+		y += 25;
+		
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_PHYSICAL))+ " PDEF", 190, y);
+		
+		y += 25;
+		
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_FIRE))+ " FDEF", 110, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_AIR))+ " ADEF", 190, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_EARTH))+ " EDEF", 270, y);
+		
+		y += 25;
+		
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_WATER))+ " WDEF", 110, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_DEATH))+ " DDEF", 190, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_LIFE))+ " LDEF", 270, y);
+		
+	}
+
+	
+	protected int getSigilDistance()
+	{
+		int itemValue = itemIndex;
+		
+		if (itemValue < fire.size())
+		{
+			return itemValue;
+		}
+		itemValue -= fire.size();
+		itemValue++;
+		
+		if (itemValue < air.size())
+		{
+			return itemValue;
+		}
+		itemValue -= air.size();
+		itemValue++;
+		
+		if (itemValue < earth.size())
+		{
+			return itemValue;
+		}
+		itemValue -= earth.size();
+		itemValue++;
+		
+		if (itemValue < water.size())
+		{
+			return itemValue;
+		}
+		itemValue -= water.size();
+		itemValue++;
+		
+		if (itemValue < death.size())
+		{
+			return itemValue;
+		}
+		itemValue -= death.size();
+		itemValue++;
+		
+		if (itemValue < life.size())
+		{
+			return itemValue;
+		}
+		itemValue -= life.size();
+		itemValue++;
+		
+		return itemValue;
+	}
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		if (selectedIndex == 0)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Sigil", 490, 70);
+
+		if (selectedIndex == 1)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Scrolls", 575, 70);
+
+		if (selectedIndex == 2)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		g2d.drawString("Misc", 660, 70);
+
+		if (selectedIndex == 3)
+		{
+			if (itemSelected)
+			{
+				g2d.drawImage(images[2], 0, 0, null);
+			}
+			else
+			{
+				g2d.drawImage(images[1], 0, 0, null);
+			}
+		}
+
+		int dist = itemIndex;
+		if (selectedType == 0)
+		{
+			dist = this.getSigilDistance();
+		}
+		g2d.drawImage(getImage(), 500, 138, 709, 295, 0, -30+(dist*20), 209, -30+(dist*20)+157, null);
+		
 
 		g2d.setColor(Color.BLACK);
 
@@ -1749,7 +1954,7 @@ class CharacterMenu extends MenuScreen
 		if (selectedType == 0)
 		{
 			if (sigils.size() > 0)
-				item = sigils.get(itemIndex);
+				item = this.getSelectedSigil();
 		}
 		else if (selectedType == 1)
 		{
@@ -1765,9 +1970,9 @@ class CharacterMenu extends MenuScreen
 		if (item == null)
 			return;
 
-		int y = 350;
+		int y = 320;
 
-		g2d.drawString(item.getName(), 120, y);
+		g2d.drawString(item.getName(), 480, y);
 
 		y += 25;
 
@@ -1775,73 +1980,79 @@ class CharacterMenu extends MenuScreen
 
 		for (int i = 0; i < desc.length; i++)
 		{
-			g2d.drawString(desc[i], 130, y);
+			g2d.drawString(desc[i], 485, y);
 			y += 25;
 		}
-	}
 
-	/* (non-Javadoc)
-	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
-	 */
-	@Override
-	protected void drawRight(Graphics2D g2d) {
-		if (selectedIndex == 0)
+		if (selectedType == 0)
 		{
-			g2d.setColor(Color.BLUE);
-		}
-		else
-		{
-			g2d.setColor(Color.BLACK);
-		}
-		g2d.drawString("Sigil", 490, 100);
+			Sigil sigil = (Sigil) item;
 
-		if (selectedIndex == 1)
-		{
-			g2d.setColor(Color.BLUE);
-		}
-		else
-		{
-			g2d.setColor(Color.BLACK);
-		}
-		g2d.drawString("Scrolls", 575, 100);
+			g2d.drawString("Effects:", 485, y);
+			y += 25;
 
-		if (selectedIndex == 2)
-		{
-			g2d.setColor(Color.BLUE);
-		}
-		else
-		{
-			g2d.setColor(Color.BLACK);
-		}
-		g2d.drawString("Misc", 660, 100);
-
-		if (selectedIndex == 3)
-		{
-			if (itemSelected)
+			if (sigil.values[0] != 0)
 			{
-				g2d.drawImage(images[2], 0, 0, null);
+				g2d.drawString(Integer.toString(sigil.values[0])+" HP", 485, y);
 			}
-			else
-			{
-				g2d.drawImage(images[1], 0, 0, null);
-			}
-		}
 
-		g2d.drawImage(getImage(), 520, 210, 663, 472, 0, -50+(itemIndex*20), 143, -50+(itemIndex*20)+262, null);
+			if (sigil.values[1] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[1])+" SPD", 545, y);
+			}
+
+			if (sigil.values[2] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[2])+" PDEF", 605, y);
+			}
+			y += 25;
+
+			if (sigil.values[3] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[3])+" FDEF", 485, y);
+			}
+
+			if (sigil.values[4] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[4])+" ADEF", 545, y);
+			}
+
+			if (sigil.values[5] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[5])+" EDEF", 605, y);
+			}
+			y += 25;
+
+			if (sigil.values[6] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[6])+" WDEF", 485, y);
+			}
+
+			if (sigil.values[7] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[7])+" DDEF", 545, y);
+			}
+
+			if (sigil.values[8] != 0)
+			{
+				g2d.drawString(Integer.toString(sigil.values[8])+" LDEF", 605, y);
+			}
+			y += 25;}
 	}
 
 	private BufferedImage getImage()
 	{
-		BufferedImage im = new BufferedImage(143, 240+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(209, 240+(Character.inventory.get(selectedType).size()*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
 
 		if (selectedType == 0)
 		{
 			int i = 0;
-			
+			int ip = 0;
+
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Fire Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Fire Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : fire)
 			{
 
@@ -1853,16 +2064,18 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
-			i++;
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Air Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Air Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : air)
 			{
 
@@ -1874,16 +2087,18 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+				
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
-			i++;
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Earth Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Earth Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : earth)
 			{
 
@@ -1895,16 +2110,18 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+				
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
-			i++;
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Water Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Water Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : water)
 			{
 
@@ -1916,16 +2133,18 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+				
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
-			i++;
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Death Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Death Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : death)
 			{
 
@@ -1937,16 +2156,18 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+				
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
-			i++;
 			g2d.setColor(Color.BLACK);
-			g2d.drawString("Life Sigils", 5, 20+(i*20));
-			i++;
+			g2d.drawString("Life Sigils", 0, 20+(ip*20));
+			ip++;
 			for (Sigil sigil : life)
 			{
 
@@ -1958,18 +2179,21 @@ class CharacterMenu extends MenuScreen
 				{
 					g2d.setColor(Color.BLACK);
 				}
-				g2d.drawString(sigil.name, 15, 20+(i*20));
-				g2d.drawString(Integer.toString(sigil.number), 100, 20+(i*20));
+				g2d.drawString(sigil.name, 10, 20+(ip*20));
+				
+				if (sigil.equipped)
+					g2d.drawString("Equipped", 120, 20+(ip*20));
 
 
 				i++;
+				ip++;
 			}
 		}
 		else
 		{
 
 			ArrayList<Item> items = null;
-			
+
 			if (selectedType == 1)
 			{
 				items = scrolls;

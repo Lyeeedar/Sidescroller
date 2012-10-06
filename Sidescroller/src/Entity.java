@@ -1248,6 +1248,18 @@ public class Entity implements Serializable{
 
 		this.setDamaged(15);
 	}
+	
+	public void heal(double amount)
+	{		
+		health += amount;
+
+		infoText.add(new SystemMessage("+"+amount, Color.CYAN, 3000));
+		
+		if (health > maxHealth)
+		{
+			health = maxHealth;
+		}
+	}
 
 	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
 	public void death()

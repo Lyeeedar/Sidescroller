@@ -29,6 +29,76 @@ public class Character {
 	
 	public static long[] spellCooldown = new long[5];
 	
+	public static Sigil[] equippedSigils = new Sigil[6];
+	
+	public static void equipSigil(Sigil sigil)
+	{
+		int index = 0;
+		
+		if (sigil.element.equals(Entity.DAMAGE_FIRE))
+		{
+			index = 0;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_AIR))
+		{
+			index = 1;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_EARTH))
+		{
+			index = 2;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_WATER))
+		{
+			index = 3;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_DEATH))
+		{
+			index = 4;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_LIFE))
+		{
+			index = 5;
+		}
+		
+		if (equippedSigils[index] != null)
+			equippedSigils[index].unequip();
+		equippedSigils[index] = sigil;
+		equippedSigils[index].equip();
+	}
+	
+	public static void unequipSigil(Sigil sigil)
+	{
+		int index = 0;
+		
+		if (sigil.element.equals(Entity.DAMAGE_FIRE))
+		{
+			index = 0;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_AIR))
+		{
+			index = 1;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_EARTH))
+		{
+			index = 2;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_WATER))
+		{
+			index = 3;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_DEATH))
+		{
+			index = 4;
+		}
+		else if (sigil.element.equals(Entity.DAMAGE_LIFE))
+		{
+			index = 5;
+		}
+		
+		equippedSigils[index].unequip();
+		equippedSigils[index] = null;
+	}
+	
 	public static void addEXP(int amount)
 	{
 		

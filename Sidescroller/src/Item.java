@@ -39,7 +39,14 @@ public class Item extends Entity {
 		this.animStages = 1;
 		this.type = type;
 		
+		calculateCollision();
 		launch();
+	}
+	
+	public void calculateCollision()
+	{
+		collisionShape[2] = spriteSheet.getWidth();
+		collisionShape[3] = spriteSheet.getHeight();
 	}
 	
 	public void launch()
