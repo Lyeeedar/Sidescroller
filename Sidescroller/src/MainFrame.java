@@ -38,24 +38,25 @@ public class MainFrame extends JFrame implements KeyListener{
 		super(gc);
 
 		this.setIgnoreRepaint(true);
+		this.setLocationRelativeTo(null);
 
 		// Set the frame to be undecorated and ignore paint calls from the OS
 		if (Main.fullscreen)
 			this.setUndecorated(true);
 
-		// Initialise the buffer strategy
-		this.createBufferStrategy(1);
-
-		// Store the buffer Strategy
-		bufferStrategy = this.getBufferStrategy();
-
 		// If the frame is not running as fullscreen then create a window for it
 		if (!Main.fullscreen)
 		{
-			this.setSize(900, 600);
+			this.setSize(800, 600);
 			this.setVisible(true);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
+	
+		// Initialise the buffer strategy
+		this.createBufferStrategy(2);
+
+		// Store the buffer Strategy
+		bufferStrategy = this.getBufferStrategy();
 
 		// Add a key listener to the frame to record key presses
 		this.addKeyListener(this);
@@ -203,16 +204,12 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			// Calculate the screen position
 			this.calculateScreen();
-
-			// Create a BufferedImage compatible with the current environment
-			BufferedImage im = gc.createCompatibleImage(resolution[0], resolution[1]);
-
-			// Get its Graphics object
-			g2d = (Graphics2D) im.getGraphics();
+			
+			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+//			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the background to the back buffer
 			drawBackground(g2d);
@@ -229,33 +226,13 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw HUD
 			drawHUD(g2d, totalTime);
 
-			// Get the graphics object for the current setting of fullscreen
-			if (Main.fullscreen)
-			{
-				// Get a graphics object for the current backbuffer
-				g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
-			}
-			else
-			{
-				g2d = (Graphics2D) this.getGraphics();
-			}
-
-//			// Enable AA
-//			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//					RenderingHints.VALUE_ANTIALIAS_ON);
-
-			// Draw the buffered Image onto the back buffer
-			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
-
 
 		} finally {
 			// Dispose of the graphics object
-			if (Main.fullscreen)
-				g2d.dispose();
+			g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-		if (Main.fullscreen)
-			bufferStrategy.show();
+		bufferStrategy.show();
 	}
 
 	public void drawHUD(Graphics2D g2d, long totalTime)

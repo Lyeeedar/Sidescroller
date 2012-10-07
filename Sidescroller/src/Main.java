@@ -40,13 +40,13 @@ public class Main {
 		
 		if(System.getProperty("os.name").startsWith("Win"))
 		{
-			System.out.println("OS = Windows");
-            System.setProperty("sun.java2d.d3d","true");
+			System.out.println(System.getProperty("os.name"));
+            System.setProperty("sun.java2d.d3d","True");
 		}
 		else
 		{
-			System.out.println("OS = Not Windows");
-            System.setProperty("sun.java2d.opengl", "true");
+			System.out.println(System.getProperty("os.name"));
+            System.setProperty("sun.java2d.opengl", "True");
 		}
 		
 		Character.resetAll();
