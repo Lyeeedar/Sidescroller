@@ -40,21 +40,17 @@ public enum SoundEffect {
 
 		try {
 			clip = AudioSystem.getClip();
-		} catch (LineUnavailableException e1) {
+			clip.open(audioInputStream);
+		} catch (Exception e) {
 			try {
 				clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioInputStream.getFormat()));
-			} catch (LineUnavailableException e) {
-				e.printStackTrace();
+				clip.open(audioInputStream);
+			} catch (LineUnavailableException e1) {
+				e1.printStackTrace();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
 			}
-		}
-
-		try {
-			// Open audio clip and load samples from the audio input stream.
-			clip.open(audioInputStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
 		}
 	}
 
