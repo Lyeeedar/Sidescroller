@@ -103,6 +103,12 @@ public class OggClip {
 		}
 		
 		try {
+			if (!outputLine.isControlSupported(FloatControl.Type.MASTER_GAIN))
+			{
+				System.err.println("Gain not supported");
+				return;
+			}
+			
 			FloatControl control = (FloatControl) outputLine.getControl(FloatControl.Type.MASTER_GAIN);
 			if (gain == -1) {
 				control.setValue(0);

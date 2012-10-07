@@ -113,12 +113,23 @@ public class Main {
 			// Set the Main Frame to fullscreen exclusive mode
 			device.setFullScreenWindow(window);
 
-			if( device.isDisplayChangeSupported() ) {
-				device.setDisplayMode( 
-						new DisplayMode( MainCanvas.resolution[0], MainCanvas.resolution[1], device.getDisplayMode().getBitDepth(), 60 )
-						);
+			try {
+				if( device.isDisplayChangeSupported() ) {
+					device.setDisplayMode( 
+							new DisplayMode( MainCanvas.resolution[0], MainCanvas.resolution[1], device.getDisplayMode().getBitDepth(), device.getDisplayMode().getRefreshRate() )
+							);
+				}
+				fullscreen = true;
 			}
-			fullscreen = true;
+			catch (Exception e)
+			{
+				if( device.isDisplayChangeSupported() ) {
+					device.setDisplayMode( 
+							new DisplayMode( MainCanvas.resolution[0], MainCanvas.resolution[1], device.getDisplayMode().getBitDepth(), 60 )
+							);
+				}
+				fullscreen = true;
+			}
 		}
 		else
 		{
