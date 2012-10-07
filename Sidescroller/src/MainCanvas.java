@@ -198,6 +198,61 @@ public class MainCanvas extends Canvas implements KeyListener{
 	    
 		Toolkit.getDefaultToolkit().sync();	
 	}
+	
+	/**
+	 * Draws all the in-game graphics
+	 */
+	public void paintPaused(GraphicsConfiguration gc)
+	{
+		Graphics2D g2d = null;
+
+		try {
+		    // Let the OS have a little time...
+		    Thread.yield();
+
+			// Calculate the screen position
+			this.calculateScreen();
+			
+			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
+
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+
+			// Draw the background to the back buffer
+			drawBackground(g2d);
+
+			// Draw all the game Entities to the back buffer
+			drawEntities(g2d);
+
+			// Draw the foreground
+			drawForeground(g2d);
+
+			// Draw speech bubbles
+			drawSpeech(g2d);
+
+			// Draw HUD
+			drawHUD(g2d, 0);
+			
+			g2d.setColor(new Color(0, 0, 0, 180));
+			
+			g2d.fillRect(0, 0, resolution[0], resolution[1]);
+			
+			g2d.setColor(Color.WHITE);
+			
+			g2d.drawString("Paused", resolution[0]/2, resolution[1]/2);
+
+		} finally {
+			// Dispose of the graphics object
+			if (g2d != null)
+				g2d.dispose();
+		}
+		// Show the back buffer (Page Flipping)
+	    if( !bufferStrategy.contentsLost() )
+	    	bufferStrategy.show();
+	    
+		Toolkit.getDefaultToolkit().sync();	
+	}
 
 	public void drawHUD(Graphics2D g2d, long totalTime)
 	{
@@ -796,6 +851,19 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			Main.oldState = Main.getState();
 			Main.setState(2);
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_P)
+		{
+			if (Main.getState() == 1)
+			{
+				Main.setState(4);
+				Main.gamedata.BGM.pause();
+			}
+			else
+			{
+				Main.setState(1);
+				Main.gamedata.BGM.resume();
+			}
 		}
 
 	}

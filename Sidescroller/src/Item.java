@@ -90,6 +90,8 @@ public class Item extends Entity {
 			Character.addItem(this);
 			Main.gamedata.systemMessages.add(new SystemMessage("Picked up a "+this.getName()+"!", Color.YELLOW, 10000));
 			alive = false;
+			
+			SoundEffect.Pickup.play();
 		}
 	}
 	

@@ -81,11 +81,20 @@ public class GameData {
 	public boolean loading = false;
 	
 	public File saveFile;
+	
+	public OggClip BGM;
 
 	public GameData()
 	{
 		clearGame();
-
+		
+		try {
+			BGM = new OggClip("Data/Resources/Sounds/test.ogg");
+			BGM.loop();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void clearGame()

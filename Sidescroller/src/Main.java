@@ -60,6 +60,7 @@ public class Main {
 		//System.setProperty("sun.java2d.ddforcevram", "True");
 
 		Character.resetAll();
+		SoundEffect.init();
 		// Create the game
 		Main game = new Main();
 
@@ -268,6 +269,10 @@ public class Main {
 
 				Main.gamedata.evaluateMenu(elapsedTime);
 
+			}
+			else if (state == 4)
+			{
+				Main.maincanvas.paintPaused(gc);
 			}
 		}
 	}
