@@ -1,10 +1,14 @@
+import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
+
+import javax.swing.JFrame;
 
 /**
  * Class containing the main game data
@@ -12,9 +16,9 @@ import java.util.Random;
  *
  */
 public class Main {
-	
-	public static boolean fullscreen = false;
-	
+
+	public static boolean fullscreen = true;
+
 	/**
 	 *  Game state. <p>
 	 * 0 = Close game <p>
@@ -31,76 +35,120 @@ public class Main {
 	/**
 	 * The frame to draw the game onto
 	 */
-	public static MainFrame mainframe;
-	
+	public static MainCanvas maincanvas;
+
 	public static final Random ran = new Random();
-	
+
 	public static GraphicsConfiguration gc = null;
-	
+	public static GraphicsDevice device = null;
+
 	public static void main(String[] args) {
-		
+
 		if(System.getProperty("os.name").startsWith("Win"))
 		{
 		}
 		else
 		{
-            //System.setProperty("sun.java2d.opengl", "True");
+			//System.setProperty("sun.java2d.opengl", "True");
 		}
-		
+
 		System.out.println(System.getProperty("os.name"));
-		
+
 		System.setProperty("sun.java2d.d3d","False");
-		System.setProperty("sun.java2d.transaccel", "True");
-	    // System.setProperty("sun.java2d.trace", "timestamp,log,count");
-	    System.setProperty("sun.java2d.ddforcevram", "True");
-		
+		//System.setProperty("sun.java2d.transaccel", "True");
+		//System.setProperty("sun.java2d.trace", "timestamp,log,count");
+		//System.setProperty("sun.java2d.ddforcevram", "True");
+
 		Character.resetAll();
 		// Create the game
 		Main game = new Main();
-		GraphicsDevice device = null;
 
-        try{
-        	
-        	// Get the current Graphics environment
-        	GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        	// Get the current screen device for the current graphics environment
-            device = env.getDefaultScreenDevice();
-            // Get the graphics configuration for the current screen device
-            gc = device.getDefaultConfiguration();
-            
-            // Create the Main Frame
-            mainframe = new MainFrame(gc);
-        	
-            if (fullscreen)
-            {
-            	// Set the Main Frame to fullscreen exclusive mode
-            	device.setFullScreenWindow(mainframe);
-            	
-            	if( device.isDisplayChangeSupported() ) {
-            		  device.setDisplayMode( 
-            		    new DisplayMode( 800, 600, 32, DisplayMode.REFRESH_RATE_UNKNOWN )
-            		  );
-            		}
-            }
-    		
-            mainframe.createStrategy();
-            
-        	// Run the game loop
-    		game.loop(gc);
-        }
-        catch (Exception e)
-        {
-        	e.printStackTrace();
-        }
-        finally{
-        	// Remove the program from fullscreen mode
-        	device.setFullScreenWindow(null);
-   
-        }
+		try{
+
+			// Get the current Graphics environment
+			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			// Get the current screen device for the current graphics environment
+			device = env.getDefaultScreenDevice();
+			// Get the graphics configuration for the current screen device
+			gc = device.getDefaultConfiguration();
+
+			// Create the Main Frame
+			maincanvas = new MainCanvas(gc);
+
+			Main.toggleFullscreen();
+
+			// Run the game loop
+			game.loop(gc);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally{
+			// Remove the program from fullscreen mode
+			device.setFullScreenWindow(null);
+
+		}
 
 		System.exit(0);
 	}
-	
+
+	static JFrame window;
+	public static void toggleFullscreen()
+	{
+		if (window != null)
+		{
+			window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			window.dispose();
+		}
+		
+		window = new JFrame("Sidescroller");
+		window.setIgnoreRepaint(true);
+		window.add(maincanvas);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		if (!fullscreen)
+		{
+			window.setUndecorated(true);
+			// Set the Main Frame to fullscreen exclusive mode
+			device.setFullScreenWindow(window);
+
+			if( device.isDisplayChangeSupported() ) {
+				device.setDisplayMode( 
+						new DisplayMode( 800, 600, device.getDisplayMode().getBitDepth(), 60 )
+						);
+			}
+			fullscreen = true;
+		}
+		else
+		{
+			device.setFullScreenWindow(null);
+			window.setUndecorated(false);
+			fullscreen = false;
+		}
+
+		window.pack();
+		window.setResizable(false);
+		
+		
+		// Get the size of the screen
+	    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+	    
+	    // Determine the new location of the window
+	    int w = window.getSize().width;
+	    int h = window.getSize().height;
+	    int x = (dim.width-w)/2;
+	    int y = (dim.height-h)/2;
+	    
+	    // Move the window
+	    window.setLocation(x, y);
+		
+		maincanvas.requestFocusInWindow();
+		window.setVisible(true);
+		
+		maincanvas.createStrategy();
+	}
+
+	public static int oldState = 3;
 	/**
 	 * The main loop of the game. <p>
 	 * Is stateful depending on the value of {@link Main#state}
@@ -112,17 +160,17 @@ public class Main {
 		long totalTime = 0;
 		int frames = 0;
 		int framerate = 0;
-		
+
 		while(true)
 		{
-			
+
 			if (state == 0)
 			{
 				break;
 			}
 			else if (state == 1)
 			{
-				
+
 				// Update fps every 0.5 seconds
 				if (totalTime < 500)
 				{
@@ -135,55 +183,55 @@ public class Main {
 					framerate = frames*2;
 					frames = 0;
 				}
-				
+
 				// Store current time
 				lastTime = System.currentTimeMillis();
-				
+
 				// Paint game graphics
-				Main.mainframe.paintGame(framerate, gc);
-				
+				Main.maincanvas.paintGame(framerate, gc);
+
 				// Work out the time that painting the game graphics took
 				elapsedTime = System.currentTimeMillis() - lastTime;
-				
+
 				// Evaluate the Entity AI, telling it how much time has passed since the last update
 				Main.gamedata.evaluateAI(elapsedTime);
-				
+
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
-				
+
 				ArrayList<SystemMessage> newMessages = new ArrayList<SystemMessage>();
-				
+
 				int i = 0;
 				for (SystemMessage sys : Main.gamedata.systemMessages)
 				{
 					if (i < 10)
 						sys.aliveTime -= elapsedTime;
-					
+
 					if (sys.aliveTime > 0)
 						newMessages.add(sys);
-					
+
 					i++;
 				}
-				
+
 				Main.gamedata.systemMessages = newMessages;
-				
+
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
-				
+
 				Character.updateTime(elapsedTime);
-				
+
 				Character.timePlayed += elapsedTime;
 				Character.genderSwapCD -= elapsedTime;
-				
+
 				ArrayList<Entity> update = new ArrayList<Entity>();
-				
+
 				// Update animation for entities
 				for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 				{
 					Entity e = entry.getValue();
 					update.add(e);
 				}
-				
+
 				for (Entity e : update)
 				{
 					e.updateTime(elapsedTime);
@@ -191,27 +239,8 @@ public class Main {
 			}
 			else if (state == 2)
 			{
-				// Update fps every 0.5 seconds
-				if (totalTime < 500)
-				{
-					totalTime += System.currentTimeMillis() - lastTime;
-					frames++;
-				}
-				else
-				{
-					totalTime = 0;
-					framerate = frames*2;
-					frames = 0;
-				}
-				
-				// Store current time
-				lastTime = System.currentTimeMillis();
-				
-				// Paint game graphics
-				Main.mainframe.paintLoad(gc);
-				
-				// Work out time taken to draw graphics and evaluate AI
-				elapsedTime = System.currentTimeMillis() - lastTime;
+				toggleFullscreen();
+				state = oldState;
 			}
 			else if (state == 3)
 			{
@@ -227,23 +256,23 @@ public class Main {
 					framerate = frames*2;
 					frames = 0;
 				}
-				
+
 				// Store current time
 				lastTime = System.currentTimeMillis();
-				
+
 				// Paint game graphics
-				Main.mainframe.paintMenu(gc);
-				
+				Main.maincanvas.paintMenu(gc);
+
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
-				
+
 				Main.gamedata.evaluateMenu(elapsedTime);
 
 			}
 		}
 	}
 
-	
+
 	/**
 	 * @return the state
 	 */

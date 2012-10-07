@@ -15,8 +15,6 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.JFrame;
-
 /**
  * Main frame of the Game. All game graphics gets drawn directly to this. Uses fullscreen exclusive mode.<p>
  * Also keeps track of the state of all keys, and therefore implements KeyListener <p>
@@ -24,7 +22,7 @@ import javax.swing.JFrame;
  *
  */
 @SuppressWarnings("serial")
-public class MainFrame extends JFrame implements KeyListener{
+public class MainCanvas extends Canvas implements KeyListener{
 
 	/**
 	 * Frame resolution. X, Y
@@ -34,38 +32,20 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static int[] screenPosition = new int[2];
 	public BufferedImage[] HUDImages = new BufferedImage[4];
 	public static Menu menu = new Menu();
-	public Canvas canvas;
 
-	public MainFrame(GraphicsConfiguration gc)
+	public MainCanvas(GraphicsConfiguration gc)
 	{
 		// Initialise the Frame with the given graphics configuration
 		super(gc);
 		
 		// Set the game resolution
-		MainFrame.resolution = new int[]{800, 600};
+		MainCanvas.resolution = new int[]{800, 600};
 
 		this.setIgnoreRepaint(true);
-		this.setLocationRelativeTo(null);
 		
-		canvas = new Canvas();
-		canvas.setPreferredSize(new Dimension(resolution[0], resolution[1]));
-		canvas.setIgnoreRepaint(true);
-		canvas.setFocusable(false);
-		this.add(canvas);
-
-		// Set the frame to be undecorated and ignore paint calls from the OS
-		if (Main.fullscreen)
-			this.setUndecorated(true);
-
-		// If the frame is not running as fullscreen then create a window for it
-		if (!Main.fullscreen)
-		{
-			this.setResizable(false);
-			this.pack();
-			this.setVisible(true);
-			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		}
-		
+		this.setPreferredSize(new Dimension(resolution[0], resolution[1]));
+		this.setIgnoreRepaint(true);
+		this.requestFocusInWindow();
 
 		// Add a key listener to the frame to record key presses
 		this.addKeyListener(this);
@@ -80,10 +60,10 @@ public class MainFrame extends JFrame implements KeyListener{
 	public void createStrategy()
 	{
 		// Initialise the buffer strategy
-		canvas.createBufferStrategy(3);
+		this.createBufferStrategy(3);
 
 		// Store the buffer Strategy
-		bufferStrategy = canvas.getBufferStrategy();
+		bufferStrategy = this.getBufferStrategy();
 	}
 	
 	public void paintLoad(GraphicsConfiguration gc)
@@ -369,8 +349,8 @@ public class MainFrame extends JFrame implements KeyListener{
 				if (e.getDialogue().getType() == 0)
 				{
 
-					int x = e.getPos()[0]-MainFrame.screenPosition[0]+15;
-					int y = e.getPos()[1]-MainFrame.screenPosition[1]-height-20;
+					int x = e.getPos()[0]-MainCanvas.screenPosition[0]+15;
+					int y = e.getPos()[1]-MainCanvas.screenPosition[1]-height-20;
 
 					int[] xp = {x+20, x+35, x-10+(e.getSize()[0]/2)};
 					int[] yp = {y+height, y+height, y+height+15};
@@ -395,8 +375,8 @@ public class MainFrame extends JFrame implements KeyListener{
 				// If dialogue is of the type 'Examine' do a thought bubble
 				else if (e.getDialogue().getType() == 1)
 				{
-					int x = e.getPos()[0]-MainFrame.screenPosition[0]-(width/2)+(e.getSize()[0]/2);
-					int y = e.getPos()[1]-MainFrame.screenPosition[1]-height-50;
+					int x = e.getPos()[0]-MainCanvas.screenPosition[0]-(width/2)+(e.getSize()[0]/2);
+					int y = e.getPos()[1]-MainCanvas.screenPosition[1]-height-50;
 
 					g2d.setColor(pale);
 					g2d.fillRoundRect(x+(width/2)-5, y+height+35, 10, 10, 10, 10);
@@ -456,7 +436,7 @@ public class MainFrame extends JFrame implements KeyListener{
 				{
 					// Draw only a single frame from the spritesheet onto the Graphics object
 					g2d.drawImage(i, 
-							e.getPos()[0]-MainFrame.screenPosition[0], e.getPos()[1]-MainFrame.screenPosition[1], e.getPos()[0]-MainFrame.screenPosition[0] + e.getSize()[0], e.getPos()[1]-MainFrame.screenPosition[1] + e.getSize()[1], 
+							e.getPos()[0]-MainCanvas.screenPosition[0], e.getPos()[1]-MainCanvas.screenPosition[1], e.getPos()[0]-MainCanvas.screenPosition[0] + e.getSize()[0], e.getPos()[1]-MainCanvas.screenPosition[1] + e.getSize()[1], 
 							e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip(),
 							null);
 				}
@@ -464,14 +444,14 @@ public class MainFrame extends JFrame implements KeyListener{
 				{
 					// Draw only a single frame from the spritesheet onto the Graphics object
 					g2d.drawImage(i, 
-							e.getPos()[0]-MainFrame.screenPosition[0] + e.getSize()[0], e.getPos()[1]-MainFrame.screenPosition[1], e.getPos()[0]-MainFrame.screenPosition[0], e.getPos()[1]-MainFrame.screenPosition[1] + e.getSize()[1], 
+							e.getPos()[0]-MainCanvas.screenPosition[0] + e.getSize()[0], e.getPos()[1]-MainCanvas.screenPosition[1], e.getPos()[0]-MainCanvas.screenPosition[0], e.getPos()[1]-MainCanvas.screenPosition[1] + e.getSize()[1], 
 							e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip(),
 							null);
 				}
 
 				g2d.setColor(Color.RED);
 
-				g2d.drawRect(e.getCollisionShape()[0]-MainFrame.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainFrame.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
+				g2d.drawRect(e.getCollisionShape()[0]-MainCanvas.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainCanvas.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
 //
 //				if (e.alerted)
 //				{
@@ -483,7 +463,7 @@ public class MainFrame extends JFrame implements KeyListener{
 					int yPos = (3000 - sysM.aliveTime)/100;
 					g2d.setColor(sysM.colour);
 					
-					g2d.drawString(sysM.message, e.getPos()[0]-MainFrame.screenPosition[0]+e.getCollisionShape()[0], e.getPos()[1]-MainFrame.screenPosition[1]+e.getCollisionShape()[1]-yPos);
+					g2d.drawString(sysM.message, e.getPos()[0]-MainCanvas.screenPosition[0]+e.getCollisionShape()[0], e.getPos()[1]-MainCanvas.screenPosition[1]+e.getCollisionShape()[1]-yPos);
 				}
 				
 				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))
@@ -505,7 +485,7 @@ public class MainFrame extends JFrame implements KeyListener{
 
 					health /= 5;
 						
-					g2d.fillRect(e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-10, (int)health, 5);
+					g2d.fillRect(e.getPos()[0]+e.getCollisionShape()[0]-MainCanvas.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainCanvas.screenPosition[1]-10, (int)health, 5);
 				}
 
 			}
@@ -514,8 +494,8 @@ public class MainFrame extends JFrame implements KeyListener{
 		if (Character.genderSwapAnimating)
 		{
 			Entity e = Main.gamedata.getGameEntities().get("Player");
-			g2d.drawImage(Character.genderSwapSprite, e.getPos()[0]-MainFrame.screenPosition[0], e.getPos()[1]-MainFrame.screenPosition[1],
-					e.getPos()[0]-MainFrame.screenPosition[0]+e.getSize()[0], e.getPos()[1]-MainFrame.screenPosition[1]+e.getSize()[1],
+			g2d.drawImage(Character.genderSwapSprite, e.getPos()[0]-MainCanvas.screenPosition[0], e.getPos()[1]-MainCanvas.screenPosition[1],
+					e.getPos()[0]-MainCanvas.screenPosition[0]+e.getSize()[0], e.getPos()[1]-MainCanvas.screenPosition[1]+e.getSize()[1],
 					(113*Character.genderSwapAnimStage), 0, (113*(Character.genderSwapAnimStage+1)), 100, null);
 		}
 	}
@@ -645,7 +625,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	/**
 	 * Method that draws all the background (3 layers) onto the Graphics object <p>
 	 * Background taken from GameData <p>
-	 * Background drawn is based on location of the screen {@link MainFrame#screenPosition}
+	 * Background drawn is based on location of the screen {@link MainCanvas#screenPosition}
 	 * @param g2d
 	 */
 	private void drawBackground(Graphics2D g2d)
@@ -678,7 +658,7 @@ public class MainFrame extends JFrame implements KeyListener{
 	/**
 	 * Method that draws all the foreground (1 layer) onto the Graphics object <p>
 	 * Foreground taken from GameData (background index 3+)<p>
-	 * Foreground drawn is based on location of the screen {@link MainFrame#screenPosition}
+	 * Foreground drawn is based on location of the screen {@link MainCanvas#screenPosition}
 	 * @param g2d
 	 */
 	private void drawForeground(Graphics2D g2d)
@@ -754,63 +734,68 @@ public class MainFrame extends JFrame implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
-			MainFrame.esc = true;
+			MainCanvas.esc = true;
 			
 			if (Main.getState() == 1)
 			{
 				menu.changeMenu("Game");
-				MainFrame.esc = false;
+				MainCanvas.esc = false;
 			}
 			
 			Main.setState(3);
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
 		{
-			MainFrame.left = true;
+			MainCanvas.left = true;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_S) || (e.getKeyCode() == KeyEvent.VK_DOWN))
 		{
-			MainFrame.down = true;
+			MainCanvas.down = true;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_D) || (e.getKeyCode() == KeyEvent.VK_RIGHT))
 		{
-			MainFrame.right = true;
+			MainCanvas.right = true;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_W) || (e.getKeyCode() == KeyEvent.VK_UP))
 		{
-			MainFrame.up = true;
+			MainCanvas.up = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
-			MainFrame.space = true;
+			MainCanvas.space = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			MainFrame.enter = true;
+			MainCanvas.enter = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_1)
 		{
-			MainFrame.key1 = true;
+			MainCanvas.key1 = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_2)
 		{
-			MainFrame.key2 = true;
+			MainCanvas.key2 = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_3)
 		{
-			MainFrame.key3 = true;
+			MainCanvas.key3 = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_4)
 		{
-			MainFrame.key4 = true;
+			MainCanvas.key4 = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_5)
 		{
-			MainFrame.key5 = true;
+			MainCanvas.key5 = true;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_TAB)
 		{
-			MainFrame.tab = true;
+			MainCanvas.tab = true;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_CONTROL)
+		{
+			Main.oldState = Main.getState();
+			Main.setState(2);
 		}
 
 	}
@@ -823,55 +808,55 @@ public class MainFrame extends JFrame implements KeyListener{
 
 		if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
 		{
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_S) || (e.getKeyCode() == KeyEvent.VK_DOWN))
 		{
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_D) || (e.getKeyCode() == KeyEvent.VK_RIGHT))
 		{
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_W) || (e.getKeyCode() == KeyEvent.VK_UP))
 		{
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_SPACE)
 		{
-			MainFrame.space = false;
+			MainCanvas.space = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER)
 		{
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_1)
 		{
-			MainFrame.key1 = false;
+			MainCanvas.key1 = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_2)
 		{
-			MainFrame.key2 = false;
+			MainCanvas.key2 = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_3)
 		{
-			MainFrame.key3 = false;
+			MainCanvas.key3 = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_4)
 		{
-			MainFrame.key4 = false;
+			MainCanvas.key4 = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_5)
 		{
-			MainFrame.key5 = false;
+			MainCanvas.key5 = false;
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_TAB)
 		{
-			MainFrame.tab = false;
+			MainCanvas.tab = false;
 		}
 
 	}

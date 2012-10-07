@@ -234,32 +234,32 @@ class GameMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			selectedIndex -= 2;
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			selectedIndex++;
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			selectedIndex--;
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			selectedIndex += 2;
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.esc)
+		else if (MainCanvas.esc)
 		{
 			Main.setState(1);
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex == 0)
 			{
@@ -284,9 +284,10 @@ class GameMenu extends MenuScreen
 			else if (selectedIndex == 5)
 			{
 				menu.changeMenu("Main");
+				Main.gamedata.clearGame();
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)
@@ -453,7 +454,7 @@ class SpellMenu extends MenuScreen
 
 		g2d.drawString(sse.name, 485, 100+size[1]+15);
 
-		String[] description = MainFrame.wrapText(sse.description, 35);
+		String[] description = MainCanvas.wrapText(sse.description, 35);
 
 		int i;
 		for (i = 0 ; i < description.length; i++)
@@ -683,7 +684,7 @@ class SpellMenu extends MenuScreen
 
 	void evaluateButtons() {
 
-		if (MainFrame.esc)
+		if (MainCanvas.esc)
 		{
 			if (treeSelected)
 			{
@@ -693,12 +694,12 @@ class SpellMenu extends MenuScreen
 			{
 				menu.changeMenu("Game");
 			}
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
 
 		if (!treeSelected)
 		{
-			if (MainFrame.up)
+			if (MainCanvas.up)
 			{
 				if (selectedIndex < 7)
 				{
@@ -716,9 +717,9 @@ class SpellMenu extends MenuScreen
 				{
 					selectedIndex -= 3;
 				}
-				MainFrame.up = false;
+				MainCanvas.up = false;
 			}
-			else if (MainFrame.down)
+			else if (MainCanvas.down)
 			{
 				if (selectedIndex == 0)
 				{
@@ -741,9 +742,9 @@ class SpellMenu extends MenuScreen
 					}
 				}
 
-				MainFrame.down = false;
+				MainCanvas.down = false;
 			}
-			else if (MainFrame.left)
+			else if (MainCanvas.left)
 			{
 
 				if (selectedIndex == 12)
@@ -755,9 +756,9 @@ class SpellMenu extends MenuScreen
 					selectedIndex--;
 				}
 
-				MainFrame.left = false;
+				MainCanvas.left = false;
 			}
-			else if (MainFrame.right)
+			else if (MainCanvas.right)
 			{
 				if ((selectedIndex == 0) || (selectedIndex == 2) || (selectedIndex == 4) || (selectedIndex == 7) || (selectedIndex == 10) || (selectedIndex == 11))
 				{
@@ -768,9 +769,9 @@ class SpellMenu extends MenuScreen
 					selectedIndex++;
 				}
 
-				MainFrame.right = false;
+				MainCanvas.right = false;
 			}
-			else if (MainFrame.enter)
+			else if (MainCanvas.enter)
 			{
 				if (selectedIndex == 5)
 				{
@@ -859,12 +860,12 @@ class SpellMenu extends MenuScreen
 					treeSelected = true;
 				}
 
-				MainFrame.enter = false;
+				MainCanvas.enter = false;
 			}
 		}
 		else
 		{
-			if (MainFrame.up)
+			if (MainCanvas.up)
 			{
 				spellStage--;
 
@@ -928,9 +929,9 @@ class SpellMenu extends MenuScreen
 				if (found)
 					spellIndex = newIndex;
 
-				MainFrame.up = false;
+				MainCanvas.up = false;
 			}
-			else if (MainFrame.down)
+			else if (MainCanvas.down)
 			{
 				if (spellStage == Character.getSpell(element).size()-1)
 				{
@@ -1003,9 +1004,9 @@ class SpellMenu extends MenuScreen
 					}
 				}
 
-				MainFrame.down = false;
+				MainCanvas.down = false;
 			}
-			else if (MainFrame.left)
+			else if (MainCanvas.left)
 			{
 				if (spellIndex == 0)
 				{
@@ -1032,9 +1033,9 @@ class SpellMenu extends MenuScreen
 					spellIndex = newIndex;
 				}
 
-				MainFrame.left = false;
+				MainCanvas.left = false;
 			}
-			else if (MainFrame.right)
+			else if (MainCanvas.right)
 			{
 				if (spellIndex == Character.getSpell(element).get(spellStage).spells.size()-1)
 				{
@@ -1061,28 +1062,28 @@ class SpellMenu extends MenuScreen
 					spellIndex = newIndex;
 				}
 
-				MainFrame.right = false;
+				MainCanvas.right = false;
 			}
 
 			if (Character.getSpell(element).get(spellStage).spells.get(spellIndex).unlocked > 1)
 			{
-				if (MainFrame.key1)
+				if (MainCanvas.key1)
 				{
 					Character.socketedSpells[0] = Character.getSpell(element).get(spellStage).spells.get(spellIndex);
 				}
-				else if (MainFrame.key2)
+				else if (MainCanvas.key2)
 				{
 					Character.socketedSpells[1] = Character.getSpell(element).get(spellStage).spells.get(spellIndex);
 				}
-				else if (MainFrame.key3)
+				else if (MainCanvas.key3)
 				{
 					Character.socketedSpells[2] = Character.getSpell(element).get(spellStage).spells.get(spellIndex);
 				}
-				else if (MainFrame.key4)
+				else if (MainCanvas.key4)
 				{
 					Character.socketedSpells[3] = Character.getSpell(element).get(spellStage).spells.get(spellIndex);
 				}
-				else if (MainFrame.key5)
+				else if (MainCanvas.key5)
 				{
 					Character.socketedSpells[4] = Character.getSpell(element).get(spellStage).spells.get(spellIndex);
 				}
@@ -1166,36 +1167,36 @@ class SaveMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			selectedIndex--;
 
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			selectedIndex++;
 
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			selectedIndex--;
 
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			selectedIndex++;
 
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.esc)
+		else if (MainCanvas.esc)
 		{
 			menu.changeMenu("Game");
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex < files.length)
 			{
@@ -1213,7 +1214,7 @@ class SaveMenu extends MenuScreen
 				menu.changeMenu("Game");
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)
@@ -1379,36 +1380,36 @@ class LoadMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			selectedIndex--;
 
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			selectedIndex++;
 
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			selectedIndex--;
 
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			selectedIndex++;
 
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.esc)
+		else if (MainCanvas.esc)
 		{
 			menu.changeMenu("Game");
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex < files.length)
 			{
@@ -1420,7 +1421,7 @@ class LoadMenu extends MenuScreen
 				menu.changeMenu("Game");
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)
@@ -1620,7 +1621,7 @@ class CharacterMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			if (itemSelected)
 			{
@@ -1631,9 +1632,9 @@ class CharacterMenu extends MenuScreen
 				selectedIndex--;
 			}
 
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			if (itemSelected)
 			{
@@ -1644,9 +1645,9 @@ class CharacterMenu extends MenuScreen
 				selectedIndex++;
 			}
 
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			if (itemSelected)
 			{
@@ -1657,9 +1658,9 @@ class CharacterMenu extends MenuScreen
 				selectedIndex--;
 			}
 
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			if (itemSelected)
 			{
@@ -1670,9 +1671,9 @@ class CharacterMenu extends MenuScreen
 				selectedIndex++;
 			}
 
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.esc)
+		else if (MainCanvas.esc)
 		{
 			if (itemSelected)
 			{
@@ -1682,9 +1683,9 @@ class CharacterMenu extends MenuScreen
 			{
 				menu.changeMenu("Game");
 			}
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex < 3)
 			{
@@ -1719,7 +1720,7 @@ class CharacterMenu extends MenuScreen
 				}
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)
@@ -1976,7 +1977,7 @@ class CharacterMenu extends MenuScreen
 
 		y += 25;
 
-		String[] desc = MainFrame.wrapText(item.description, 40);
+		String[] desc = MainCanvas.wrapText(item.description, 40);
 
 		for (int i = 0; i < desc.length; i++)
 		{
@@ -2345,27 +2346,27 @@ class MainMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			selectedIndex -= 2;
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			selectedIndex++;
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			selectedIndex--;
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			selectedIndex += 2;
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex == 0)
 			{
@@ -2394,7 +2395,7 @@ class MainMenu extends MenuScreen
 				Main.setState(0);
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)
@@ -2459,36 +2460,36 @@ class MainLoadMenu extends MenuScreen
 	 */
 	@Override
 	void evaluateButtons() {
-		if (MainFrame.up)
+		if (MainCanvas.up)
 		{
 			selectedIndex--;
 
-			MainFrame.up = false;
+			MainCanvas.up = false;
 		}
-		else if (MainFrame.down)
+		else if (MainCanvas.down)
 		{
 			selectedIndex++;
 
-			MainFrame.down = false;
+			MainCanvas.down = false;
 		}
-		else if (MainFrame.left)
+		else if (MainCanvas.left)
 		{
 			selectedIndex--;
 
-			MainFrame.left = false;
+			MainCanvas.left = false;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			selectedIndex++;
 
-			MainFrame.right = false;
+			MainCanvas.right = false;
 		}
-		else if (MainFrame.esc)
+		else if (MainCanvas.esc)
 		{
 			menu.changeMenu("Main");
-			MainFrame.esc = false;
+			MainCanvas.esc = false;
 		}
-		else if (MainFrame.enter)
+		else if (MainCanvas.enter)
 		{
 			if (selectedIndex < files.length)
 			{
@@ -2500,7 +2501,7 @@ class MainLoadMenu extends MenuScreen
 				menu.changeMenu("Main");
 			}
 
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 		}
 
 		if (selectedIndex < 0)

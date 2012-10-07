@@ -284,7 +284,7 @@ public class GameData {
 			// Reset game speed timer
 			this.gameSpeedRemainder = this.gameSpeed;
 
-			MainFrame.menu.evaluateButtons();
+			MainCanvas.menu.evaluateButtons();
 		}
 	}
 
@@ -315,8 +315,8 @@ public class GameData {
 				Entity e = entry.getValue();
 				// If the entity is over double the resolution away from the screen (and player)
 				// then do not update its AI. Stops excessive AI processing.
-				if ((e.getPos()[0] < MainFrame.screenPosition[0]-MainFrame.resolution[0]) || (e.getPos()[0] > (MainFrame.screenPosition[0]+(2*MainFrame.resolution[0])))
-						|| (e.getPos()[1]+e.getSize()[1] < MainFrame.screenPosition[1]-MainFrame.resolution[1]) || (e.getPos()[1] > (MainFrame.screenPosition[1]+(2*MainFrame.resolution[1]))))
+				if ((e.getPos()[0] < MainCanvas.screenPosition[0]-MainCanvas.resolution[0]) || (e.getPos()[0] > (MainCanvas.screenPosition[0]+(2*MainCanvas.resolution[0])))
+						|| (e.getPos()[1]+e.getSize()[1] < MainCanvas.screenPosition[1]-MainCanvas.resolution[1]) || (e.getPos()[1] > (MainCanvas.screenPosition[1]+(2*MainCanvas.resolution[1]))))
 					continue;
 
 				evaluate.add(entry);
@@ -391,7 +391,6 @@ public class GameData {
 		final int state = Main.getState();
 		final GameData gd = this;
 		
-		Main.setState(2);
 		SaveGame.loadGame(file, gd);
 		Main.setState(state);
 		System.gc();	
@@ -404,7 +403,6 @@ public class GameData {
 		final int state = Main.getState();
 		final GameData gd = this;
 		
-		Main.setState(2);
 		SaveGame.loadLevel(levelName, gd);
 		Main.setState(state);
 		System.gc();	

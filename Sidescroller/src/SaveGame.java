@@ -129,7 +129,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 1;
 		Main.gamedata.loadText = "Loading old file";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		if (file.exists())
 		{
 			try {
@@ -152,7 +152,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 2;
 		Main.gamedata.loadText = "Loading level";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
 		if (level == null)
 			return false;
@@ -161,7 +161,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 3;
 		Main.gamedata.loadText = "Overwriting game entities";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		if (save.gameEntities.containsKey(level.name))
 		{
 			gameEntities = save.gameEntities.get(level.name);
@@ -177,7 +177,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 4;
 		Main.gamedata.loadText = "Processing spritesheets";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
@@ -186,18 +186,18 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 5;
 		Main.gamedata.loadText = "Loading background";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
 		gamedata.setBackground(level.getBackground());
 		
 		Main.gamedata.loadStage = 6;
 		Main.gamedata.loadText = "Generating Collision Map";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		gamedata.createCollisionMap();
 		
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Setting references";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		Character.inventory = save.inventory;
 		Character.socketedSpells = save.socketedSpells;
 		
@@ -213,7 +213,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 8;
 		Main.gamedata.loadText = "Reloading character images";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		Character.reloadAllImages();
 		
 		gamedata.systemMessages.clear();
@@ -233,7 +233,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 1;
 		Main.gamedata.loadText = "Loading old file";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		if (file.exists())
 		{
 			try {
@@ -256,14 +256,14 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 2;
 		Main.gamedata.loadText = "Loading new level";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		Level level = Level.load(new File("Data/"+levelName+".data"));
 		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
 		Main.gamedata.loadStage = 3;
 		Main.gamedata.loadText = "Overwriting game entities";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		if (save.gameEntities.containsKey(level.name))
 		{
 			gameEntities = save.gameEntities.get(level.name);
@@ -272,7 +272,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 4;
 		Main.gamedata.loadText = "Updating player stats";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		if (save.player != null)
 		{
 			Entity oldPlayer = level.gameEntities.get("Player");
@@ -285,7 +285,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 5;
 		Main.gamedata.loadText = "Processing entity images";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
@@ -295,13 +295,13 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 6;
 		Main.gamedata.loadText = "Loading background";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
 		gamedata.setBackground(level.getBackground());
 		
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Calculating collision map";
-		Main.mainframe.paintLoad(gc);
+		Main.maincanvas.paintLoad(gc);
 		gamedata.createCollisionMap();
 		
 		return true;

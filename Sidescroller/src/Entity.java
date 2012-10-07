@@ -271,14 +271,14 @@ public class Entity implements Serializable{
 	}
 
 	/**
-	 * Method that takes player input (from {@link MainFrame}) to control entity. <p>
+	 * Method that takes player input (from {@link MainCanvas}) to control entity. <p>
 	 * Moves the Entity depending on the state of the keys 'up', 'left' and 'right' <p>
 	 * Performs actions on state of other keys. <p>
 	 */
 	protected void behavior0()
 	{
 		// Move left and right
-		if (MainFrame.left)
+		if (MainCanvas.left)
 		{
 			this.getVelocity()[0] = -speed;
 			this.getPos()[2] = 0;
@@ -286,7 +286,7 @@ public class Entity implements Serializable{
 			if ((animateStage != 1) && (animateStrip == 2))
 				newAnimStrip = 1;
 		}
-		else if (MainFrame.right)
+		else if (MainCanvas.right)
 		{
 			this.getVelocity()[0] = speed;
 			this.getPos()[2] = 1;
@@ -305,16 +305,16 @@ public class Entity implements Serializable{
 		}
 
 		// Jump
-		if ((MainFrame.up) && (this.isGrounded()))
+		if ((MainCanvas.up) && (this.isGrounded()))
 		{
 			this.getVelocity()[1] -= 25;
 		}
 
 		// Activate infront of Entity
-		if (MainFrame.enter)
+		if (MainCanvas.enter)
 		{
 			// Make sure that you can super speedily iterate through all the dialogue
-			MainFrame.enter = false;
+			MainCanvas.enter = false;
 			Rectangle r = null;
 
 			// Create a rectangle representing the area to be activated
@@ -343,15 +343,15 @@ public class Entity implements Serializable{
 
 		}
 		
-		if (MainFrame.space)
+		if (MainCanvas.space)
 		{
 			Character.beginGenderSwap();
 			
-			MainFrame.tab = false;
+			MainCanvas.tab = false;
 		}
 
 		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
-		if (MainFrame.key1)
+		if (MainCanvas.key1)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[0] > 0) || (isAnimating))
@@ -381,7 +381,7 @@ public class Entity implements Serializable{
 			spellToCast = s;
 			castSpellAt = 5;
 		}
-		else if (MainFrame.key2)
+		else if (MainCanvas.key2)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[1] > 0) || (isAnimating))
@@ -411,7 +411,7 @@ public class Entity implements Serializable{
 			spellToCast = s;
 			castSpellAt = 5;
 		}
-		else if (MainFrame.key3)
+		else if (MainCanvas.key3)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[2] > 0) || (isAnimating))
@@ -441,7 +441,7 @@ public class Entity implements Serializable{
 			spellToCast = s;
 			castSpellAt = 5;
 		}
-		else if (MainFrame.key4)
+		else if (MainCanvas.key4)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[3] > 0) || (isAnimating))
@@ -471,7 +471,7 @@ public class Entity implements Serializable{
 			spellToCast = s;
 			castSpellAt = 5;
 		}
-		else if (MainFrame.key5)
+		else if (MainCanvas.key5)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[4] > 0) || (isAnimating))
