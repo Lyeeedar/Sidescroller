@@ -240,9 +240,9 @@ public class MainFrame extends JFrame implements KeyListener{
 				g2d = (Graphics2D) this.getGraphics();
 			}
 
-			// Enable AA
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+//			// Enable AA
+//			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the buffered Image onto the back buffer
 			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);

@@ -38,6 +38,12 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
+		if(System.getProperty("os.name").startsWith("Win"))
+            System.setProperty("sun.java2d.d3d","true");
+		else
+            System.setProperty("sun.java2d.opengl", "true");
+		
+		Character.resetAll();
 		// Create the game
 		Main game = new Main();
 		GraphicsDevice device = null;

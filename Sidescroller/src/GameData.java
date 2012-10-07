@@ -1,3 +1,6 @@
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -106,7 +109,7 @@ public class GameData {
 	{	
 		Character.resetAll();
 		boolean a = true;
-		if (!a)
+		if (a)
 		{
 			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
 
@@ -132,7 +135,7 @@ public class GameData {
 
 			BufferedImage im = null;
 			try{
-				im = ImageIO.read(new File("Test2/back0.png"));
+				im = ImageIO.read(new File("Test/back0.png"));
 			}
 			catch (IOException ex)
 			{
@@ -142,7 +145,7 @@ public class GameData {
 			background[0] = im;
 
 			try{
-				im = ImageIO.read(new File("Test2/back1.png"));
+				im = ImageIO.read(new File("Test/back1.png"));
 			}
 			catch (IOException ex)
 			{
@@ -152,7 +155,7 @@ public class GameData {
 			background[1] = im;
 
 			try{
-				im = ImageIO.read(new File("Test2/back2.png"));
+				im = ImageIO.read(new File("Test/back1.png"));
 			}
 			catch (IOException ex)
 			{
@@ -162,7 +165,7 @@ public class GameData {
 			background[2] = im;
 
 			try{
-				im = ImageIO.read(new File("Test2/back3.png"));
+				im = ImageIO.read(new File("Test/back2.png"));
 			}
 			catch (IOException ex)
 			{
@@ -172,7 +175,7 @@ public class GameData {
 			background[3] = im;
 
 			try{
-				im = ImageIO.read(new File("Test2/back4.png"));
+				im = ImageIO.read(new File("Test/back3.png"));
 			}
 			catch (IOException ex)
 			{
@@ -203,6 +206,7 @@ public class GameData {
 			BufferedImage im = null;
 			try{
 				im = ImageIO.read(new File(image));
+				im = toCompatibleImage(im);
 			}
 			catch (IOException ioe)
 			{
@@ -211,6 +215,35 @@ public class GameData {
 			gameImages.put(image, im);
 			return im;
 		}
+	}
+	
+	private static BufferedImage toCompatibleImage(BufferedImage image)
+	{
+		// obtain the current system graphical settings
+		GraphicsConfiguration gfx_config = GraphicsEnvironment.
+			getLocalGraphicsEnvironment().getDefaultScreenDevice().
+			getDefaultConfiguration();
+
+		/*
+		 * if image is already compatible and optimized for current system 
+		 * settings, simply return it
+		 */
+		if (image.getColorModel().equals(gfx_config.getColorModel()))
+			return image;
+
+		// image is not optimized, so create a new image that is
+		BufferedImage new_image = gfx_config.createCompatibleImage(
+				image.getWidth(), image.getHeight(), image.getTransparency());
+
+		// get the graphics context of the new image to draw the old image on
+		Graphics2D g2d = (Graphics2D) new_image.getGraphics();
+
+		// actually draw the image and dispose of context no longer needed
+		g2d.drawImage(image, 0, 0, null);
+		g2d.dispose();
+
+		// return the new optimized image
+		return new_image; 
 	}
 
 	/**
