@@ -1,3 +1,4 @@
+import java.awt.DisplayMode;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -40,14 +41,18 @@ public class Main {
 		
 		if(System.getProperty("os.name").startsWith("Win"))
 		{
-			System.out.println(System.getProperty("os.name"));
-            System.setProperty("sun.java2d.d3d","True");
 		}
 		else
 		{
-			System.out.println(System.getProperty("os.name"));
-            System.setProperty("sun.java2d.opengl", "True");
+            //System.setProperty("sun.java2d.opengl", "True");
 		}
+		
+		System.out.println(System.getProperty("os.name"));
+		
+		System.setProperty("sun.java2d.d3d","False");
+		System.setProperty("sun.java2d.transaccel", "True");
+	    // System.setProperty("sun.java2d.trace", "timestamp,log,count");
+	    System.setProperty("sun.java2d.ddforcevram", "True");
 		
 		Character.resetAll();
 		// Create the game
@@ -70,8 +75,16 @@ public class Main {
             {
             	// Set the Main Frame to fullscreen exclusive mode
             	device.setFullScreenWindow(mainframe);
+            	
+            	if( device.isDisplayChangeSupported() ) {
+            		  device.setDisplayMode( 
+            		    new DisplayMode( 800, 600, 32, DisplayMode.REFRESH_RATE_UNKNOWN )
+            		  );
+            		}
             }
     		
+            mainframe.createStrategy();
+            
         	// Run the game loop
     		game.loop(gc);
         }
@@ -82,6 +95,7 @@ public class Main {
         finally{
         	// Remove the program from fullscreen mode
         	device.setFullScreenWindow(null);
+   
         }
 
 		System.exit(0);

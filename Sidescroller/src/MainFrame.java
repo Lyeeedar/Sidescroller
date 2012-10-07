@@ -1,7 +1,10 @@
+import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -31,14 +34,24 @@ public class MainFrame extends JFrame implements KeyListener{
 	public static int[] screenPosition = new int[2];
 	public BufferedImage[] HUDImages = new BufferedImage[4];
 	public static Menu menu = new Menu();
+	public Canvas canvas;
 
 	public MainFrame(GraphicsConfiguration gc)
 	{
 		// Initialise the Frame with the given graphics configuration
 		super(gc);
+		
+		// Set the game resolution
+		MainFrame.resolution = new int[]{800, 600};
 
 		this.setIgnoreRepaint(true);
 		this.setLocationRelativeTo(null);
+		
+		canvas = new Canvas();
+		canvas.setPreferredSize(new Dimension(resolution[0], resolution[1]));
+		canvas.setIgnoreRepaint(true);
+		canvas.setFocusable(false);
+		this.add(canvas);
 
 		// Set the frame to be undecorated and ignore paint calls from the OS
 		if (Main.fullscreen)
@@ -47,22 +60,15 @@ public class MainFrame extends JFrame implements KeyListener{
 		// If the frame is not running as fullscreen then create a window for it
 		if (!Main.fullscreen)
 		{
-			this.setSize(800, 600);
+			this.setResizable(false);
+			this.pack();
 			this.setVisible(true);
 			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		}
-	
-		// Initialise the buffer strategy
-		this.createBufferStrategy(2);
-
-		// Store the buffer Strategy
-		bufferStrategy = this.getBufferStrategy();
+		
 
 		// Add a key listener to the frame to record key presses
 		this.addKeyListener(this);
-
-		// Set the game resolution
-		MainFrame.resolution = new int[]{800, 600};
 		
 		HUDImages[0] = GameData.getImage("Data/Resources/GUI/HUD.png");
 		HUDImages[1] = GameData.getImage("Data/Resources/GUI/spellIconBase.png");
@@ -71,17 +77,24 @@ public class MainFrame extends JFrame implements KeyListener{
 
 	}
 	
+	public void createStrategy()
+	{
+		// Initialise the buffer strategy
+		canvas.createBufferStrategy(3);
+
+		// Store the buffer Strategy
+		bufferStrategy = canvas.getBufferStrategy();
+	}
+	
 	public void paintLoad(GraphicsConfiguration gc)
 	{
 		Graphics2D g2d = null;
 
 		try {
+			 // Let the OS have a little time...
+		    Thread.yield();
 
-			// Create a BufferedImage compatible with the current environment
-			BufferedImage im = gc.createCompatibleImage(resolution[0], resolution[1]);
-
-			// Get its Graphics object
-			g2d = (Graphics2D) im.getGraphics();
+			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -100,34 +113,18 @@ public class MainFrame extends JFrame implements KeyListener{
 			g2d.setColor(Color.WHITE);
 			
 			g2d.drawString(Main.gamedata.loadText, 250, 450);
-			
-			// Get the graphics object for the current setting of fullscreen
-			if (Main.fullscreen)
-			{
-				// Get a graphics object for the current backbuffer
-				g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
-			}
-			else
-			{
-				g2d = (Graphics2D) this.getGraphics();
-			}
-
-			// Enable AA
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-
-			// Draw the buffered Image onto the back buffer
-			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
 
 
 		} finally {
 			// Dispose of the graphics object
-			if (Main.fullscreen)
+			if (g2d != null)
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-		if (Main.fullscreen)
-			bufferStrategy.show();
+	    if( !bufferStrategy.contentsLost() )
+	    	bufferStrategy.show();
+	    
+		Toolkit.getDefaultToolkit().sync();	
 	}
 
 	/**
@@ -138,12 +135,10 @@ public class MainFrame extends JFrame implements KeyListener{
 		Graphics2D g2d = null;
 
 		try {
+			 // Let the OS have a little time...
+		    Thread.yield();
 
-			// Create a BufferedImage compatible with the current environment
-			BufferedImage im = gc.createCompatibleImage(resolution[0], resolution[1]);
-
-			// Get its Graphics object
-			g2d = (Graphics2D) im.getGraphics();
+			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -164,33 +159,17 @@ public class MainFrame extends JFrame implements KeyListener{
 
 			menu.drawMenus(g2d);
 
-			// Get the graphics object for the current setting of fullscreen
-			if (Main.fullscreen)
-			{
-				// Get a graphics object for the current backbuffer
-				g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
-			}
-			else
-			{
-				g2d = (Graphics2D) this.getGraphics();
-			}
-
-			// Enable AA
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-
-			// Draw the buffered Image onto the back buffer
-			g2d.drawImage(im, 0, 0, this.getWidth(), this.getHeight(), null);
-
 
 		} finally {
 			// Dispose of the graphics object
-			if (Main.fullscreen)
+			if (g2d != null)
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-		if (Main.fullscreen)
-			bufferStrategy.show();
+	    if( !bufferStrategy.contentsLost() )
+	    	bufferStrategy.show();
+	    
+		Toolkit.getDefaultToolkit().sync();	
 	}
 
 	/**
@@ -201,6 +180,8 @@ public class MainFrame extends JFrame implements KeyListener{
 		Graphics2D g2d = null;
 
 		try {
+		    // Let the OS have a little time...
+		    Thread.yield();
 
 			// Calculate the screen position
 			this.calculateScreen();
@@ -208,8 +189,8 @@ public class MainFrame extends JFrame implements KeyListener{
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
-//			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//					RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			// Draw the background to the back buffer
 			drawBackground(g2d);
@@ -226,13 +207,16 @@ public class MainFrame extends JFrame implements KeyListener{
 			// Draw HUD
 			drawHUD(g2d, totalTime);
 
-
 		} finally {
 			// Dispose of the graphics object
-			g2d.dispose();
+			if (g2d != null)
+				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-		bufferStrategy.show();
+	    if( !bufferStrategy.contentsLost() )
+	    	bufferStrategy.show();
+	    
+		Toolkit.getDefaultToolkit().sync();	
 	}
 
 	public void drawHUD(Graphics2D g2d, long totalTime)
