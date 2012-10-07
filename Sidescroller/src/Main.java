@@ -39,9 +39,15 @@ public class Main {
 	public static void main(String[] args) {
 		
 		if(System.getProperty("os.name").startsWith("Win"))
+		{
+			System.out.println("OS = Windows");
             System.setProperty("sun.java2d.d3d","true");
+		}
 		else
+		{
+			System.out.println("OS = Not Windows");
             System.setProperty("sun.java2d.opengl", "true");
+		}
 		
 		Character.resetAll();
 		// Create the game
