@@ -82,6 +82,14 @@ public class Menu {
 		{
 			this.menu = new MainLoadMenu(this);
 		}
+		else if (menu.equals("Credits"))
+		{
+			this.menu = new CreditsMenu(this);
+		}
+		else if (menu.equals("Options"))
+		{
+			this.menu = new OptionsMenu(this);
+		}
 	}
 
 
@@ -2305,13 +2313,13 @@ class MainMenu extends MenuScreen
 		{
 			g2d.drawImage(images[2], 490, 220, null);
 			g2d.setColor(selected);
-			g2d.drawString("Tutorial", 600, 285);
+			g2d.drawString("Options", 600, 285);
 		}
 		else
 		{
 			g2d.drawImage(images[1], 490, 220, null);
 			g2d.setColor(normal);
-			g2d.drawString("Tutorial", 600, 285);
+			g2d.drawString("Options", 600, 285);
 		}
 
 		if (selectedIndex == 4)
@@ -2381,10 +2389,18 @@ class MainMenu extends MenuScreen
 				Main.gamedata.loadGame(files[0]);
 				Main.setState(1);
 			}
+			else if (selectedIndex == 1)
+			{
+				menu.changeMenu("Credits");
+			}
 			else if (selectedIndex == 2)
 			{
 				Main.setState(1);
 				Main.gamedata.test();
+			}
+			else if (selectedIndex == 3)
+			{
+				menu.changeMenu("Options");
 			}
 			else if (selectedIndex == 4)
 			{
@@ -2614,4 +2630,168 @@ class MainLoadMenu extends MenuScreen
 		return im;
 	}
 
+}
+
+class CreditsMenu extends MenuScreen
+{
+
+	/**
+	 * @param menu
+	 */
+	public CreditsMenu(Menu menu) {
+		super(menu);
+		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		if ((MainCanvas.esc) || (MainCanvas.enter))
+		{
+			menu.changeMenu("Main");
+			MainCanvas.esc = false;
+			MainCanvas.enter = false;
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawLeft(Graphics2D g2d) {
+		g2d.setColor(Color.BLACK);
+		
+		g2d.drawString("Kevin Glass - easyOgg Library", 100, 80);
+		
+		g2d.drawString("SFX by http://www.freesfx.co.uk", 100, 180);
+		
+		g2d.drawString("Me - The Rest Of The Game :D", 100, 280);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		g2d.setColor(Color.BLUE);
+		g2d.drawString("Back", 500, 480);
+		
+	}
+	
+}
+
+class OptionsMenu extends MenuScreen
+{
+	int selectedIndex = 0;
+
+	/**
+	 * @param menu
+	 */
+	public OptionsMenu(Menu menu) {
+		super(menu);
+		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		// TODO Auto-generated method stub
+		if (MainCanvas.esc)
+		{
+			menu.changeMenu("Main");
+			
+			MainCanvas.esc = false;
+		}
+		else if (MainCanvas.up)
+		{
+			selectedIndex--;
+			
+			MainCanvas.up = false;
+		}
+		else if (MainCanvas.down)
+		{
+			selectedIndex++;
+			
+			MainCanvas.down = false;
+		}
+		else if (MainCanvas.enter)
+		{
+			if (selectedIndex == 0)
+			{
+				Main.toggleFullscreen();
+			}
+			else if (selectedIndex == 1)
+			{
+				if (SoundEffect.volume == SoundEffect.Volume.MUTE)
+				{
+					SoundEffect.volume = SoundEffect.Volume.UNMUTE;
+				}
+				else
+				{
+					SoundEffect.volume = SoundEffect.Volume.MUTE;
+				}
+			}
+			
+			MainCanvas.enter = false;
+		}
+		
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		else if (selectedIndex > 2)
+			selectedIndex = 2;
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawLeft(Graphics2D g2d) {
+		if (selectedIndex == 0)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Fullscreen:", 80, 100);
+		g2d.drawString(""+Main.fullscreen, 250, 100);
+		
+		if (selectedIndex == 1)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Sound Effect Volume:", 80, 200);
+		
+		if (SoundEffect.volume == SoundEffect.Volume.MUTE)
+		{
+			g2d.drawString("Mute", 250, 200);
+		}
+		else
+		{
+			g2d.drawString("Unmute", 250, 200);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

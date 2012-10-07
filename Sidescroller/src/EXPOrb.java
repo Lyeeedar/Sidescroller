@@ -103,6 +103,7 @@ public class EXPOrb extends Item {
 			
 			Main.gamedata.getGameEntities().get("Player").getInfoText().add(new SystemMessage("+"+number+" EXP", Color.GREEN, 3000));
 			
+			SoundEffect.EXP.play();
 			this.setAlive(false);
 		}
 	}

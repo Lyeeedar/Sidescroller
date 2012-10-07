@@ -11,14 +11,15 @@ import javax.sound.sampled.*;
  * 4. You can use the static variable SoundEffect.volume to mute the sound.
  */
 public enum SoundEffect {
-   Pickup("Data/Resources/Sounds/Pickup.wav");
+   Pickup("Data/Resources/Sounds/Pickup.wav"),
+   EXP("Data/Resources/Sounds/EXP_V2.wav");
    
    // Nested class for specifying volume
    public static enum Volume {
-      MUTE, LOW, MEDIUM, HIGH
+      MUTE, UNMUTE
    }
    
-   public static Volume volume = Volume.LOW;
+   public static Volume volume = Volume.UNMUTE;
    
    // Each sound effect has its own clip, loaded with its own sound file.
    private Clip clip;

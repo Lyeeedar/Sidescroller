@@ -115,7 +115,7 @@ public class Main {
 
 			if( device.isDisplayChangeSupported() ) {
 				device.setDisplayMode( 
-						new DisplayMode( 800, 600, device.getDisplayMode().getBitDepth(), 60 )
+						new DisplayMode( MainCanvas.resolution[0], MainCanvas.resolution[1], device.getDisplayMode().getBitDepth(), 60 )
 						);
 			}
 			fullscreen = true;
@@ -127,7 +127,10 @@ public class Main {
 			fullscreen = false;
 		}
 
-		window.pack();
+		if (fullscreen)
+			window.pack();
+		else
+			window.setSize(802, 630);
 		window.setResizable(false);
 		
 		
@@ -164,6 +167,7 @@ public class Main {
 
 		while(true)
 		{
+			maincanvas.requestFocusInWindow();
 
 			if (state == 0)
 			{

@@ -91,6 +91,7 @@ public class GameData {
 		try {
 			BGM = new OggClip("Data/Resources/Sounds/test.ogg");
 			BGM.loop();
+			BGM.setGain(0.75f);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

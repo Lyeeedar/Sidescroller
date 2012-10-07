@@ -791,8 +791,11 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			MainCanvas.esc = true;
 			
-			if (Main.getState() == 1)
+			if ((Main.getState() == 1) || (Main.getState() == 4))
 			{
+				if (Main.gamedata.BGM.isPaused())
+					Main.gamedata.BGM.resume();
+				
 				menu.changeMenu("Game");
 				MainCanvas.esc = false;
 			}
