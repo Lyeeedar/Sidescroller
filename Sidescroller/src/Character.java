@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,27 +36,27 @@ public class Character {
 	{
 		int index = 0;
 		
-		if (sigil.element.equals(Entity.DAMAGE_FIRE))
+		if (sigil.element.equals(Entity.FIRE))
 		{
 			index = 0;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_AIR))
+		else if (sigil.element.equals(Entity.AIR))
 		{
 			index = 1;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_EARTH))
+		else if (sigil.element.equals(Entity.EARTH))
 		{
 			index = 2;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_WATER))
+		else if (sigil.element.equals(Entity.WATER))
 		{
 			index = 3;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_DEATH))
+		else if (sigil.element.equals(Entity.DEATH))
 		{
 			index = 4;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_LIFE))
+		else if (sigil.element.equals(Entity.LIFE))
 		{
 			index = 5;
 		}
@@ -70,27 +71,27 @@ public class Character {
 	{
 		int index = 0;
 		
-		if (sigil.element.equals(Entity.DAMAGE_FIRE))
+		if (sigil.element.equals(Entity.FIRE))
 		{
 			index = 0;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_AIR))
+		else if (sigil.element.equals(Entity.AIR))
 		{
 			index = 1;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_EARTH))
+		else if (sigil.element.equals(Entity.EARTH))
 		{
 			index = 2;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_WATER))
+		else if (sigil.element.equals(Entity.WATER))
 		{
 			index = 3;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_DEATH))
+		else if (sigil.element.equals(Entity.DEATH))
 		{
 			index = 4;
 		}
-		else if (sigil.element.equals(Entity.DAMAGE_LIFE))
+		else if (sigil.element.equals(Entity.LIFE))
 		{
 			index = 5;
 		}
@@ -101,7 +102,10 @@ public class Character {
 	
 	public static void addEXP(int amount)
 	{
-		
+		for (int i = 0; i < 5; i++)
+		{
+			socketedSpells[i].addEXP(amount);
+		}
 	}
 	
 	public static void updateTime(long elapsedTime)
@@ -216,6 +220,7 @@ public class Character {
 	public static void populateLifeSpells()
 	{
 		String[] icons = {"Data/Resources/GUI/spellIconLife.png","Data/Resources/GUI/spellIconLifeSelected.png"};
+		String element = Entity.LIFE;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
 		
@@ -224,9 +229,9 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Weak Heal", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("Weak Heal", null, 2, new int[]{500, 100},
 				icons,
-				"Heal a little of your health."));
+				"Heal a little of your health.", 500, element));
 		
 		lifeSpells = spells;
 	}
@@ -234,6 +239,7 @@ public class Character {
 	public static void populateDeathSpells()
 	{
 		String[] icons = {"Data/Resources/GUI/spellIconDeath.png","Data/Resources/GUI/spellIconDeathSelected.png"};
+		String element = Entity.DEATH;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
 		
@@ -242,9 +248,9 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Summon imp", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("Summon imp", null, 2, new int[]{500, 100},
 				icons,
-				"Summon an imp to attack your foe."));
+				"Summon an imp to attack your foe.", 500, element));
 		
 		deathSpells = spells;
 	}
@@ -252,6 +258,7 @@ public class Character {
 	public static void populateWaterSpells()
 	{
 		String[] icons = {"Data/Resources/GUI/spellIconWater.png","Data/Resources/GUI/spellIconWaterSelected.png"};
+		String element = Entity.WATER;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
 		
@@ -260,9 +267,9 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 2, new int[]{500, 100},
 				icons,
-				"Send a spike of ice at your foe."));
+				"Send a spike of ice at your foe.", 500, element));
 		
 		waterSpells = spells;
 	}
@@ -270,6 +277,7 @@ public class Character {
 	public static void populateEarthSpells()
 	{
 		String[] icons = {"Data/Resources/GUI/spellIconEarth.png","Data/Resources/GUI/spellIconEarthSelected.png"};
+		String element = Entity.EARTH;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
 		
@@ -278,17 +286,17 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 3, new int[]{500, 100},
+		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 2, new int[]{500, 100},
 				icons,
-				"Send a series of rock spikes flying out in front of you."));
+				"Send a series of rock spikes flying out in front of you.", 500, element));
 		
-		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 3, new int[]{400, 200},
+		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 0, new int[]{400, 200},
 				icons,
-				"Raise a wall of rock from the ground to stop foes."));
+				"Raise a wall of rock from the ground to stop foes.", 580, element));
 		
-		spells.get(1).spells.add(new SpellsStageEntry("RockShot", null, 3, new int[]{600, 200},
+		spells.get(1).spells.add(new SpellsStageEntry("RockShot", new String[]{"RockSpike"}, 0, new int[]{600, 200},
 				icons,
-				"Send a large rock flying at an opponent."));
+				"Send a large rock flying at an opponent.", 580, element));
 		
 		earthSpells = spells;
 	}
@@ -296,6 +304,7 @@ public class Character {
 	public static void populateAirSpells()
 	{
 		String[] airIcons = {"Data/Resources/GUI/spellIconAir.png","Data/Resources/GUI/spellIconAirSelected.png"};
+		String element = Entity.AIR;
 		
 		airSpells = new ArrayList<SpellsStage>();
 		
@@ -304,14 +313,15 @@ public class Character {
 			airSpells.add(new SpellsStage());
 		}
 		
-		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 3, new int[]{500, 100},
+		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 2, new int[]{500, 100},
 				airIcons,
-				"Slice a foe with a blade of air."));
+				"Slice a foe with a blade of air.", 500, element));
 	}
 	
 	public static void populateFireSpells()
 	{
 		String[] fireIcons = {"Data/Resources/GUI/spellIconFire.png","Data/Resources/GUI/spellIconFireSelected.png"};
+		String element = Entity.FIRE;
 		
 		fireSpells = new ArrayList<SpellsStage>();
 		
@@ -320,21 +330,21 @@ public class Character {
 			fireSpells.add(new SpellsStage());
 		}
 		
-		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 3, new int[]{500, 100},
+		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 2, new int[]{500, 100},
 				fireIcons,
-				"A ball of burning fire. Will singe a target somewhat fierce."));
+				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 3, new int[]{400, 200},
+		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{400, 200},
 				fireIcons,
-				"Sets fire to a spot, scorching all who enter it."));
+				"Sets fire to a spot, scorching all who enter it.", 700, element));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", null, 3, new int[]{600, 200},
+		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", new String[]{"FireBall"}, 0, new int[]{600, 200},
 				fireIcons,
-				"Creates a wall of fire, burning any who pass through it."));
+				"Creates a wall of fire, burning any who pass through it.", 580, element));
 		
-		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 3, new int[]{400, 300},
+		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 0, new int[]{400, 300},
 				fireIcons,
-				"Sets fire to a line, scorching all who enter it."));
+				"Sets fire to a line, scorching all who enter it.", 900, element));
 
 	
 		unlockSpells(fireSpells);
@@ -352,7 +362,7 @@ public class Character {
 				{
 					continue;
 				}
-				else if (sse.parents == null)
+				else if (sse.parents.size() == 0)
 				{
 					continue;
 				}
@@ -381,27 +391,27 @@ public class Character {
 	
 	public static ArrayList<SpellsStage> getSpell(String name)
 	{
-		if (name.equals("Fire"))
+		if (name.equals(Entity.FIRE))
 		{
 			return fireSpells;
 		}
-		else if (name.equals("Air"))
+		else if (name.equals(Entity.AIR))
 		{
 			return airSpells;
 		}
-		else if (name.equals("Earth"))
+		else if (name.equals(Entity.EARTH))
 		{
 			return earthSpells;
 		}
-		else if (name.equals("Water"))
+		else if (name.equals(Entity.WATER))
 		{
 			return waterSpells;
 		}
-		else if (name.equals("Death"))
+		else if (name.equals(Entity.DEATH))
 		{
 			return deathSpells;
 		}
-		else if (name.equals("Life"))
+		else if (name.equals(Entity.LIFE))
 		{
 			return lifeSpells;
 		}
@@ -484,9 +494,14 @@ class SpellsStageEntry implements Serializable
 	public String[] imageFiles;
 	public transient BufferedImage[] images;
 	public String description;
+	public int maxEXP;
+	public int currentEXP = 0;
+	public String element;
 	
-	public SpellsStageEntry(String name, String[] parents, int unlocked, int[] pos, String[] imageFiles, String description)
+	public SpellsStageEntry(String name, String[] parents, int unlocked, int[] pos, String[] imageFiles, String description, int maxEXP, String element)
 	{
+		this.element = element;
+		this.maxEXP = maxEXP;
 		this.imageFiles = imageFiles;
 		this.description = description;
 		this.name = name;
@@ -511,5 +526,18 @@ class SpellsStageEntry implements Serializable
 	public int isUnlocked()
 	{
 		return unlocked;
+	}
+	
+	public void addEXP(int exp)
+	{
+		currentEXP += exp;
+		
+		if ((currentEXP >= maxEXP) && (unlocked < 3))
+		{
+			unlocked = 3;
+			Main.gamedata.systemMessages.add(new SystemMessage("Mastered "+name, Color.ORANGE, 10000));
+			Main.gamedata.getGameEntities().get("Player").infoText.add(new SystemMessage("Spell Mastered", Color.ORANGE, 3000));
+			Character.unlockSpells(Character.getSpell(element));
+		}
 	}
 }

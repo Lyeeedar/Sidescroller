@@ -31,7 +31,16 @@ public enum SoundEffect {
 		// Set up an audio input stream piped from the sound file.
 		AudioInputStream audioInputStream = null;
 		try {
-			audioInputStream = AudioSystem.getAudioInputStream(new File(soundFileName));
+	    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(soundFileName);
+	    	if (in == null)
+	    	{
+	    		in = new FileInputStream(soundFileName);
+	    	}
+	    	else
+	    	{
+	    		in = new BufferedInputStream(in);
+	    	}
+			audioInputStream = AudioSystem.getAudioInputStream(in);
 		} catch (UnsupportedAudioFileException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {

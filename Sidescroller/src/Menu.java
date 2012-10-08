@@ -348,7 +348,7 @@ class SpellMenu extends MenuScreen
 	int spellStage = 0;
 	int spellIndex = 0;
 
-	String element = "Fire";
+	String element = Entity.FIRE;
 
 	final int[] size = {240, 302};
 
@@ -486,6 +486,8 @@ class SpellMenu extends MenuScreen
 		}
 
 		i++;
+		
+		g2d.drawString(sse.currentEXP+" / "+sse.maxEXP, 495, 100+size[1]+35+(20*i));
 
 		for (int ii = 0; ii < 5; ii++)
 		{
@@ -783,78 +785,78 @@ class SpellMenu extends MenuScreen
 			{
 				if (selectedIndex == 5)
 				{
-					if (element.equals("Fire"))
+					if (element.equals(Entity.FIRE))
 					{
 
 					}
 					else
 					{
-						element = "Fire";
+						element = Entity.FIRE;
 						spellIndex = 0;
 						spellStage = 0;
 					}
 				}
 				else if (selectedIndex == 6)
 				{
-					if (element.equals("Air"))
+					if (element.equals(Entity.AIR))
 					{
 
 					}
 					else
 					{
-						element = "Air";
+						element = Entity.AIR;
 						spellIndex = 0;
 						spellStage = 0;
 					}
 				}
 				else if (selectedIndex == 7)
 				{
-					if (element.equals("Earth"))
+					if (element.equals(Entity.EARTH))
 					{
 
 					}
 					else
 					{
-						element = "Earth";
+						element = Entity.EARTH;
 						spellIndex = 0;
 						spellStage = 0;
 					}
 				}
 				else if (selectedIndex == 8)
 				{
-					if (element.equals("Water"))
+					if (element.equals(Entity.WATER))
 					{
 
 					}
 					else
 					{
-						element = "Water";
+						element = Entity.WATER;
 						spellIndex = 0;
 						spellStage = 0;
 					}
 				}
 				else if (selectedIndex == 9)
 				{
-					if (element.equals("Death"))
+					if (element.equals(Entity.DEATH))
 					{
 
 					}
 					else
 					{
-						element = "Death";
+						element = Entity.DEATH;
 						spellIndex = 0;
 						spellStage = 0;
 					}
 				}
 				else if (selectedIndex == 10)
 				{
-					if (element.equals("Life"))
+					if (element.equals(Entity.LIFE))
 					{
 
 					}
 					else
 					{
-						element = "Life";
+						element = Entity.LIFE;
 						spellIndex = 0;
 						spellStage = 0;
 					}
@@ -1555,7 +1557,7 @@ class CharacterMenu extends MenuScreen
 	int itemIndex = 0;
 
 	ArrayList<Sigil> sigils = new ArrayList<Sigil>();
-	ArrayList<Item> scrolls = new ArrayList<Item>();
+	ArrayList<Upgrade> scrolls = new ArrayList<Upgrade>();
 	ArrayList<Item> misc = new ArrayList<Item>();
 
 	ArrayList<Sigil> fire = new ArrayList<Sigil>();
@@ -1577,47 +1579,47 @@ class CharacterMenu extends MenuScreen
 		for (Map.Entry<String, Item> entry : Character.inventory.get(0).entrySet())
 		{
 			Sigil item = (Sigil) entry.getValue();
-			
+
 			sigils.add(item);
 		}
-		
+
 		for (Map.Entry<String, Item> entry : Character.inventory.get(1).entrySet())
 		{
-			Item item = entry.getValue();
-			
+			Upgrade item = (Upgrade) entry.getValue();
+
 			scrolls.add(item);
 		}
-		
+
 		for (Map.Entry<String, Item> entry : Character.inventory.get(2).entrySet())
 		{
 			Item item = entry.getValue();
-			
+
 			misc.add(item);
 		}
-		
+
 		for (Sigil sigil : sigils)
 		{
-			if (sigil.element.equals(Entity.DAMAGE_FIRE))
+			if (sigil.element.equals(Entity.FIRE))
 			{
 				fire.add(sigil);
 			}
-			else if (sigil.element.equals(Entity.DAMAGE_AIR))
+			else if (sigil.element.equals(Entity.AIR))
 			{
 				air.add(sigil);
 			}
-			else if (sigil.element.equals(Entity.DAMAGE_EARTH))
+			else if (sigil.element.equals(Entity.EARTH))
 			{
 				earth.add(sigil);
 			}
-			else if (sigil.element.equals(Entity.DAMAGE_WATER))
+			else if (sigil.element.equals(Entity.WATER))
 			{
 				water.add(sigil);
 			}
-			else if (sigil.element.equals(Entity.DAMAGE_DEATH))
+			else if (sigil.element.equals(Entity.DEATH))
 			{
 				death.add(sigil);
 			}
-			else if (sigil.element.equals(Entity.DAMAGE_LIFE))
+			else if (sigil.element.equals(Entity.LIFE))
 			{
 				life.add(sigil);
 			}
@@ -1707,10 +1709,10 @@ class CharacterMenu extends MenuScreen
 					if (selectedType == 0)
 					{
 						Sigil sigil = this.getSelectedSigil();
-						
+
 						if (sigil == null)
 						{
-							
+
 						}
 						else if (sigil.equipped)
 						{
@@ -1720,6 +1722,10 @@ class CharacterMenu extends MenuScreen
 						{
 							Character.equipSigil(sigil);
 						}
+					}
+					else if (selectedType == 1)
+					{
+						scrolls.get(itemIndex).use();
 					}
 				}
 				else
@@ -1765,50 +1771,50 @@ class CharacterMenu extends MenuScreen
 	protected Sigil getSelectedSigil()
 	{
 		int itemValue = itemIndex;
-		
+
 		if (itemIndex == -1)
 		{
 			return null;
 		}
-		
+
 		if (itemValue < fire.size())
 		{
 			return fire.get(itemValue);
 		}
 		itemValue -= fire.size();
-		
+
 		if (itemValue < air.size())
 		{
 			return air.get(itemValue);
 		}
 		itemValue -= air.size();
-		
+
 		if (itemValue < earth.size())
 		{
 			return earth.get(itemValue);
 		}
 		itemValue -= earth.size();
-		
+
 		if (itemValue < water.size())
 		{
 			return water.get(itemValue);
 		}
 		itemValue -= water.size();
-		
+
 		if (itemValue < death.size())
 		{
 			return death.get(itemValue);
 		}
 		itemValue -= death.size();
-		
+
 		if (itemValue < life.size())
 		{
 			return life.get(itemValue);
 		}
-		
+
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
 	 */
@@ -1819,86 +1825,86 @@ class CharacterMenu extends MenuScreen
 
 		g2d.setColor(Color.BLACK);
 		int y = 350;
-		
+
 		g2d.drawString("Health: ", 90, y);
 		g2d.drawString(Double.toString(p.health), 150, y);
 		g2d.drawString("/", 210, y);
 		g2d.drawString(Double.toString(p.maxHealth), 230, y);
-		
+
 		y += 25;
-		
+
 		g2d.drawString("Speed: ", 90, y);
 		g2d.drawString(Integer.toString(p.speed), 150, y);
-		
+
 		y += 25;
-		
+
 		g2d.drawString("Defenses: ", 90, y);
-		
+
 		y += 25;
-		
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_PHYSICAL))+ " PDEF", 190, y);
-		
+
+		g2d.drawString(Double.toString(p.defense.get(Entity.PHYSICAL))+ " PDEF", 190, y);
+
 		y += 25;
-		
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_FIRE))+ " FDEF", 110, y);
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_AIR))+ " ADEF", 190, y);
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_EARTH))+ " EDEF", 270, y);
-		
+
+		g2d.drawString(Double.toString(p.defense.get(Entity.FIRE))+ " FDEF", 110, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.AIR))+ " ADEF", 190, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.EARTH))+ " EDEF", 270, y);
+
 		y += 25;
-		
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_WATER))+ " WDEF", 110, y);
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_DEATH))+ " DDEF", 190, y);
-		g2d.drawString(Double.toString(p.defense.get(Entity.DAMAGE_LIFE))+ " LDEF", 270, y);
-		
+
+		g2d.drawString(Double.toString(p.defense.get(Entity.WATER))+ " WDEF", 110, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.DEATH))+ " DDEF", 190, y);
+		g2d.drawString(Double.toString(p.defense.get(Entity.LIFE))+ " LDEF", 270, y);
+
 	}
 
-	
+
 	protected int getSigilDistance()
 	{
 		int itemValue = itemIndex;
-		
+
 		if (itemValue < fire.size())
 		{
 			return itemValue;
 		}
 		itemValue -= fire.size();
 		itemValue++;
-		
+
 		if (itemValue < air.size())
 		{
 			return itemValue;
 		}
 		itemValue -= air.size();
 		itemValue++;
-		
+
 		if (itemValue < earth.size())
 		{
 			return itemValue;
 		}
 		itemValue -= earth.size();
 		itemValue++;
-		
+
 		if (itemValue < water.size())
 		{
 			return itemValue;
 		}
 		itemValue -= water.size();
 		itemValue++;
-		
+
 		if (itemValue < death.size())
 		{
 			return itemValue;
 		}
 		itemValue -= death.size();
 		itemValue++;
-		
+
 		if (itemValue < life.size())
 		{
 			return itemValue;
 		}
 		itemValue -= life.size();
 		itemValue++;
-		
+
 		return itemValue;
 	}
 	/* (non-Javadoc)
@@ -1954,7 +1960,7 @@ class CharacterMenu extends MenuScreen
 			dist = this.getSigilDistance();
 		}
 		g2d.drawImage(getImage(), 500, 138, 709, 295, 0, -30+(dist*20), 209, -30+(dist*20)+157, null);
-		
+
 
 		g2d.setColor(Color.BLACK);
 
@@ -2097,7 +2103,7 @@ class CharacterMenu extends MenuScreen
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawString(sigil.name, 10, 20+(ip*20));
-				
+
 				if (sigil.equipped)
 					g2d.drawString("Equipped", 120, 20+(ip*20));
 
@@ -2120,7 +2126,7 @@ class CharacterMenu extends MenuScreen
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawString(sigil.name, 10, 20+(ip*20));
-				
+
 				if (sigil.equipped)
 					g2d.drawString("Equipped", 120, 20+(ip*20));
 
@@ -2143,7 +2149,7 @@ class CharacterMenu extends MenuScreen
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawString(sigil.name, 10, 20+(ip*20));
-				
+
 				if (sigil.equipped)
 					g2d.drawString("Equipped", 120, 20+(ip*20));
 
@@ -2166,7 +2172,7 @@ class CharacterMenu extends MenuScreen
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawString(sigil.name, 10, 20+(ip*20));
-				
+
 				if (sigil.equipped)
 					g2d.drawString("Equipped", 120, 20+(ip*20));
 
@@ -2189,7 +2195,7 @@ class CharacterMenu extends MenuScreen
 					g2d.setColor(Color.BLACK);
 				}
 				g2d.drawString(sigil.name, 10, 20+(ip*20));
-				
+
 				if (sigil.equipped)
 					g2d.drawString("Equipped", 120, 20+(ip*20));
 
@@ -2198,19 +2204,35 @@ class CharacterMenu extends MenuScreen
 				ip++;
 			}
 		}
+		else if (selectedType == 1)
+		{
+			ArrayList<Upgrade> upgrades = null;
+			upgrades = scrolls;
+			
+			int i = 0;
+			for (Upgrade upgrade : upgrades)
+			{
+
+				if (i == itemIndex)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
+				g2d.drawString(upgrade.name, 10, 20+(i*20));
+				
+				if (upgrade.used)
+					g2d.drawString("Used", 100, 20+(i*20));
+
+				i++;
+			}
+		}
 		else
 		{
-
 			ArrayList<Item> items = null;
-
-			if (selectedType == 1)
-			{
-				items = scrolls;
-			}
-			else if (selectedType == 2)
-			{
-				items = misc;
-			}
+			items = misc;
 
 			int i = 0;
 			for (Item item : items)
@@ -2654,7 +2676,7 @@ class CreditsMenu extends MenuScreen
 			MainCanvas.esc = false;
 			MainCanvas.enter = false;
 		}
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -2663,13 +2685,13 @@ class CreditsMenu extends MenuScreen
 	@Override
 	protected void drawLeft(Graphics2D g2d) {
 		g2d.setColor(Color.BLACK);
-		
+
 		g2d.drawString("Kevin Glass - easyOgg Library", 100, 80);
-		
+
 		g2d.drawString("SFX by http://www.freesfx.co.uk", 100, 180);
-		
+
 		g2d.drawString("Me - The Rest Of The Game :D", 100, 280);
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -2678,10 +2700,10 @@ class CreditsMenu extends MenuScreen
 	@Override
 	protected void drawRight(Graphics2D g2d) {
 		g2d.setColor(Color.BLUE);
-		g2d.drawString("Back", 500, 480);
-		
+		g2d.drawString("Back", 570, 480);
+
 	}
-	
+
 }
 
 class OptionsMenu extends MenuScreen
@@ -2705,20 +2727,44 @@ class OptionsMenu extends MenuScreen
 		if (MainCanvas.esc)
 		{
 			menu.changeMenu("Main");
-			
+
 			MainCanvas.esc = false;
 		}
 		else if (MainCanvas.up)
 		{
 			selectedIndex--;
-			
+
 			MainCanvas.up = false;
 		}
 		else if (MainCanvas.down)
 		{
 			selectedIndex++;
-			
+
 			MainCanvas.down = false;
+		}
+		else if (MainCanvas.right)
+		{
+			if (selectedIndex == 2)
+			{
+				GameData.gain += 0.05f;
+				if (GameData.gain > 1)
+					GameData.gain = 1.0f;
+				Main.gamedata.BGM.setGain(GameData.gain);
+			}
+			
+			MainCanvas.right = false;
+		}
+		else if (MainCanvas.left)
+		{
+			if (selectedIndex == 2)
+			{
+				GameData.gain -= 0.05f;
+				if (GameData.gain < 0)
+					GameData.gain = 0.0f;
+				Main.gamedata.BGM.setGain(GameData.gain);
+			}
+			
+			MainCanvas.left = false;
 		}
 		else if (MainCanvas.enter)
 		{
@@ -2737,14 +2783,18 @@ class OptionsMenu extends MenuScreen
 					SoundEffect.volume = SoundEffect.Volume.MUTE;
 				}
 			}
-			
+			if (selectedIndex == 3)
+			{
+				menu.changeMenu("Main");
+			}
+
 			MainCanvas.enter = false;
 		}
-		
+
 		if (selectedIndex < 0)
 			selectedIndex = 0;
-		else if (selectedIndex > 2)
-			selectedIndex = 2;
+		else if (selectedIndex > 3)
+			selectedIndex = 3;
 	}
 
 	/* (non-Javadoc)
@@ -2760,10 +2810,10 @@ class OptionsMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
+
 		g2d.drawString("Fullscreen:", 80, 100);
 		g2d.drawString(""+Main.fullscreen, 250, 100);
-		
+
 		if (selectedIndex == 1)
 		{
 			g2d.setColor(Color.BLUE);
@@ -2772,17 +2822,41 @@ class OptionsMenu extends MenuScreen
 		{
 			g2d.setColor(Color.BLACK);
 		}
-		
-		g2d.drawString("Sound Effect Volume:", 80, 200);
-		
+
+		g2d.drawString("Sound Effect Muted:", 80, 200);
+
 		if (SoundEffect.volume == SoundEffect.Volume.MUTE)
 		{
-			g2d.drawString("Mute", 250, 200);
+			g2d.drawString("true", 250, 200);
 		}
 		else
 		{
-			g2d.drawString("Unmute", 250, 200);
+			g2d.drawString("false", 250, 200);
 		}
+		
+		if (selectedIndex == 2)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("BGM volume:", 80, 300);
+
+		g2d.drawString(""+(int)(GameData.gain*100), 250, 300);
+		
+		if (selectedIndex == 3)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Main Menu", 180, 500);
 	}
 
 	/* (non-Javadoc)
@@ -2791,7 +2865,7 @@ class OptionsMenu extends MenuScreen
 	@Override
 	protected void drawRight(Graphics2D g2d) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

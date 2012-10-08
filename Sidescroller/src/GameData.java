@@ -3,7 +3,9 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,6 +85,7 @@ public class GameData {
 	public File saveFile;
 	
 	public OggClip BGM;
+	public static float gain = 0.75f;
 
 	public GameData()
 	{
@@ -91,7 +94,7 @@ public class GameData {
 		try {
 			BGM = new OggClip("Data/Resources/Sounds/test.ogg");
 			BGM.loop();
-			BGM.setGain(0.75f);
+			BGM.setGain(gain);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -130,11 +133,11 @@ public class GameData {
 
 			for (int i = 0; i<2; i++)
 			{
-				Entity ef = new Entity("NPC"+i, 60, 5, 8, new int[]{300+(i*50), 90, 0}, 3, "Spritesheet2.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
+				Entity ef = new Entity("NPC"+i, 60, 7, 8, new int[]{300+(i*50), 90, 0}, 3, "Data/Resources/Spritesheets/female.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
 
 				ef.setFaction("Enemy");
 				gameEntities.put("NPC"+i, ef);
-				ef.expAmount = 10;
+				ef.expAmount = 100;
 				ef.getDropList().put("Chest", 100);
 				ef.getDropList().put("Speed Sigil - Fire", 100);
 				ef.getDropList().put("Speed Sigil - Life", 100);
@@ -143,56 +146,15 @@ public class GameData {
 			//		gameEntities.add(eff);	
 			//		gameEntities.add(efg);
 
-			BufferedImage im = null;
-			try{
-				im = ImageIO.read(new File("Test/back0.png"));
-			}
-			catch (IOException ex)
-			{
+			background[0] = GameData.getImage("Data/Resources/Levels/level1/back0.png");
 
-			}
+			background[1] = GameData.getImage("Data/Resources/Levels/level1/back1.png");
 
-			background[0] = im;
+			background[2] = GameData.getImage("Data/Resources/Levels/level1/back2.png");
 
-			try{
-				im = ImageIO.read(new File("Test/back1.png"));
-			}
-			catch (IOException ex)
-			{
+			background[3] = GameData.getImage("Data/Resources/Levels/level1/back3.png");
 
-			}
-
-			background[1] = im;
-
-			try{
-				im = ImageIO.read(new File("Test/back1.png"));
-			}
-			catch (IOException ex)
-			{
-
-			}
-
-			background[2] = im;
-
-			try{
-				im = ImageIO.read(new File("Test/back2.png"));
-			}
-			catch (IOException ex)
-			{
-
-			}
-
-			background[3] = im;
-
-			try{
-				im = ImageIO.read(new File("Test/back3.png"));
-			}
-			catch (IOException ex)
-			{
-
-			}
-
-			background[4] = im;
+			background[4] = GameData.getImage("Data/Resources/Levels/level1/back4.png");
 			
 			createCollisionMap();
 			
@@ -215,7 +177,14 @@ public class GameData {
 		{
 			BufferedImage im = null;
 			try{
-				im = ImageIO.read(new File(image));
+		    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(image);
+		    	
+		    	if (in == null)
+		    	{
+		    		in = new FileInputStream(image);
+		    	}
+		    	
+				im = ImageIO.read(in);
 				im = toCompatibleImage(im);
 			}
 			catch (IOException ioe)

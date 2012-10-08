@@ -18,13 +18,13 @@ public class Entity implements Serializable{
 	 */
 	protected static final long serialVersionUID = -8723388619027762099L;
 
-	public static final String DAMAGE_PHYSICAL = "DPHYS";
-	public static final String DAMAGE_FIRE = "DFIRE";
-	public static final String DAMAGE_AIR = "DAIR";
-	public static final String DAMAGE_EARTH = "DEARTH";
-	public static final String DAMAGE_WATER = "DWATER";
-	public static final String DAMAGE_DEATH = "DDEATH";
-	public static final String DAMAGE_LIFE = "DLIFE";
+	public static final String PHYSICAL = "DPHYS";
+	public static final String FIRE = "DFIRE";
+	public static final String AIR = "DAIR";
+	public static final String EARTH = "DEARTH";
+	public static final String WATER = "DWATER";
+	public static final String DEATH = "DDEATH";
+	public static final String LIFE = "DLIFE";
 
 	/**
 	 * The internal name of the Entity
@@ -156,13 +156,13 @@ public class Entity implements Serializable{
 
 	/**
 	 * The elemental defense for the entity. Elements are: <br>
-	 * {@link Entity#DAMAGE_PHYSICAL} <br>
-	 * {@link Entity#DAMAGE_FIRE} <br>
-	 * {@link Entity#DAMAGE_AIR} <br>
-	 * {@link Entity#DAMAGE_EARTH} <br>
-	 * {@link Entity#DAMAGE_WATER} <br>
-	 * {@link Entity#DAMAGE_DEATH} <br>
-	 * {@link Entity#DAMAGE_LIFE} <br>
+	 * {@link Entity#PHYSICAL} <br>
+	 * {@link Entity#FIRE} <br>
+	 * {@link Entity#AIR} <br>
+	 * {@link Entity#EARTH} <br>
+	 * {@link Entity#WATER} <br>
+	 * {@link Entity#DEATH} <br>
+	 * {@link Entity#LIFE} <br>
 	 */
 	protected HashMap<String, Double> defense = new HashMap<String, Double>();
 
@@ -238,13 +238,13 @@ public class Entity implements Serializable{
 
 		spells.add("Fireball");
 
-		defense.put(Entity.DAMAGE_PHYSICAL, (double) 0);
-		defense.put(Entity.DAMAGE_FIRE, (double) 0);
-		defense.put(Entity.DAMAGE_AIR, (double) 0);
-		defense.put(Entity.DAMAGE_EARTH, (double) 0);
-		defense.put(Entity.DAMAGE_WATER, (double) 0);
-		defense.put(Entity.DAMAGE_DEATH, (double) 0);
-		defense.put(Entity.DAMAGE_LIFE, (double) 0);
+		defense.put(Entity.PHYSICAL, (double) 0);
+		defense.put(Entity.FIRE, (double) 0);
+		defense.put(Entity.AIR, (double) 0);
+		defense.put(Entity.EARTH, (double) 0);
+		defense.put(Entity.WATER, (double) 0);
+		defense.put(Entity.DEATH, (double) 0);
+		defense.put(Entity.LIFE, (double) 0);
 
 	}
 
@@ -584,7 +584,15 @@ public class Entity implements Serializable{
 					velocity[1] = 0;
 					applyFriction();
 					this.changePosition(npos[0], npos[1], this.getPos()[2]);
-					this.setGrounded(true);
+					
+					if (checkCollision(new int[]{npos[0], npos[1]+10}) == null)
+					{
+						
+					}
+					else
+					{
+						this.setGrounded(true);
+					}
 					updateJumpAnim(grounded);
 					return;
 				}
@@ -688,7 +696,7 @@ public class Entity implements Serializable{
 
 				int[] pos = {0, 0, this.getPos()[2]};
 
-				Spell s = SpellList.getStrike(Entity.DAMAGE_PHYSICAL, 5, pos, name, collisionShape);
+				Spell s = SpellList.getStrike(Entity.PHYSICAL, 5, pos, name, collisionShape);
 				s.setFaction(this.getFaction());
 
 				castSpellOffset = pos;
@@ -1234,7 +1242,7 @@ public class Entity implements Serializable{
 		double eleDefense = defense.get(type);
 
 		if (eleDefense != 0)
-			amount -= amount/defense.get(Entity.DAMAGE_PHYSICAL);
+			amount -= amount/defense.get(Entity.PHYSICAL);
 
 		health -= amount;
 

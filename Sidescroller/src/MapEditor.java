@@ -702,37 +702,37 @@ class EntityFrame extends JFrame
 		
 		panel.add(new JLabel("Armour - Phys"));
 		final JTextField armorPhys = new JTextField(5);
-		armorPhys.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_PHYSICAL)));
+		armorPhys.setText(Double.toString(e.getDefense().get(Entity.PHYSICAL)));
 		panel.add(armorPhys);
 		
 		panel.add(new JLabel("Armour - Fire"));
 		final JTextField armorFire = new JTextField(5);
-		armorFire.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_FIRE)));
+		armorFire.setText(Double.toString(e.getDefense().get(Entity.FIRE)));
 		panel.add(armorFire);
 		
 		panel.add(new JLabel("Armour - Air"));
 		final JTextField armorAir = new JTextField(5);
-		armorAir.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_AIR)));
+		armorAir.setText(Double.toString(e.getDefense().get(Entity.AIR)));
 		panel.add(armorAir);
 		
 		panel.add(new JLabel("Armour - Earth"));
 		final JTextField armorEarth = new JTextField(5);
-		armorEarth.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_EARTH)));
+		armorEarth.setText(Double.toString(e.getDefense().get(Entity.EARTH)));
 		panel.add(armorEarth);
 		
 		panel.add(new JLabel("Armour - Water"));
 		final JTextField armorWater = new JTextField(5);
-		armorWater.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_WATER)));
+		armorWater.setText(Double.toString(e.getDefense().get(Entity.WATER)));
 		panel.add(armorWater);
 		
 		panel.add(new JLabel("Armour - Death"));
 		final JTextField armorDeath = new JTextField(5);
-		armorDeath.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_DEATH)));
+		armorDeath.setText(Double.toString(e.getDefense().get(Entity.DEATH)));
 		panel.add(armorDeath);
 		
 		panel.add(new JLabel("Armour - Life"));
 		final JTextField armorLife = new JTextField(5);
-		armorLife.setText(Double.toString(e.getDefense().get(Entity.DAMAGE_LIFE)));
+		armorLife.setText(Double.toString(e.getDefense().get(Entity.LIFE)));
 		panel.add(armorLife);
 		
 		panel.add(new JLabel("EXP"));
@@ -796,13 +796,13 @@ class EntityFrame extends JFrame
 					e.setHealth(Double.parseDouble(health.getText()));
 					
 					HashMap<String, Double> newDefense = new HashMap<String, Double>();
-					newDefense.put(Entity.DAMAGE_PHYSICAL, Double.parseDouble(armorPhys.getText()));
-					newDefense.put(Entity.DAMAGE_FIRE, Double.parseDouble(armorFire.getText()));
-					newDefense.put(Entity.DAMAGE_AIR, Double.parseDouble(armorAir.getText()));
-					newDefense.put(Entity.DAMAGE_EARTH, Double.parseDouble(armorEarth.getText()));
-					newDefense.put(Entity.DAMAGE_WATER, Double.parseDouble(armorWater.getText()));
-					newDefense.put(Entity.DAMAGE_DEATH, Double.parseDouble(armorDeath.getText()));
-					newDefense.put(Entity.DAMAGE_LIFE, Double.parseDouble(armorLife.getText()));
+					newDefense.put(Entity.PHYSICAL, Double.parseDouble(armorPhys.getText()));
+					newDefense.put(Entity.FIRE, Double.parseDouble(armorFire.getText()));
+					newDefense.put(Entity.AIR, Double.parseDouble(armorAir.getText()));
+					newDefense.put(Entity.EARTH, Double.parseDouble(armorEarth.getText()));
+					newDefense.put(Entity.WATER, Double.parseDouble(armorWater.getText()));
+					newDefense.put(Entity.DEATH, Double.parseDouble(armorDeath.getText()));
+					newDefense.put(Entity.LIFE, Double.parseDouble(armorLife.getText()));
 					
 					e.setDefense(newDefense);
 					

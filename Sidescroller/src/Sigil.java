@@ -57,33 +57,33 @@ public class Sigil extends Item {
 		
 		HashMap<String, Double> newDefense = new HashMap<String, Double>();
 		
-		Double oldval = p.defense.get(Entity.DAMAGE_PHYSICAL);
+		Double oldval = p.defense.get(Entity.PHYSICAL);
 		oldval += values[2];
-		newDefense.put(Entity.DAMAGE_PHYSICAL, oldval);
+		newDefense.put(Entity.PHYSICAL, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_FIRE);
+		oldval = p.defense.get(Entity.FIRE);
 		oldval += values[3];
-		newDefense.put(Entity.DAMAGE_FIRE, oldval);
+		newDefense.put(Entity.FIRE, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_AIR);
+		oldval = p.defense.get(Entity.AIR);
 		oldval += values[4];
-		newDefense.put(Entity.DAMAGE_AIR, oldval);
+		newDefense.put(Entity.AIR, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_EARTH);
+		oldval = p.defense.get(Entity.EARTH);
 		oldval += values[5];
-		newDefense.put(Entity.DAMAGE_EARTH, oldval);
+		newDefense.put(Entity.EARTH, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_WATER);
+		oldval = p.defense.get(Entity.WATER);
 		oldval += values[6];
-		newDefense.put(Entity.DAMAGE_WATER, oldval);
+		newDefense.put(Entity.WATER, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_DEATH);
+		oldval = p.defense.get(Entity.DEATH);
 		oldval += values[7];
-		newDefense.put(Entity.DAMAGE_DEATH, oldval);
+		newDefense.put(Entity.DEATH, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_LIFE);
+		oldval = p.defense.get(Entity.LIFE);
 		oldval += values[8];
-		newDefense.put(Entity.DAMAGE_LIFE, oldval);
+		newDefense.put(Entity.LIFE, oldval);
 		
 		p.setDefense(newDefense);
 		
@@ -101,33 +101,33 @@ public class Sigil extends Item {
 		
 		HashMap<String, Double> newDefense = new HashMap<String, Double>();
 		
-		Double oldval = p.defense.get(Entity.DAMAGE_PHYSICAL);
+		Double oldval = p.defense.get(Entity.PHYSICAL);
 		oldval -= values[2];
-		newDefense.put(Entity.DAMAGE_PHYSICAL, oldval);
+		newDefense.put(Entity.PHYSICAL, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_FIRE);
+		oldval = p.defense.get(Entity.FIRE);
 		oldval -= values[3];
-		newDefense.put(Entity.DAMAGE_FIRE, oldval);
+		newDefense.put(Entity.FIRE, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_AIR);
+		oldval = p.defense.get(Entity.AIR);
 		oldval -= values[4];
-		newDefense.put(Entity.DAMAGE_AIR, oldval);
+		newDefense.put(Entity.AIR, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_EARTH);
+		oldval = p.defense.get(Entity.EARTH);
 		oldval -= values[5];
-		newDefense.put(Entity.DAMAGE_EARTH, oldval);
+		newDefense.put(Entity.EARTH, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_WATER);
+		oldval = p.defense.get(Entity.WATER);
 		oldval -= values[6];
-		newDefense.put(Entity.DAMAGE_WATER, oldval);
+		newDefense.put(Entity.WATER, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_DEATH);
+		oldval = p.defense.get(Entity.DEATH);
 		oldval -= values[7];
-		newDefense.put(Entity.DAMAGE_DEATH, oldval);
+		newDefense.put(Entity.DEATH, oldval);
 		
-		oldval = p.defense.get(Entity.DAMAGE_LIFE);
+		oldval = p.defense.get(Entity.LIFE);
 		oldval -= values[8];
-		newDefense.put(Entity.DAMAGE_LIFE, oldval);
+		newDefense.put(Entity.LIFE, oldval);
 		
 		p.setDefense(newDefense);
 		

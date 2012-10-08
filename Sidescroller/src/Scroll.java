@@ -16,6 +16,7 @@ public class Scroll extends Upgrade {
 	int index;
 	int stage;
 	String element;
+	
 	/**
 	 * @param name
 	 * @param description
@@ -39,27 +40,27 @@ public class Scroll extends Upgrade {
 	{
 		SpellsStageEntry s = null;
 		
-		if (element.equals(Entity.DAMAGE_FIRE))
+		if (element.equals(Entity.FIRE))
 		{
 			s = Character.fireSpells.get(stage).spells.get(index);
 		}
-		else if (element.equals(Entity.DAMAGE_AIR))
+		else if (element.equals(Entity.AIR))
 		{
 			s = Character.airSpells.get(stage).spells.get(index);
 		}
-		else if (element.equals(Entity.DAMAGE_EARTH))
+		else if (element.equals(Entity.EARTH))
 		{
 			s = Character.earthSpells.get(stage).spells.get(index);
 		}
-		else if (element.equals(Entity.DAMAGE_WATER))
+		else if (element.equals(Entity.WATER))
 		{
 			s = Character.waterSpells.get(stage).spells.get(index);
 		}
-		else if (element.equals(Entity.DAMAGE_DEATH))
+		else if (element.equals(Entity.DEATH))
 		{
 			s = Character.deathSpells.get(stage).spells.get(index);
 		}
-		else if (element.equals(Entity.DAMAGE_LIFE))
+		else if (element.equals(Entity.LIFE))
 		{
 			s = Character.lifeSpells.get(stage).spells.get(index);
 		}
@@ -68,8 +69,6 @@ public class Scroll extends Upgrade {
 		{
 			s.unlocked = 2;
 		}
-		
-		number--;
 	}
 
 }

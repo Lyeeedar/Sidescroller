@@ -1,5 +1,4 @@
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,8 +58,12 @@ public class OggClip {
 	 */
 	public OggClip(String ref) throws IOException {
 		try {
-			//init(Thread.currentThread().getContextClassLoader().getResourceAsStream(ref));
-			init(new FileInputStream(new File(ref)));
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ref);
+	    	if (in == null)
+	    	{
+	    		in = new FileInputStream(ref);
+	    	}
+			init(in);
 		} catch (IOException e) {
 			throw new IOException("Couldn't find: "+ref);
 		}

@@ -44,8 +44,9 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		if(System.getProperty("os.name").startsWith("Win"))
+		if(System.getProperty("os.name").startsWith("Linux"))
 		{
+			SoundEffect.volume = SoundEffect.Volume.MUTE;
 		}
 		else
 		{
