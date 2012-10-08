@@ -218,6 +218,8 @@ public class SaveGame implements Serializable{
 		
 		gamedata.systemMessages.clear();
 		
+		gamedata.BGM = level.getBGM();
+		
 		return true;
 	}
 	
@@ -303,6 +305,8 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadText = "Calculating collision map";
 		Main.maincanvas.paintLoad(gc);
 		gamedata.createCollisionMap();
+		
+		gamedata.BGM = level.getBGM();
 		
 		return true;
 	}

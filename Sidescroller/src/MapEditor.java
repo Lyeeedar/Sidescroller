@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -13,12 +12,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +45,7 @@ public class MapEditor {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		EditorFrame ef = new EditorFrame();
+		new EditorFrame();
 
 	}
 
@@ -101,8 +96,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		this.setPreferredSize(new Dimension(MapEditor.gamedata.levelSize[0], MapEditor.gamedata.levelSize[1]));
-		this.setSize(MapEditor.gamedata.levelSize[0], MapEditor.gamedata.levelSize[1]);
+		this.setPreferredSize(new Dimension(GameData.levelSize[0], GameData.levelSize[1]));
+		this.setSize(GameData.levelSize[0], GameData.levelSize[1]);
 	}
 
 	public void paintComponent(Graphics g)
@@ -213,7 +208,7 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 				}
 				else
 				{
-					EntityFrame fr = new EntityFrame(ent);
+					new EntityFrame(ent);
 					return;
 				}
 			}
@@ -269,13 +264,17 @@ class OptionsPanel extends JPanel
 		this.add(new JLabel("Level Name"));
 		final JTextField name = new JTextField(10);
 		this.add(name);
+		
+		this.add(new JLabel("BGM Name"));
+		final JTextField bgmname = new JTextField(10);
+		this.add(bgmname);
 
 		JButton background = new JButton("Choose Background");
 		background.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				BackgroundFrame f = new BackgroundFrame();
+				new BackgroundFrame();
 
 			}
 
@@ -287,11 +286,11 @@ class OptionsPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, 0, "", new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
+				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, 0, null, new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
 
 				MapEditor.gamedata.getGameEntities().put("Unnamed"+MapEditor.gamedata.getGameEntities().size(), e);
 
-				EntityFrame fr = new EntityFrame(e);
+				new EntityFrame(e);
 
 				EditorFrame.mapPanel.repaint();
 
@@ -328,7 +327,7 @@ class OptionsPanel extends JPanel
 				file.mkdirs();
 				
 				Level level = new Level();
-				level.create(name.getText(), MapEditor.gamedata.getGameEntities());
+				level.create(name.getText(), MapEditor.gamedata.getGameEntities(), bgmname.getText());
 
 				Level.save(level);
 				
@@ -367,6 +366,7 @@ class OptionsPanel extends JPanel
 					Level level = Level.load(file);
 
 					name.setText(level.name);
+					bgmname.setText(level.BGM);
 					MapEditor.gamedata.setBackground(level.getBackground());
 					MapEditor.gamedata.setGameEntities(level.gameEntities);
 					MapEditor.gamedata.createCollisionMap();
@@ -377,6 +377,8 @@ class OptionsPanel extends JPanel
 					}
 
 					EditorFrame.mapPanel.repaint();
+					EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.collisionMap.length, MapEditor.gamedata.collisionMap[0].length));
+					EditorFrame.mapPanel.revalidate();
 				}
 
 
@@ -521,10 +523,10 @@ class BackgroundFrame extends JFrame
 
 			if (index == 3)
 			{
-				MapEditor.gamedata.levelSize[0] = MapEditor.gamedata.background[0].getWidth();
-				MapEditor.gamedata.levelSize[1] = MapEditor.gamedata.background[0].getHeight();
+				GameData.levelSize[0] = MapEditor.gamedata.background[0].getWidth();
+				GameData.levelSize[1] = MapEditor.gamedata.background[0].getHeight();
 
-				MapEditor.gamedata.collisionMap = new boolean[MapEditor.gamedata.levelSize[0]][MapEditor.gamedata.levelSize[1]];
+				MapEditor.gamedata.collisionMap = new boolean[GameData.levelSize[0]][GameData.levelSize[1]];
 
 				MapEditor.gamedata.createCollisionMap();
 				
@@ -615,7 +617,8 @@ class EntityFrame extends JFrame
 
 			}});
 		panel.add(spritesheet);
-		panel.add(new JTextField(spritefile));
+		final JTextField spriteFile = new JTextField(e.getSpriteFile());
+		panel.add(spriteFile);
 
 		panel.add(new JLabel("Collision Values: "));
 
@@ -680,7 +683,7 @@ class EntityFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				BehaviorFrame bf = new BehaviorFrame(behavior);
+				new BehaviorFrame(behavior);
 
 			}});
 		panel.add(behaviorBtn);
@@ -690,7 +693,7 @@ class EntityFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				DialogueFrame df = new DialogueFrame(d);
+				new DialogueFrame(d);
 				
 			}});
 		panel.add(dialogue);
@@ -745,7 +748,7 @@ class EntityFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				DropListFrame dropFrame = new DropListFrame(dropList);
+				new DropListFrame(dropList);
 
 			}});
 		panel.add(drops);
@@ -768,7 +771,7 @@ class EntityFrame extends JFrame
 					e.speed = Integer.parseInt(speed.getText());
 					e.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));
 					e.setWeight(Integer.parseInt(weight.getText()));
-					e.setSpriteFile(spritefile);
+					e.setSpriteFile(spriteFile.getText());
 					e.processSpritesheet();
 
 					int[] r = {Integer.parseInt(x.getText()), Integer.parseInt(y.getText()),
@@ -1026,7 +1029,7 @@ class DialogueFrame extends JFrame
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DialogueBlockFrame dbf = new DialogueBlockFrame(block);
+					new DialogueBlockFrame(block);
 					
 				}});
 			dialoguePanel.add(blockBtn);

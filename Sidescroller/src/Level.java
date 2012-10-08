@@ -32,6 +32,8 @@ public class Level implements Serializable{
 	 */
 	HashMap<String, Entity> gameEntities = new HashMap<String, Entity>();
 	
+	String BGM;
+	
 	public Level()
 	{
 		
@@ -42,10 +44,25 @@ public class Level implements Serializable{
 	 * @param name
 	 * @param gameEntities
 	 */
-	public void create(String name, HashMap<String, Entity> gameEntities)
+	public void create(String name, HashMap<String, Entity> gameEntities, String BGM)
 	{
+		this.BGM = BGM;
 		this.name = name;
 		this.gameEntities = gameEntities;
+	}
+	
+	public OggClip getBGM()
+	{
+		OggClip bgm = null;
+		try {
+			bgm = new OggClip(BGM);
+			bgm.loop();
+			bgm.setGain(GameData.gain);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return bgm;
 	}
 	
 	/**

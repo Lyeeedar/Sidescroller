@@ -90,21 +90,12 @@ public class GameData {
 	public GameData()
 	{
 		clearGame();
-		
-		try {
-			BGM = new OggClip("Data/Resources/Sounds/test.ogg");
-			BGM.loop();
-			BGM.setGain(gain);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public void clearGame()
 	{
-		Entity p = new Entity("Player", 800000000, 0, 0, new int[]{0, 0, 0}, 1, null, new int[]{0, 0, 0, 0}, new boolean[]{false, false, false, false}, null);
-		gameEntities.put("Player", p);
+		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
+		gameEntities.put("Player", e);
 		
 		for (int i = 0; i < 5; i++)
 		{
@@ -122,12 +113,9 @@ public class GameData {
 	{	
 		Character.resetAll();
 		boolean a = true;
-		if (a)
+		if (!a)
 		{
-			//Dialogue dia = new Dialogue(new String[]{"test part 1", "test part 2"}, 0);
-
-			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 65}, new boolean[]{true, true, false, false}, null);
-
+			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 			gameEntities.put("Player", e);
 			e.setFaction("Player");
 
@@ -164,7 +152,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadLevel("test");
+			this.loadLevel("level1");
 		}
 
 	}
