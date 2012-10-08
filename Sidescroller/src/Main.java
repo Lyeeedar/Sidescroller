@@ -142,7 +142,7 @@ public class Main {
 		if (fullscreen)
 			window.pack();
 		else
-			window.setSize(802, 630);
+			window.setSize(802, 627);
 		window.setResizable(false);
 		
 		

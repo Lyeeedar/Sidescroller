@@ -263,10 +263,16 @@ public class Entity implements Serializable{
 		if (behavior[0])
 			behavior0();
 
+		if (behavior.length < 3)
+			return;
+		
 		if (behavior[2])
 			behavior2();
+		
+		if (behavior.length < 4)
+			return;
 
-		if ((behavior.length > 3) && (behavior[3]))
+		if (behavior[3])
 			behavior3();
 	}
 
@@ -1238,7 +1244,10 @@ public class Entity implements Serializable{
 	 * @param type
 	 */
 	public void damage(double amount, String type)
-	{		
+	{
+		if (!alive)
+			return;
+		
 		double eleDefense = defense.get(type);
 
 		if (eleDefense != 0)

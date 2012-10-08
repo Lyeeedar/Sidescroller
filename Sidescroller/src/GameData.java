@@ -181,7 +181,7 @@ public class GameData {
 		    	
 		    	if (in == null)
 		    	{
-		    		in = new FileInputStream(image);
+		    		in = new FileInputStream("src/"+image);
 		    	}
 		    	
 				im = ImageIO.read(in);

@@ -1,3 +1,8 @@
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Map;
+
 
 /**
  * This class simulates a spell. It is a subclass of entity but overrides many of the methods contained within it.
@@ -43,12 +48,12 @@ class Spell extends Entity
 	String exclude;
 
 	public Spell(String name, int animateTime,	int[] pos, int[] collision, boolean[] behaviour,
-			int[] velocity, String spriteFile, int weight, boolean passable, int spellCDTime, int aliveTime,
+			int[] velocity, String spriteFile, int weight, boolean passable, boolean visible, int spellCDTime, int aliveTime,
 			String damageType, int damageAmount, String exclude) {
 		
 		super(name, animateTime, 2, 8, pos, 0, spriteFile, collision, behaviour, null);
 
-
+		this.visible = visible;
 		this.velocity = velocity;
 		this.weight = weight;
 		this.passable = passable;
@@ -95,14 +100,36 @@ class Spell extends Entity
 	{	
 		if (behavior[0])
 			behaviorProjectile();
+		
+		if (behavior.length < 2)
+			return;
+		
 		if (behavior[1])
 			behaviorGroundHugger();
+		
+		if (behavior.length < 3)
+			return;
+		
 		if (behavior[2])
 			behaviorStrike();
+		
+		if (behavior.length < 4)
+			return;
+		
 		if (behavior[3])
 			behaviorAreaEffect();
+		
+		if (behavior.length < 5)
+			return;
+		
 		if (behavior[4])
 			behaviorSpreadAreaEffect();
+		
+		if (behavior.length < 6)
+			return;
+		
+		if (behavior[5])
+			behaviorHeal();
 	}
 
 	/**
@@ -122,10 +149,13 @@ class Spell extends Entity
 		this.velocity[1] = velocity[1];
 	}
 
+	int dps = 0;
+	
 	@Override
 	public void updateTime(long time)
 	{		
 		super.updateTime(time);
+		
 		aliveTime -= time;
 
 		if ((!alive) && (this.remainingAnimateTime == this.animateTime))
@@ -144,6 +174,8 @@ class Spell extends Entity
 		{
 			this.animateStrip = 2;
 		}
+		
+		dps -= time;
 
 	}
 
@@ -157,13 +189,20 @@ class Spell extends Entity
 		
 		npos += velocity[0];
 		
-		int[] cpos = {npos, this.pos[1]-size[1], this.pos[2]};
+		int[] cpos = {npos, this.pos[1]-(size[1]/2), this.pos[2]};
+
+		if (checkCollision(cpos) != null)
+		{
+			alive = false;
+		}
+		else
+		{
+			cpos = findGround(cpos, this.collisionShape[2]);
+			
+			cpos[1] -= collisionShape[1]+collisionShape[3];
 		
-		cpos = findGround(cpos, this.collisionShape[2]);
-		
-		cpos[1] -= collisionShape[1]+collisionShape[3];
-	
-		pos = cpos;
+			pos = cpos;
+		}
 		
 		if (!alive)
 			return;
@@ -246,11 +285,54 @@ class Spell extends Entity
 	
 	public void behaviorAreaEffect()
 	{
-		String s = super.collideEntities(pos);
+		if (!alive)
+			return;
 		
-		if ((s != null) && (!s.equals(this.getName())))
+		if (dps > 0)
+			return;
+		
+		if (dps < 0)
+			dps = 400;
+		
+		String sc = checkCollision(pos);
+		if ((sc != null) && (sc.equals(this.getName())))
 		{
-			Main.gamedata.getGameEntities().get(s).damage(damageAmount, damageType);
+			alive = false;
+			return;
+		}
+		
+		ArrayList<Entity> entityCheck = new ArrayList<Entity>();
+		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
+		{
+			Entity e = entry.getValue();
+
+			if (e instanceof Spell)
+			{
+				continue;
+			}
+			else if (e instanceof Item)
+			{
+				continue;
+			}
+			
+			if (faction.equals(e.faction))
+			{
+				continue;
+			}
+			
+			entityCheck.add(e);
+		}
+		
+		Rectangle rt = new Rectangle(pos[0]+collisionShape[0], pos[1]+collisionShape[1], collisionShape[2], collisionShape[3]);
+		
+		for (Entity e : entityCheck)
+		{
+			Rectangle re = new Rectangle(e.pos[0]+e.collisionShape[0], e.pos[1]+e.collisionShape[1], e.collisionShape[2], e.collisionShape[3]);
+			
+			if (rt.intersects(re))
+			{
+				e.damage(damageAmount, damageType);
+			}
 		}
 	}
 	
@@ -262,6 +344,13 @@ class Spell extends Entity
 		this.setVisible(false);
 		pos[0] += velocity[0];
 		
+//		String sc = checkCollision(pos);
+//		if ((sc != null) && (sc.equals(this.getName())))
+//		{
+//			alive = false;
+//			return;
+//		}
+		
 		int[] npos = {this.pos[0], this.pos[1]+collisionShape[1]+collisionShape[3], this.pos[2]};
 		
 		npos = findGround(pos, this.collisionShape[2]);
@@ -269,11 +358,28 @@ class Spell extends Entity
 		npos[1] -= collisionShape[1]+collisionShape[3];
 		
 		Spell s = new Spell(name+" Effect", (int)this.animateTime, npos, collisionShape,
-				new boolean[]{false, false, false, true, false}, new int[]{0, 0}, this.spriteFile, 3, true, 0, 1000, this.damageType, this.damageAmount, this.exclude);
+				new boolean[]{false, false, false, true, false}, new int[]{0, 0}, this.spriteFile, 3, true, true, 0, 1000, this.damageType, this.damageAmount, this.exclude);
 		s.setFaction(faction);
 		
 		Main.gamedata.getGameEntities().put(s.name+System.currentTimeMillis(), s);
 		
+	}
+	
+	public void behaviorHeal()
+	{
+		if (!alive)
+			return;
+		
+		if (dps > 0)
+			return;
+		
+		if (dps < 0)
+			dps = 400;
+		
+		Entity e = Main.gamedata.getGameEntities().get(exclude);
+		
+		e.heal(damageAmount);
+		e.infoText.add(new SystemMessage("+"+damageAmount+"     HP", Color.GREEN, 3000));
 	}
 	
 	public int[] findGround(int[] npos, int width)

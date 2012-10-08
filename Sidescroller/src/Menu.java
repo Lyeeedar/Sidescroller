@@ -372,21 +372,22 @@ class SpellMenu extends MenuScreen
 				{
 					if ((i == stage) && (ii == selected))
 					{
-						g2d.drawImage(images[1], sse.pos[0]-22, sse.pos[1]-22, null);
+						g2d.drawImage(images[1], sse.pos[0]-28, sse.pos[1]-28, null);
 					}
 					else
 					{
-						g2d.drawImage(images[0], sse.pos[0]-15, sse.pos[1]-15, null);
+						g2d.drawImage(images[0], sse.pos[0]-28, sse.pos[1]-28, null);
 					}
 				}
 
 				if (sse.unlocked == 3)
 				{
-					g2d.drawImage(sse.images[1], sse.pos[0]-15, sse.pos[1]-15, null);
+					g2d.drawImage(sse.images[1], sse.pos[0]-28, sse.pos[1]-28, null);
 				}
-				else if (sse.unlocked  == 2)
+				
+				if (sse.unlocked > 1)
 				{
-					g2d.drawImage(sse.images[0], sse.pos[0]-15, sse.pos[1]-15, null);
+					g2d.drawImage(sse.images[0], sse.pos[0]-28, sse.pos[1]-28, null);
 				}
 				else if (sse.unlocked == 0)
 				{
@@ -458,6 +459,11 @@ class SpellMenu extends MenuScreen
 			sse = Character.socketedSpells[selectedIndex];
 		}
 
+		if (sse.unlocked < 2)
+		{
+			return;
+		}
+		
 		g2d.setColor(Color.BLACK);
 
 		g2d.drawString(sse.name, 485, 100+size[1]+15);
@@ -488,42 +494,10 @@ class SpellMenu extends MenuScreen
 		i++;
 		
 		g2d.drawString(sse.currentEXP+" / "+sse.maxEXP, 495, 100+size[1]+35+(20*i));
-
-		for (int ii = 0; ii < 5; ii++)
-		{
-			if (sse.name.equals(Character.socketedSpells[ii].name))
-			{
-				//g2d.drawString("Bound to "+sockets[ii], 495, 110+size[1]+35+(20*i));
-				i++;
-			}
-		}
 	}
 
 	protected void drawLeft(Graphics2D g2d)
-	{
-
-		if (selectedIndex == 0)
-		{
-			g2d.drawImage(images[1], 168, 53, null);
-		}
-		else
-		{
-			g2d.drawImage(images[0], 175, 60, null);
-		}
-
-		SpellsStageEntry sse = null;
-
-		sse = Character.socketedSpells[0];
-
-		if (sse.unlocked == 3)
-		{
-			g2d.drawImage(sse.images[1], 175, 60, null);
-		}
-		else if (sse.unlocked  == 2)
-		{
-			g2d.drawImage(sse.images[0], 175, 60,null);
-		}
-
+	{		
 		g2d.setColor(Color.BLACK);
 		g2d.drawLine(195, 100, 145, 160);
 		g2d.drawLine(195, 100, 245, 160);
@@ -533,84 +507,129 @@ class SpellMenu extends MenuScreen
 		g2d.drawLine(195, 200, 145, 280);
 		g2d.drawLine(195, 200, 245, 280);
 
-		if (selectedIndex == 1)
+		SpellsStageEntry sse = null;
+
+		// Draw Socket 0
+		
+		if (selectedIndex == 0)
 		{
-			g2d.drawImage(images[1], 118, 133, null);
+			g2d.drawImage(images[1], 167, 53, null);
 		}
 		else
 		{
-			g2d.drawImage(images[0], 125, 140, null);
+			g2d.drawImage(images[0], 167, 53, null);
+		}
+		
+		sse = Character.socketedSpells[0];
+
+		if (sse.unlocked == 3)
+		{
+			g2d.drawImage(sse.images[1], 167, 53, null);
+		}
+		
+		if (sse.unlocked > 1)
+		{
+			g2d.drawImage(sse.images[0], 167, 53, null);
+		}
+		
+		// End Draw Socket 0
+
+		// Draw Socket 1
+		
+		if (selectedIndex == 1)
+		{
+			g2d.drawImage(images[1], 117, 132, null);
+		}
+		else
+		{
+			g2d.drawImage(images[0], 117, 132, null);
 		}
 
 		sse = Character.socketedSpells[1];
 
 		if (sse.unlocked == 3)
 		{
-			g2d.drawImage(sse.images[1], 125, 140, null);
+			g2d.drawImage(sse.images[1], 117, 132, null);
 		}
-		else if (sse.unlocked  == 2)
+		
+		if (sse.unlocked > 1)
 		{
-			g2d.drawImage(sse.images[0], 125, 140,null);
+			g2d.drawImage(sse.images[0], 117, 132,null);
 		}
+		
+		// End Draw Socket 1
+		
+		//Draw Socket 2
 
 		if (selectedIndex == 2)
 		{
-			g2d.drawImage(images[1], 218, 133, null);
+			g2d.drawImage(images[1], 217, 132, null);
 		}
 		else
 		{
-			g2d.drawImage(images[0], 225, 140, null);
+			g2d.drawImage(images[0], 217, 132, null);
 		}
 		sse = Character.socketedSpells[2];
 
 		if (sse.unlocked == 3)
 		{
-			g2d.drawImage(sse.images[1], 225, 140, null);
+			g2d.drawImage(sse.images[1], 217, 132, null);
 		}
-		else if (sse.unlocked  == 2)
+		
+		if (sse.unlocked > 1)
 		{
-			g2d.drawImage(sse.images[0], 225, 140,null);
+			g2d.drawImage(sse.images[0], 217, 132, null);
 		}
 
+		// End Draw Socket 2
+		
+		// Draw Socket 3
 
 		if (selectedIndex == 3)
 		{
-			g2d.drawImage(images[1], 118, 253, null);
+			g2d.drawImage(images[1], 117, 252, null);
 		}
 		else
 		{
-			g2d.drawImage(images[0], 125, 260, null);
+			g2d.drawImage(images[0], 117, 252, null);
 		}
 		sse = Character.socketedSpells[3];
 
 		if (sse.unlocked == 3)
 		{
-			g2d.drawImage(sse.images[1], 125, 260, null);
+			g2d.drawImage(sse.images[1], 117, 252, null);
 		}
-		else if (sse.unlocked  == 2)
+		
+		if (sse.unlocked > 1)
 		{
-			g2d.drawImage(sse.images[0], 125, 260,null);
+			g2d.drawImage(sse.images[0], 117, 252, null);
 		}
 
+		// End Draw Socket 3
+		
+		// Draw Socket 4
 
 		if (selectedIndex == 4)
 		{
-			g2d.drawImage(images[1], 218, 253, null);
+			g2d.drawImage(images[1], 217, 252, null);
 		}
 		else
 		{
-			g2d.drawImage(images[0], 225, 260, null);
+			g2d.drawImage(images[0], 217, 252, null);
 		}
 		sse = Character.socketedSpells[4];
 
 		if (sse.unlocked == 3)
 		{
-			g2d.drawImage(sse.images[1], 225, 260, null);
+			g2d.drawImage(sse.images[1], 217, 252, null);
 		}
-		else if (sse.unlocked  == 2)
+		
+		if (sse.unlocked > 1)
 		{
-			g2d.drawImage(sse.images[0], 225, 260,null);
+			g2d.drawImage(sse.images[0], 217, 252, null);
 		}
+		
+		// End Draw Socket 4
 
 
 

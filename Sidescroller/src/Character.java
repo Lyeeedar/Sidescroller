@@ -219,7 +219,6 @@ public class Character {
 	
 	public static void populateLifeSpells()
 	{
-		String[] icons = {"Data/Resources/GUI/spellIconLife.png","Data/Resources/GUI/spellIconLifeSelected.png"};
 		String element = Entity.LIFE;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
@@ -229,8 +228,8 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Weak Heal", null, 2, new int[]{500, 100},
-				icons,
+		spells.get(0).spells.add(new SpellsStageEntry("SmallHeal", null, 2, new int[]{500, 100},
+				new String[]{"Data/Resources/GUI/Life/spellIconSmallHeal.png","Data/Resources/GUI/Life/spellIconLifeMaster.png"},
 				"Heal a little of your health.", 500, element));
 		
 		lifeSpells = spells;
@@ -238,7 +237,6 @@ public class Character {
 	
 	public static void populateDeathSpells()
 	{
-		String[] icons = {"Data/Resources/GUI/spellIconDeath.png","Data/Resources/GUI/spellIconDeathSelected.png"};
 		String element = Entity.DEATH;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
@@ -248,8 +246,8 @@ public class Character {
 			spells.add(new SpellsStage());
 		}
 		
-		spells.get(0).spells.add(new SpellsStageEntry("Summon imp", null, 2, new int[]{500, 100},
-				icons,
+		spells.get(0).spells.add(new SpellsStageEntry("ImpI", null, 2, new int[]{500, 100},
+				new String[]{"Data/Resources/GUI/Death/spellIconImpI.png","Data/Resources/GUI/Death/spellIconDeathMaster.png"},
 				"Summon an imp to attack your foe.", 500, element));
 		
 		deathSpells = spells;
@@ -257,7 +255,6 @@ public class Character {
 	
 	public static void populateWaterSpells()
 	{
-		String[] icons = {"Data/Resources/GUI/spellIconWater.png","Data/Resources/GUI/spellIconWaterSelected.png"};
 		String element = Entity.WATER;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
@@ -268,7 +265,7 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 2, new int[]{500, 100},
-				icons,
+				new String[]{"Data/Resources/GUI/Water/spellIconIceSpike.png","Data/Resources/GUI/Water/spellIconWaterMaster.png"},
 				"Send a spike of ice at your foe.", 500, element));
 		
 		waterSpells = spells;
@@ -276,7 +273,6 @@ public class Character {
 	
 	public static void populateEarthSpells()
 	{
-		String[] icons = {"Data/Resources/GUI/spellIconEarth.png","Data/Resources/GUI/spellIconEarthSelected.png"};
 		String element = Entity.EARTH;
 		
 		ArrayList<SpellsStage> spells = new ArrayList<SpellsStage>();
@@ -287,23 +283,22 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 2, new int[]{500, 100},
-				icons,
+				new String[]{"Data/Resources/GUI/Earth/spellIconRockSpike.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
 				"Send a series of rock spikes flying out in front of you.", 500, element));
 		
 		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 0, new int[]{400, 200},
-				icons,
+				new String[]{"Data/Resources/GUI/Earth/spellIconRockWall.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
 				"Raise a wall of rock from the ground to stop foes.", 580, element));
 		
-		spells.get(1).spells.add(new SpellsStageEntry("RockShot", new String[]{"RockSpike"}, 0, new int[]{600, 200},
-				icons,
-				"Send a large rock flying at an opponent.", 580, element));
+		spells.get(1).spells.add(new SpellsStageEntry("Stone", new String[]{"RockSpike"}, 0, new int[]{600, 200},
+				new String[]{"Data/Resources/GUI/Earth/spellIconStone.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
+				"Send a stone flying at an opponent.", 580, element));
 		
 		earthSpells = spells;
 	}
 	
 	public static void populateAirSpells()
 	{
-		String[] airIcons = {"Data/Resources/GUI/spellIconAir.png","Data/Resources/GUI/spellIconAirSelected.png"};
 		String element = Entity.AIR;
 		
 		airSpells = new ArrayList<SpellsStage>();
@@ -314,13 +309,12 @@ public class Character {
 		}
 		
 		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 2, new int[]{500, 100},
-				airIcons,
+				new String[]{"Data/Resources/GUI/Air/spellIconWindBlade.png","Data/Resources/GUI/Air/spellIconAirMaster.png"},
 				"Slice a foe with a blade of air.", 500, element));
 	}
 	
 	public static void populateFireSpells()
 	{
-		String[] fireIcons = {"Data/Resources/GUI/spellIconFire.png","Data/Resources/GUI/spellIconFireSelected.png"};
 		String element = Entity.FIRE;
 		
 		fireSpells = new ArrayList<SpellsStage>();
@@ -331,19 +325,19 @@ public class Character {
 		}
 		
 		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 2, new int[]{500, 100},
-				fireIcons,
+				new String[]{"Data/Resources/GUI/Fire/spellIconFireBall.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
 				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{400, 200},
-				fireIcons,
+				new String[]{"Data/Resources/GUI/Fire/spellIconScorch.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
 				"Sets fire to a spot, scorching all who enter it.", 700, element));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", new String[]{"FireBall"}, 0, new int[]{600, 200},
-				fireIcons,
+				new String[]{"Data/Resources/GUI/Fire/spellIconFlameWall.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
 				"Creates a wall of fire, burning any who pass through it.", 580, element));
 		
 		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 0, new int[]{400, 300},
-				fireIcons,
+				new String[]{"Data/Resources/GUI/Fire/spellIconWildFire.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
 				"Sets fire to a line, scorching all who enter it.", 900, element));
 
 	

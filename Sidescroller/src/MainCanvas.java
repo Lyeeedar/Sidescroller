@@ -296,15 +296,16 @@ public class MainCanvas extends Canvas implements KeyListener{
 		
 		for (int i = 0; i < 5; i++)
 		{
-			g2d.drawImage(HUDImages[1], x+(i*40), y+59, null);
+			g2d.drawImage(HUDImages[1], x-8+(i*40), y+59-8, null);
 			
 			if (Character.socketedSpells[i].unlocked == 3)
 			{
-				g2d.drawImage(Character.socketedSpells[i].images[1], x+(i*40), y+59, null);
+				g2d.drawImage(Character.socketedSpells[i].images[1], x-8+(i*40), y+59-8, null);
 			}
-			else
+			
+			if (Character.socketedSpells[i].unlocked > 1)
 			{
-				g2d.drawImage(Character.socketedSpells[i].images[0], x+(i*40), y+59, null);
+				g2d.drawImage(Character.socketedSpells[i].images[0], x-8+(i*40), y+59-8, null);
 			}
 			
 			if (Character.spellCooldown[i] < 1)
