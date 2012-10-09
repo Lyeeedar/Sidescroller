@@ -196,6 +196,8 @@ public class Entity implements Serializable{
 	protected int speed;
 	
 	protected int expAmount = 0;
+	
+	protected long jumpCD = 0;
 
 	protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
 	/**
@@ -311,9 +313,12 @@ public class Entity implements Serializable{
 		}
 
 		// Jump
-		if ((MainCanvas.up) && (this.isGrounded()))
+		if ((MainCanvas.up) && (jumpCD > 0))
 		{
-			this.getVelocity()[1] -= 25;
+			jumpCD = 0;
+			this.getVelocity()[1] = -25;
+			setGrounded(false);
+			//MainCanvas.up = false;
 		}
 
 		// Activate infront of Entity
@@ -508,6 +513,10 @@ public class Entity implements Serializable{
 			castSpellAt = 5;
 		}
 
+		if (grounded)
+		{
+			jumpCD = 1000;
+		}
 	}
 
 	/**
@@ -587,7 +596,7 @@ public class Entity implements Serializable{
 
 				if (checkCollision(npos) == null)
 				{
-					velocity[1] = 0;
+					//velocity[1] = 0;
 					applyFriction();
 					this.changePosition(npos[0], npos[1], this.getPos()[2]);
 					
@@ -1082,6 +1091,10 @@ public class Entity implements Serializable{
 	public void updateTime(long time)
 	{
 		this.spellCD -= time;
+		
+		if (jumpCD > 0)
+			this.jumpCD -= time;
+
 		animate(time);
 		
 		ArrayList<SystemMessage> newInfoText = new ArrayList<SystemMessage>();

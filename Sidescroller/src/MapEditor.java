@@ -46,7 +46,7 @@ public class MapEditor {
 	 */
 	public static void main(String[] args) {
 		new EditorFrame();
-
+		Main.gamedata.BGM.stop();
 	}
 
 }
@@ -119,6 +119,8 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 			g.setColor(Color.BLACK);
 			g.drawString(e.getName(), e.getPos()[0], e.getPos()[1]-30);
 			g.drawString(e.faction, e.getPos()[0], e.getPos()[1]-10);
+			g.drawString(""+e.pos[0], e.getPos()[0]-50, e.getPos()[1]);
+			g.drawString(""+e.pos[1], e.getPos()[0]-50, e.getPos()[1]+20);
 
 			if (e.isPassable())
 			{
@@ -983,7 +985,7 @@ class DialogueFrame extends JFrame
 			}});
 		bottom.add(bubbleBox);
 		
-		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel"};
+		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
 		bottom.add(comboBox);
 		
@@ -1076,6 +1078,10 @@ class DialogueBlockFrame extends JFrame
 		else if (block.get(0).equals("ChangeLevel"))
 		{
 			changeLevel();
+		}
+		else if (block.get(0).equals("ChangePosition"))
+		{
+			changePosition();
 		}
 		
 		
@@ -1235,6 +1241,46 @@ class DialogueBlockFrame extends JFrame
 				block.set(2, posx.getText());
 				block.set(3, posy.getText());
 				block.set(4, dir.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	public void changePosition()
+	{
+		while (block.size() < 5)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Pos X: "));
+		final JTextField posx = new JTextField(10);
+		posx.setText(block.get(1));
+		panel.add(posx);
+		
+		panel.add(new JLabel("Pos Y: "));
+		final JTextField posy = new JTextField(10);
+		posy.setText(block.get(2));
+		panel.add(posy);
+		
+		panel.add(new JLabel("Direction: "));
+		final JTextField dir = new JTextField(10);
+		dir.setText(block.get(3));
+		panel.add(dir);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, posx.getText());
+				block.set(2, posy.getText());
+				block.set(3, dir.getText());
 				
 				frame.dispose();
 				

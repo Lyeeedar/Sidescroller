@@ -76,6 +76,10 @@ public class Dialogue implements Serializable{
 		{
 			return changeLevel(stagetext);
 		}
+		else if (stagetext.get(0).equals("ChangePosition"))
+		{
+			return changePosition(stagetext);
+		}
 		
 		return null;
 	}
@@ -153,6 +157,20 @@ public class Dialogue implements Serializable{
 		internalstage = 0;
 		
 		return "Loading Level "+stagetext.get(1);
+	}
+	
+	private String changePosition(ArrayList<String> stagetext)
+	{	
+		int posX = Integer.parseInt(stagetext.get(1));
+		int posY = Integer.parseInt(stagetext.get(2));
+		int dir = Integer.parseInt(stagetext.get(3));
+		
+		Main.gamedata.getGameEntities().get("Player").setPos(new int[]{posX, posY, dir});
+		
+		stage = 0;
+		internalstage = 0;
+		
+		return "";
 	}
 	
 	/**

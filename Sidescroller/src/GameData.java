@@ -213,7 +213,8 @@ public class GameData {
 		    	
 				im = ImageIO.read(in);
 				
-				im = toCompatibleImage(im);
+				if (im != null)
+					im = toCompatibleImage(im);
 			}
 			catch (IOException ioe)
 			{
