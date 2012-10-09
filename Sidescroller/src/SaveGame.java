@@ -218,7 +218,7 @@ public class SaveGame implements Serializable{
 		
 		gamedata.systemMessages.clear();
 		
-		gamedata.BGM = level.getBGM();
+		gamedata.changeSong(level.getBGM());
 		
 		return true;
 	}
@@ -306,7 +306,7 @@ public class SaveGame implements Serializable{
 		Main.maincanvas.paintLoad(gc);
 		gamedata.createCollisionMap();
 		
-		gamedata.BGM = level.getBGM();
+		gamedata.changeSong(level.getBGM());
 		
 		return true;
 	}

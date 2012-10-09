@@ -4,6 +4,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -94,7 +95,16 @@ public class GameData {
 	
 	public void clearGame()
 	{
-		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
+		OggClip bgm = null;
+		try {
+			bgm = new OggClip("Data/Resources/Sounds/MainMenu.ogg");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		changeSong(bgm);
+		
+		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 		gameEntities.put("Player", e);
 		
 		for (int i = 0; i < 5; i++)
@@ -104,6 +114,29 @@ public class GameData {
 		}
 		
 		this.createCollisionMap();
+	}
+	
+	public void changeSong(OggClip bgm)
+	{
+		if (bgm == null)
+		{
+			
+		}
+		else if (BGM == null)
+		{
+			BGM = bgm;
+			BGM.loop();
+		}
+		else if (bgm.getName().equals(BGM.getName()))
+		{
+			
+		}
+		else
+		{
+			BGM.stop();
+			BGM = bgm;
+			BGM.loop();
+		}
 	}
 
 	/**
@@ -169,10 +202,17 @@ public class GameData {
 		    	
 		    	if (in == null)
 		    	{
-		    		in = new FileInputStream("src/"+image);
+		    		try{
+		    			in = new FileInputStream(image);
+		    		}
+		    		catch (FileNotFoundException fne)
+		    		{
+		    			in = new FileInputStream("src/"+image);
+		    		}
 		    	}
 		    	
 				im = ImageIO.read(in);
+				
 				im = toCompatibleImage(im);
 			}
 			catch (IOException ioe)

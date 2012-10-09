@@ -50,6 +50,8 @@ public class OggClip {
 	private boolean paused;
 	private float oldGain;
 	
+	private String name;
+	
 	/**
 	 * Create a new clip based on a reference into the class path
 	 * 
@@ -57,11 +59,12 @@ public class OggClip {
 	 * @throws IOException Indicated a failure to find the resource
 	 */
 	public OggClip(String ref) throws IOException {
+		setName(ref);
 		try {
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ref);
 	    	if (in == null)
 	    	{
-	    		in = new FileInputStream(ref);
+	    		in = new FileInputStream("src/"+ref);
 	    	}
 			init(in);
 		} catch (IOException e) {
@@ -607,6 +610,22 @@ public class OggClip {
 		oy.clear();
 	}
 	
+	/**
+	 * Returns {@link OggClip#name}
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets {@link OggClip#name}
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	private class InternalException extends Exception {
 		/**
 		 * 

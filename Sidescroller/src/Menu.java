@@ -2707,9 +2707,11 @@ class CreditsMenu extends MenuScreen
 
 		g2d.drawString("Kevin Glass - easyOgg Library", 100, 80);
 
-		g2d.drawString("SFX by http://www.freesfx.co.uk", 100, 180);
+		g2d.drawString("SFX by www.freesfx.co.uk", 100, 180);
+		
+		g2d.drawString("Kevin MacLeod - Music - www.incompetech.com", 100, 280);
 
-		g2d.drawString("Me - The Rest Of The Game :D", 100, 280);
+		g2d.drawString("Me - The Rest Of The Game :D", 100, 380);
 
 	}
 

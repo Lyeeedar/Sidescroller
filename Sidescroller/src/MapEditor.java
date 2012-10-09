@@ -508,17 +508,15 @@ class BackgroundFrame extends JFrame
 
 			BufferedImage im = null;
 
-			try{
-				im = ImageIO.read(file);
-			}
-			catch (IOException e)
+			im = GameData.getImage(file.getPath());
+			
+			if (im == null)
 			{
-				System.err.println(file.getAbsolutePath() + " is an invalid image file.");
+				System.err.println("Invalid file: " + file.getPath());
 				return;
 			}
 
-
-			MapEditor.background[index] = file.getAbsolutePath();
+			MapEditor.background[index] = file.getPath();
 			MapEditor.gamedata.getBackground()[index] = im;
 
 			if (index == 3)
@@ -531,6 +529,7 @@ class BackgroundFrame extends JFrame
 				MapEditor.gamedata.createCollisionMap();
 				
 				EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.background[0].getWidth(), MapEditor.gamedata.background[0].getHeight()));
+				EditorFrame.mapPanel.revalidate();
 			}
 
 			EditorFrame.mapPanel.repaint();
