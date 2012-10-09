@@ -2709,7 +2709,8 @@ class CreditsMenu extends MenuScreen
 
 		g2d.drawString("SFX by www.freesfx.co.uk", 100, 180);
 		
-		g2d.drawString("Kevin MacLeod - Music - www.incompetech.com", 100, 280);
+		g2d.drawString("Kevin MacLeod - Music", 100, 280);
+		g2d.drawString("www.incompetech.com", 100, 300);
 
 		g2d.drawString("Me - The Rest Of The Game :D", 100, 380);
 

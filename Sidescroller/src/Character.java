@@ -6,32 +6,71 @@ import java.util.HashMap;
 
 
 /**
+ * This class holds a lot of the character details, such as what spells are learned and equipped, and what sigils are socketed
  * @author Lyeeedar
  *
  */
 public class Character {
 	
+	/**
+	 * The total time played on this game
+	 */
 	public static long timePlayed;
 
+	/**
+	 * The entire inventory, it is stored as 3 HashMap's in the order: <p>
+	 * 0 = Sigils (Armour upgrades) <p>
+	 * 1 = Upgrades (Usuable items) <p>
+	 * 2 = Misc <p>
+	 */
 	public static ArrayList<HashMap<String, Item>> inventory = new ArrayList<HashMap<String, Item>>();
+	
+	/**
+	 * The spells socketted in the 5 slots
+	 */
 	public static SpellsStageEntry[] socketedSpells = new SpellsStageEntry[5];
 	
 	/**
-	 *  0 = female
-	 *  1 = male
+	 * The current gender: <p>
+	 *  0 = female <p>
+	 *  1 = male <p>
 	 */
 	public static int gender = 1;
+	/**
+	 * The cooldown before it is possible to genderswap again
+	 */
 	public static long genderSwapCD = 0;
-	
+	/**
+	 * The current stage of the genderswap animation
+	 */
 	public static int genderSwapAnimStage = 0;
+	/**
+	 * The time before the genderswap animation is updates
+	 */
 	public static int genderSwapAnimCD = 0;
+	/**
+	 * Whether the genderswap is animating
+	 */
 	public static boolean genderSwapAnimating = false;
+	/**
+	 * The sprite used for the genderswap animation
+	 */
 	public static BufferedImage genderSwapSprite = GameData.getImage("Data/Resources/Spritesheets/transform.png");
 	
+	/**
+	 * The cooldown for each of the socketed spells
+	 */
 	public static long[] spellCooldown = new long[5];
 	
+	/**
+	 * The currently equipped sigils.
+	 */
 	public static Sigil[] equippedSigils = new Sigil[6];
 	
+	/**
+	 * Method to equip a sigil. Only 1 sigil can be equipped per element
+	 * @param sigil
+	 */
 	public static void equipSigil(Sigil sigil)
 	{
 		int index = 0;
@@ -67,6 +106,10 @@ public class Character {
 		equippedSigils[index].equip();
 	}
 	
+	/**
+	 * Method used to unequip a sigil
+	 * @param sigil
+	 */
 	public static void unequipSigil(Sigil sigil)
 	{
 		int index = 0;
@@ -100,6 +143,10 @@ public class Character {
 		equippedSigils[index] = null;
 	}
 	
+	/**
+	 * Method to add exp to each of the equipped spells
+	 * @param amount
+	 */
 	public static void addEXP(int amount)
 	{
 		for (int i = 0; i < 5; i++)
@@ -108,6 +155,10 @@ public class Character {
 		}
 	}
 	
+	/**
+	 * Method to update time. In this case timePlayed, genderswap, spells
+	 * @param elapsedTime
+	 */
 	public static void updateTime(long elapsedTime)
 	{
 		timePlayed += elapsedTime;
@@ -141,6 +192,9 @@ public class Character {
 		}
 	}
 	
+	/**
+	 * Method to start the genderswap process
+	 */
 	public static void beginGenderSwap()
 	{
 		if (genderSwapCD > 0)
@@ -151,6 +205,9 @@ public class Character {
 		genderSwapAnimating = true;
 	}
 	
+	/**
+	 * Method that actually swaps the sprite depending on the characters gender
+	 */
 	public static void swapGender()
 	{
 		
@@ -169,6 +226,10 @@ public class Character {
 		
 	}
 	
+	/**
+	 * Method that adds an item to the inventory. Will stack the item if it already exists in the inventory
+	 * @param item
+	 */
 	public static void addItem(Item item)
 	{
 		HashMap<String, Item> inventoryMap = inventory.get(item.type);
@@ -189,6 +250,9 @@ public class Character {
 	public static ArrayList<SpellsStage> deathSpells = new ArrayList<SpellsStage>();
 	public static ArrayList<SpellsStage> lifeSpells = new ArrayList<SpellsStage>();
 	
+	/**
+	 * Reset all the variables in this class. Empties inventory, resets sockted spells, resets spell unlocks and reloads all images
+	 */
 	public static void resetAll()
 	{
 		inventory.clear();
@@ -344,6 +408,12 @@ public class Character {
 		unlockSpells(fireSpells);
 	}
 	
+	/**
+	 * Method that checks a spell tree and unlocks all the spells depending on their requirements. <p>
+	 * will set a spell to unlock 1 aslong as all the prerequisites have been at least learnt. <p>
+	 * Will unlock a spell if all its prerequisistes have been mastered
+	 * @param spells
+	 */
 	public static void unlockSpells(ArrayList<SpellsStage> spells)
 	{
 		for (int i = 0; i < spells.size(); i++)
@@ -382,7 +452,11 @@ public class Character {
 		}
 	}
 	
-	
+	/**
+	 * Return the spell for the given element (static String in Entity)
+	 * @param name
+	 * @return
+	 */
 	public static ArrayList<SpellsStage> getSpell(String name)
 	{
 		if (name.equals(Entity.FIRE))
@@ -444,15 +518,27 @@ public class Character {
 }
 // End of Class
 
-
+/**
+ * Class used to model a stage in the spell tree
+ * @author Lyeeedar
+ *
+ */
 class SpellsStage implements Serializable
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2385401053100828396L;
+	/**
+	 * The list of spells in the spell stage
+	 */
 	public ArrayList<SpellsStageEntry> spells = new ArrayList<SpellsStageEntry>();
 	
+	/**
+	 * Get the spell with the given name from the spells array
+	 * @param name
+	 * @return
+	 */
 	public SpellsStageEntry getSpellStageEntry(String name)
 	{
 		for (SpellsStageEntry s : spells)
@@ -466,6 +552,9 @@ class SpellsStage implements Serializable
 		return null;
 	}
 	
+	/**
+	 * Load all the spell images in this stage
+	 */
 	public void loadImages()
 	{
 		for (SpellsStageEntry sse : spells)
@@ -475,21 +564,60 @@ class SpellsStage implements Serializable
 	}
 }
 
+/**
+ * Class to model a spell in the spell tree
+ * @author Lyeeedar
+ *
+ */
 class SpellsStageEntry implements Serializable
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1455799641945222577L;
+	/**
+	 * Spell name
+	 */
 	public String name;
+	/**
+	 * The parents of the spell to be used for unlocking
+	 */
 	public ArrayList<String> parents = new ArrayList<String>();
+	/**
+	 * The unlocked stage of the spell. <p>
+	 * 0 = Unknown <p>
+	 * 1 = Known <p>
+	 * 2 = Learnt <p>
+	 * 3 = Mastered
+	 */
 	public int unlocked;
+	/**
+	 * The position in the spell tree
+	 */
 	public int[] pos;
+	/**
+	 * The names of the images used by this spell
+	 */
 	public String[] imageFiles;
+	/**
+	 * The images used by this spell
+	 */
 	public transient BufferedImage[] images;
+	/**
+	 * The description of this spell
+	 */
 	public String description;
+	/**
+	 * The exp needed to Master this spell
+	 */
 	public int maxEXP;
+	/**
+	 * The current exp gained by this spell
+	 */
 	public int currentEXP = 0;
+	/**
+	 * The element of this spell
+	 */
 	public String element;
 	
 	public SpellsStageEntry(String name, String[] parents, int unlocked, int[] pos, String[] imageFiles, String description, int maxEXP, String element)
@@ -510,6 +638,9 @@ class SpellsStageEntry implements Serializable
 		}
 	}
 	
+	/**
+	 * Load the images used by this spell
+	 */
 	public void loadImage()
 	{
 		images = new BufferedImage[2];
@@ -522,6 +653,10 @@ class SpellsStageEntry implements Serializable
 		return unlocked;
 	}
 	
+	/**
+	 * Add exp to this spell and unlock the spell if the maxExp is reached
+	 * @param exp
+	 */
 	public void addEXP(int exp)
 	{
 		currentEXP += exp;

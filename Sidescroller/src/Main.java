@@ -23,8 +23,9 @@ public class Main {
 	 *  Game state. <p>
 	 * 0 = Close game <p>
 	 * 1 = Normal loop <p>
-	 * 2 = Load/Save
+	 * 2 = Toggle Fullscreen <p>
 	 * 3 = Menu
+	 * 4 = Paused
 	 * 
 	 */
 	private static int state = 3;
@@ -37,30 +38,35 @@ public class Main {
 	 */
 	public static MainCanvas maincanvas;
 
+	/**
+	 * Instance of Random for generating random numbers
+	 */
 	public static final Random ran = new Random();
+	
+	/**
+	 * The current game window
+	 */
+	static JFrame window;
 
 	public static GraphicsConfiguration gc = null;
 	public static GraphicsDevice device = null;
 
 	public static void main(String[] args) {
 
+		// If system in linux then sound effects will be buggy so set them to muted by default
 		if(System.getProperty("os.name").startsWith("Linux"))
 		{
 			SoundEffect.volume = SoundEffect.Volume.MUTE;
 		}
-		else
-		{
-			//System.setProperty("sun.java2d.opengl", "True");
-		}
 
 		System.out.println(System.getProperty("os.name"));
 
+		// Turn off direct3D to improve game stability
 		System.setProperty("sun.java2d.d3d","False");
-		//System.setProperty("sun.java2d.transaccel", "True");
-		//System.setProperty("sun.java2d.trace", "timestamp,log,count");
-		//System.setProperty("sun.java2d.ddforcevram", "True");
 
+		// Reset all game variables
 		Character.resetAll();
+		// Reload sound effects
 		SoundEffect.init();
 		// Create the game
 		Main game = new Main();
@@ -77,6 +83,7 @@ public class Main {
 			// Create the Main Frame
 			maincanvas = new MainCanvas(gc);
 
+			// Create the frame
 			Main.toggleFullscreen();
 
 			// Run the game loop
@@ -95,9 +102,12 @@ public class Main {
 		System.exit(0);
 	}
 
-	static JFrame window;
+	/**
+	 * Method used to toggle fullscreen mode. It also disposes of the old frame to prevent old windows hanging around the screen.
+	 */
 	public static void toggleFullscreen()
 	{
+		// If there is currently a window open, then close it
 		if (window != null)
 		{
 			window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -108,12 +118,17 @@ public class Main {
 		window.setIgnoreRepaint(true);
 		window.add(maincanvas);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// If not fullscreen then set the new frame to fullscreen
 		if (!fullscreen)
 		{
+			// Turn off decorations for the frame
 			window.setUndecorated(true);
 			// Set the Main Frame to fullscreen exclusive mode
 			device.setFullScreenWindow(window);
 
+			// Set the screen display mode to automatically resize the screen to fullscreen
+			// Try 2 different versions of the display mode to catch most bugs
 			try {
 				if( device.isDisplayChangeSupported() ) {
 					device.setDisplayMode( 
@@ -132,6 +147,7 @@ public class Main {
 				fullscreen = true;
 			}
 		}
+		// If fullscreen then remove the frame from fullscreen and restore decorations
 		else
 		{
 			device.setFullScreenWindow(null);
@@ -139,6 +155,7 @@ public class Main {
 			fullscreen = false;
 		}
 
+		// Set the window size and then prevent any further resizing
 		if (fullscreen)
 			window.pack();
 		else
@@ -158,12 +175,17 @@ public class Main {
 	    // Move the window
 	    window.setLocation(x, y);
 		
+	    // Set the keyboard focus to the canvas
 		maincanvas.requestFocusInWindow();
 		window.setVisible(true);
 		
+		// Recreate the buffer strategy for the frame
 		maincanvas.createStrategy();
 	}
 
+	/**
+	 * The last state the game loop was in
+	 */
 	public static int oldState = 3;
 	/**
 	 * The main loop of the game. <p>
@@ -179,12 +201,19 @@ public class Main {
 
 		while(true)
 		{
+			// Make sure the focus is on the canvas
 			maincanvas.requestFocusInWindow();
 
+			// ------------------- State 0 Start ------------------- //
+			// This state is used to quit the game
 			if (state == 0)
 			{
 				break;
 			}
+			// ------------------- State 0 End   ------------------- //
+			
+			// ------------------- State 1 Start ------------------- //
+			// This state is used to run the normal game. AI updates, animation updates and etc
 			else if (state == 1)
 			{
 
@@ -218,6 +247,7 @@ public class Main {
 
 				ArrayList<SystemMessage> newMessages = new ArrayList<SystemMessage>();
 
+				// Time out system messages in the message box
 				int i = 0;
 				for (SystemMessage sys : Main.gamedata.systemMessages)
 				{
@@ -254,11 +284,19 @@ public class Main {
 					e.updateTime(elapsedTime);
 				}
 			}
+			// ------------------- State 1 End   ------------------- //
+			
+			// ------------------- State 2 Start ------------------- //
+			// This state is used to toggle the fullscreen mode
 			else if (state == 2)
 			{
 				toggleFullscreen();
 				state = oldState;
 			}
+			// ------------------- State 2 End   ------------------- //
+			
+			// ------------------- State 3 Start ------------------- //
+			// This state is used to draw and update the menus
 			else if (state == 3)
 			{
 				// Update fps every 0.5 seconds
@@ -277,19 +315,25 @@ public class Main {
 				// Store current time
 				lastTime = System.currentTimeMillis();
 
-				// Paint game graphics
+				// Paint menu graphics
 				Main.maincanvas.paintMenu(gc);
 
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;
 
+				// Evaluate menu AI
 				Main.gamedata.evaluateMenu(elapsedTime);
 
 			}
+			// ------------------- State 3 End   ------------------- //
+			
+			// ------------------- State 4 Start ------------------- //
+			// This state is used to draw the pause screen
 			else if (state == 4)
 			{
 				Main.maincanvas.paintPaused(gc);
 			}
+			// ------------------- State 4 End   ------------------- //
 		}
 	}
 

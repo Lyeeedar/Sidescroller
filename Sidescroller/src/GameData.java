@@ -8,9 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -22,6 +20,9 @@ import javax.imageio.ImageIO;
  */
 public class GameData {
 
+	/**
+	 * The images used by the game. Stored with thier filename so each image is only ever loaded once
+	 */
 	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
 	
 	/**
@@ -78,14 +79,23 @@ public class GameData {
 	 */
 	public String levelName = "";
 	
+	/**
+	 * Messages to be displayed in the chatbox
+	 */
 	public ArrayList<SystemMessage> systemMessages = new ArrayList<SystemMessage>();
 	
-	public boolean saving = false;
-	public boolean loading = false;
-	
+	/**
+	 * The current savefile
+	 */
 	public File saveFile;
 	
+	/**
+	 * The current Background music
+	 */
 	public OggClip BGM;
+	/**
+	 * The volume of the BGM
+	 */
 	public static float gain = 0.75f;
 
 	public GameData()
@@ -93,6 +103,9 @@ public class GameData {
 		clearGame();
 	}
 	
+	/**
+	 * Method to clear all the game data kept in GameData
+	 */
 	public void clearGame()
 	{
 		OggClip bgm = null;
@@ -103,6 +116,8 @@ public class GameData {
 		}
 		
 		changeSong(bgm);
+		
+		gameEntities.clear();
 		
 		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 		gameEntities.put("Player", e);
@@ -116,6 +131,10 @@ public class GameData {
 		this.createCollisionMap();
 	}
 	
+	/**
+	 * Method to change the current BGM. If theres an old song playing then stop it, and then start the new one.
+	 * @param bgm
+	 */
 	public void changeSong(OggClip bgm)
 	{
 		if (bgm == null)
@@ -187,9 +206,14 @@ public class GameData {
 		{
 			this.loadLevel("level1");
 		}
-
 	}
 	
+	/**
+	 * Method to load an image. Will ceck if the image has already been loaded, and returns a reference if it has.
+	 * If it hasn't been loaded then load the image and store it for future use
+	 * @param image
+	 * @return
+	 */
 	public static BufferedImage getImage(String image)
 	{
 		if (gameImages.containsKey(image))
@@ -198,15 +222,18 @@ public class GameData {
 		{
 			BufferedImage im = null;
 			try{
+				// Try to load the image from the .jar file
 		    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(image);
 		    	
 		    	if (in == null)
 		    	{
 		    		try{
+		    			// Try to load it from the local file system
 		    			in = new FileInputStream(image);
 		    		}
 		    		catch (FileNotFoundException fne)
 		    		{
+		    			// Try to load it from the src folder (only useful if run from eclipse)
 		    			in = new FileInputStream("src/"+image);
 		    		}
 		    	}
@@ -225,6 +252,11 @@ public class GameData {
 		}
 	}
 	
+	/**
+	 * Method to convert the image passed into an image optimised for the current display mode
+	 * @param image
+	 * @return
+	 */
 	private static BufferedImage toCompatibleImage(BufferedImage image)
 	{
 		// obtain the current system graphical settings
@@ -370,13 +402,6 @@ public class GameData {
 				this.getGameEntities().remove(s);
 			}
 		}
-	}
-
-	public Iterator<Entity> getEntityIterator()
-	{
-		Collection<Entity> c = gameEntities.values();
-		Iterator<Entity> itr = c.iterator();
-		return itr;
 	}
 	
 	/**

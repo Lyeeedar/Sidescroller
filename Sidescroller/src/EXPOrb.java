@@ -2,10 +2,6 @@ import java.awt.Color;
 import java.awt.Rectangle;
 
 /**
- * 
- */
-
-/**
  * @author Lyeeedar
  *
  */

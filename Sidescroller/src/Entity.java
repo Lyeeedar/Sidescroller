@@ -18,6 +18,7 @@ public class Entity implements Serializable{
 	 */
 	protected static final long serialVersionUID = -8723388619027762099L;
 
+	// ----------- Game Elements ----------- //
 	public static final String PHYSICAL = "DPHYS";
 	public static final String FIRE = "DFIRE";
 	public static final String AIR = "DAIR";
@@ -25,12 +26,16 @@ public class Entity implements Serializable{
 	public static final String WATER = "DWATER";
 	public static final String DEATH = "DDEATH";
 	public static final String LIFE = "DLIFE";
+	// ----------- Game Elements ----------- //
 
 	/**
 	 * The internal name of the Entity
 	 */
 	protected String name = "";
 
+	/**
+	 * The faction of the Entity. Used to check for collisions (same factions cannot collide)
+	 */
 	protected String faction = "";
 
 	/**
@@ -147,6 +152,9 @@ public class Entity implements Serializable{
 	 */
 	protected boolean alive = true;
 
+	/**
+	 * The entities max health
+	 */
 	protected double maxHealth = 100;
 
 	/**
@@ -181,31 +189,71 @@ public class Entity implements Serializable{
 	 */
 	protected int damaged = 0;
 
+	/**
+	 * The new animation strip to be changed to
+	 */
 	protected int newAnimStrip = 1;
+	/**
+	 * The new animation stage to be changed to
+	 */
 	protected int newAnimStage = 0;
 
+	/**
+	 * Whether a non-interuptable animation is playing
+	 */
 	protected boolean isAnimating = false;
 
+	/**
+	 * The spell that should be cast
+	 */
 	protected Spell spellToCast = null;
+	/**
+	 * The animation frame to cast the spell at
+	 */
 	protected int castSpellAt = 0;
+	/**
+	 * The position of offset the spell to
+	 */
 	protected int[] castSpellOffset;
+	/**
+	 * The socket index of the spell to update the spellCD
+	 */
 	protected int castSpellIndex;
 
+	/**
+	 * The drops for this entity
+	 */
 	protected HashMap<String, Integer> dropList = new HashMap<String, Integer>();
 
+	/**
+	 * the speed of this entity
+	 */
 	protected int speed;
 	
+	/**
+	 * The exp this entity drops
+	 */
 	protected int expAmount = 0;
 	
+	/**
+	 * The jump cd for this entity, allows the entity to jump just after falling off something
+	 */
 	protected long jumpCD = 0;
 
-	protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
 	/**
+	 * The system messages to be displayed about the entities head
+	 */
+	protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
+
+	/**
+	 * @param name
 	 * @param animateTime
 	 * @param totalAnimateStrip
-	 * @param pos - int[3], X, Y, dir
-	 * @param spriteSheet
-	 * @param collision - int[4], X, Y, width, height
+	 * @param totalAnimateStages
+	 * @param pos
+	 * @param speed
+	 * @param spritefile
+	 * @param collision
 	 * @param behaviour
 	 * @param dialogue
 	 */
