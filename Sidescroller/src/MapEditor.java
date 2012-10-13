@@ -974,6 +974,18 @@ class DialogueFrame extends JFrame
 		JPanel bottom = new JPanel();
 		panel.add(bottom, BorderLayout.SOUTH);
 		
+		final String[] genders = {"Female", "Male"};
+		final JComboBox genderBox = new JComboBox(genders);
+		genderBox.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Character.gender = genderBox.getSelectedIndex();
+				init();
+				
+			}});
+		bottom.add(genderBox);
+		
 		final String[] bubbleType = {"Speech", "Examine"};
 		final JComboBox bubbleBox = new JComboBox(bubbleType);
 		bubbleBox.addItemListener(new ItemListener(){

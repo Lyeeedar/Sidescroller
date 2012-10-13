@@ -276,8 +276,9 @@ public class Entity implements Serializable{
 			this.dialogue = dialogue;
 		else
 		{
-			ArrayList<ArrayList<String>> dia = new ArrayList<ArrayList<String>>();
-			this.dialogue = new Dialogue(dia, 0);
+			ArrayList<ArrayList<String>> dia1 = new ArrayList<ArrayList<String>>();
+			ArrayList<ArrayList<String>> dia2 = new ArrayList<ArrayList<String>>();
+			this.dialogue = new Dialogue(dia1, dia2, 0);
 		}
 
 		this.spriteFile = spritefile;
