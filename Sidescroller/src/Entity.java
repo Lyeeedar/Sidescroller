@@ -564,7 +564,7 @@ public class Entity implements Serializable{
 
 		if (grounded)
 		{
-			jumpCD = 1000;
+			jumpCD = 500;
 		}
 	}
 
@@ -1126,6 +1126,7 @@ public class Entity implements Serializable{
 		{
 			this.setTalkingTimer(0);
 			this.getDialogue().incrStage();
+			getDialogue().lastGender = Character.gender;
 		}
 		else if (this.getTalkingTimer() < Dialogue.dialogueFade+Dialogue.fadeDuration)
 			this.setTalkingTimer(0);

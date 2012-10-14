@@ -2,10 +2,16 @@ Stuff to be done:
 
 Code:
 
-Dialogue conditionals based on gender (an arraylist per gender) (2 tabs in editor to make it easier to edit)
+Dialogue types:
+
+Edit other gender dialogue stage
+Change gender
+Kill
+Play anim
+Move
+Disable/enable player move
 
 confirm menu option
-dialogues play animations
 tested serialized save games + levels on both linux and windows
 
 

@@ -36,6 +36,8 @@ public class Dialogue implements Serializable{
 	private int internalstage1 = 0;
 	private int internalstage2 = 0;
 	
+	public int lastGender = Character.gender;
+	
 	public static final int dialogueFade = 10000;
 	public static final int fadeDuration = 3000;
 	public static final float fadeStep = (float) 255/fadeDuration;
@@ -83,6 +85,18 @@ public class Dialogue implements Serializable{
 		else if (stagetext.get(0).equals("ChangePosition"))
 		{
 			return changePosition(stagetext);
+		}
+		else if (stagetext.get(0).equals("ChangeStage"))
+		{
+			return changeStage(stagetext);
+		}
+		else if (stagetext.get(0).equals("ChangePassable"))
+		{
+			return changePassable(stagetext);
+		}
+		else if (stagetext.get(0).equals("ChangeVisible"))
+		{
+			return changeVisible(stagetext);
 		}
 		
 		return null;
@@ -157,7 +171,7 @@ public class Dialogue implements Serializable{
 		
 		Main.gamedata.getGameEntities().get("Player").setPos(new int[]{posX, posY, dir});
 		
-		setStage(0);
+		setStage(getStage()+1);
 		setInternalstage(0);
 		
 		return "Loading Level "+stagetext.get(1);
@@ -171,7 +185,39 @@ public class Dialogue implements Serializable{
 		
 		Main.gamedata.getGameEntities().get("Player").setPos(new int[]{posX, posY, dir});
 		
-		setStage(0);
+		setStage(getStage()+1);
+		setInternalstage(0);
+		
+		return "";
+	}
+	
+	private String changeStage(ArrayList<String> stagetext)
+	{
+		setStage(Integer.parseInt(stagetext.get(1)));
+		setInternalstage(0);
+		
+		return "";
+	}
+	
+	private String changePassable(ArrayList<String> stagetext)
+	{
+		boolean passable = stagetext.get(2).equals("true");
+		
+		Main.gamedata.getGameEntities().get(stagetext.get(1)).setPassable(passable);
+		
+		setStage(getStage()+1);
+		setInternalstage(0);
+		
+		return "";
+	}
+	
+	private String changeVisible(ArrayList<String> stagetext)
+	{
+		boolean visible = stagetext.get(2).equals("true");
+		
+		Main.gamedata.getGameEntities().get(stagetext.get(1)).setVisible(visible);
+		
+		setStage(getStage()+1);
 		setInternalstage(0);
 		
 		return "";
@@ -236,17 +282,17 @@ public class Dialogue implements Serializable{
 	}
 	
 	public int getStage() {
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			return stage1;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			return stage2;
 		return 0;
 	}
 	
 	public void setStage(int stage) {
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			stage1 = stage;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			stage2 = stage;
 	}
 
@@ -256,9 +302,9 @@ public class Dialogue implements Serializable{
 	 */
 	public ArrayList<ArrayList<String>> getQuest() {
 		
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			return quest1;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			return quest2;
 		return null;
 	}
@@ -268,9 +314,9 @@ public class Dialogue implements Serializable{
 	 * @param quest the quest to set
 	 */
 	public void setQuest(ArrayList<ArrayList<String>> quest) {
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			quest1 = quest;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			quest2 = quest;
 	}
 
@@ -279,9 +325,9 @@ public class Dialogue implements Serializable{
 	 * @return the internalstage
 	 */
 	public int getInternalstage() {
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			return internalstage1;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			return internalstage2;
 		return 0;
 	}
@@ -291,9 +337,9 @@ public class Dialogue implements Serializable{
 	 * @param internalstage the internalstage to set
 	 */
 	public void setInternalstage(int internalstage) {
-		if (Character.gender == 0)
+		if (lastGender == 0)
 			internalstage1 = internalstage;
-		else if (Character.gender == 1)
+		else if (lastGender == 1)
 			internalstage2 = internalstage;
 	}
 

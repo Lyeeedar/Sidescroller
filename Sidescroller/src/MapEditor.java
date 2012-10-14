@@ -116,11 +116,18 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
 			Entity e = entry.getValue();
+			g.setColor(new Color(255, 255, 255, 120));
+			
+			g.fillRect(e.getPos()[0]-55, e.getPos()[1]-50, 55, 70);
+			
 			g.setColor(Color.BLACK);
-			g.drawString(e.getName(), e.getPos()[0], e.getPos()[1]-30);
-			g.drawString(e.faction, e.getPos()[0], e.getPos()[1]-10);
+			
+			g.drawRect(e.getPos()[0]-55, e.getPos()[1]-50, 55, 70);
+			
+			g.drawString(e.getName(), e.getPos()[0]-50, e.getPos()[1]-30);
+			g.drawString(e.faction, e.getPos()[0]-50, e.getPos()[1]-15);
 			g.drawString(""+e.pos[0], e.getPos()[0]-50, e.getPos()[1]);
-			g.drawString(""+e.pos[1], e.getPos()[0]-50, e.getPos()[1]+20);
+			g.drawString(""+e.pos[1], e.getPos()[0]-50, e.getPos()[1]+15);
 
 			if (e.isPassable())
 			{
@@ -298,6 +305,18 @@ class OptionsPanel extends JPanel
 
 			}});
 		this.add(entity);
+		
+		JButton clearEntity = new JButton("Clear Entities");
+		clearEntity.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				MapEditor.gamedata.getGameEntities().clear();
+
+				EditorFrame.mapPanel.repaint();
+
+			}});
+		this.add(clearEntity);
 
 		JButton gravity = new JButton("Gravity");
 		gravity.addActionListener(new ActionListener(){
@@ -984,6 +1003,7 @@ class DialogueFrame extends JFrame
 				init();
 				
 			}});
+		genderBox.setSelectedIndex(Character.gender);
 		bottom.add(genderBox);
 		
 		final String[] bubbleType = {"Speech", "Examine"};
@@ -997,7 +1017,7 @@ class DialogueFrame extends JFrame
 			}});
 		bottom.add(bubbleBox);
 		
-		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition"};
+		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
 		bottom.add(comboBox);
 		
@@ -1094,6 +1114,18 @@ class DialogueBlockFrame extends JFrame
 		else if (block.get(0).equals("ChangePosition"))
 		{
 			changePosition();
+		}
+		else if (block.get(0).equals("ChangeStage"))
+		{
+			changeStage();
+		}
+		else if (block.get(0).equals("ChangePassable"))
+		{
+			changePassable();
+		}
+		else if (block.get(0).equals("ChangeVisible"))
+		{
+			changeVisible();
 		}
 		
 		
@@ -1299,6 +1331,104 @@ class DialogueBlockFrame extends JFrame
 			}});
 		panel.add(apply);
 	}
+	
+	public void changeStage()
+	{
+		while (block.size() < 3)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Stage: "));
+		final JTextField stage = new JTextField(10);
+		stage.setText(block.get(1));
+		panel.add(stage);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, stage.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	public void changePassable()
+	{
+		while (block.size() < 3)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Target: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		panel.add(new JLabel("Passable: "));
+		final JTextField passable = new JTextField(10);
+		passable.setText(block.get(2));
+		panel.add(passable);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
+				block.set(2, passable.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	public void changeVisible()
+	{
+		while (block.size() < 3)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Target: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		panel.add(new JLabel("Visible: "));
+		final JTextField visible = new JTextField(10);
+		visible.setText(block.get(2));
+		panel.add(visible);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
+				block.set(2, visible.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	
 }
 
 class DropListFrame extends JFrame

@@ -68,6 +68,7 @@ public class SaveGame implements Serializable{
 			}
 			else
 			{
+				entry.getValue().setTalking(false);
 				saveMap.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -280,7 +281,8 @@ public class SaveGame implements Serializable{
 			Entity oldPlayer = level.gameEntities.get("Player");
 			level.gameEntities.remove("Player");
 
-			save.player.setPos(oldPlayer.getPos());
+			if (oldPlayer != null)
+				save.player.setPos(oldPlayer.getPos());
 
 			gameEntities.put("Player", save.player);
 		}
