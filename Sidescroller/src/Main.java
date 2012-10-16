@@ -20,6 +20,8 @@ public class Main {
 	public static boolean fullscreen = true;
 	
 	public static boolean debug = true;
+	
+	public static boolean preloadCollisionMap = true;
 
 	/**
 	 *  Game state. <p>

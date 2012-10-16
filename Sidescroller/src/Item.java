@@ -134,9 +134,9 @@ public class Item extends Entity {
 		{
 			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
 			{
-				if (nx >= Main.gamedata.getCollisionMap().length)
+				if (nx >= Main.gamedata.collisionX)
 					return this.getName();
-				else if (Main.gamedata.getCollisionMap()[nx][ny])
+				else if (Main.gamedata.checkCollision(nx, ny))
 					return this.getName();
 			}
 		}

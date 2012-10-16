@@ -62,7 +62,10 @@ public class GameData {
 	/**
 	 * A map of which pixels are collidable with
 	 */
-	public boolean[][] collisionMap;
+	private int[][] collisionMap;
+	
+	public int collisionX = 1;
+	public int collisionY = 1;
 
 	/**
 	 * Strength of gravity in the game
@@ -121,7 +124,7 @@ public class GameData {
 			background[i] = im;
 		}
 		
-		this.createCollisionMap();
+		this.createCollisionMap(1, 1);
 	}
 	
 	/**
@@ -179,7 +182,7 @@ public class GameData {
 			//		gameEntities.add(eff);	
 			//		gameEntities.add(efg);
 			
-			createCollisionMap();
+			//createCollisionMap();
 			
 			//this.loadGame(new File("Data/Saves/test.sav"));
 			
@@ -291,33 +294,6 @@ public class GameData {
 		// return the new optimized image
 		return new_image; 
 	}
-
-	/**
-	 * Method to calculate and store the collision map for the entity. Created from the collision layer (background[3]). Collisionable pixels are the non-transparent ones
-	 */
-	public void createCollisionMap()
-	{
-		levelSize[0] = background[0].getWidth();
-		levelSize[1] = background[0].getHeight();
-
-		collisionMap = new boolean[levelSize[0]][levelSize[1]];
-
-		for (int x = 0; x < levelSize[0]; x++)
-		{
-			for (int y = 0; y < levelSize[1]; y++)
-			{
-				// Extract pixel colour
-				int colour = background[3].getRGB(x, y);
-
-				// Extract alpha value
-				int alpha = (colour>>24) & 0xff;
-
-				// If alpha is not 0 then store true in the collision map
-				collisionMap[x][y] = (alpha != 0);
-			}
-		}
-	}
-	
 
 	public void evaluateMenu(long time)
 	{
@@ -447,8 +423,102 @@ public class GameData {
 		System.gc();	
 		
 	}
+	
 
+	/**
+	 * Method to calculate and store the collision map for the entity. Created from the collision layer (background[3]). Collisionable pixels are the non-transparent ones
+	 */
+	public void fillCollisionMap()
+	{
+		levelSize[0] = background[3].getWidth();
+		levelSize[1] = background[3].getHeight();
 
+		createCollisionMap(levelSize[0], levelSize[1]);
+		
+		boolean collide = false;
+
+		for (int x = 0; x < levelSize[0]; x++)
+		{
+			for (int y = 0; y < levelSize[1]; y++)
+			{
+				// Extract pixel colour
+				int colour = background[3].getRGB(x, y);
+
+				// Extract alpha value
+				int alpha = (colour>>24) & 0xff;
+
+				collide = (alpha != 0);
+				
+				if (collide)
+				{
+					// If alpha is not 0 then store true in the collision map
+					collisionMap[x][y] = 2;
+				}
+				else
+				{
+					// If alpha is not 0 then store true in the collision map
+					collisionMap[x][y] = 1;
+				}
+			}
+		}
+	}
+	
+	public boolean checkCollision(int x, int y)
+	{
+		boolean collide = false;
+		
+		if (collisionMap[x][y] == 1)
+		{
+			collide = false;
+		}
+		else if (collisionMap[x][y] == 2)
+		{
+			collide = true;
+		}
+		else
+		{
+			// Extract pixel colour
+			int colour = background[3].getRGB(x, y);
+
+			// Extract alpha value
+			int alpha = (colour>>24) & 0xff;
+
+			collide = (alpha != 0);
+			
+			if (collide)
+			{
+				// If alpha is not 0 then store true in the collision map
+				collisionMap[x][y] = 2;
+			}
+			else
+			{
+				// If alpha is not 0 then store true in the collision map
+				collisionMap[x][y] = 1;
+			}
+		}
+		
+		
+		return collide;
+	}
+
+	public void createCollisionMap(int x, int y)
+	{	
+		collisionMap = new int[x][y];
+		
+		collisionX = x;
+		collisionY = y;
+	}
+	
+	public void createCollisionMap()
+	{
+		levelSize[0] = background[3].getWidth();
+		levelSize[1] = background[3].getHeight();
+		
+		collisionMap = new int[levelSize[0]][levelSize[1]];
+		
+		collisionX = levelSize[0];
+		collisionY = levelSize[1];
+	}
 
 
 
@@ -533,22 +603,22 @@ public class GameData {
 	public void setBackground(BufferedImage[] background) {
 		this.background = background;
 	}
-
-	/**
-	 * Returns {@link GameData#collisionMap}
-	 * @return the collisionMap
-	 */
-	public boolean[][] getCollisionMap() {
-		return collisionMap;
-	}
-
-	/**
-	 * Sets {@link GameData#collisionMap}
-	 * @param collisionMap the collisionMap to set
-	 */
-	public void setCollisionMap(boolean[][] collisionMap) {
-		this.collisionMap = collisionMap;
-	}
+//
+//	/**
+//	 * Returns {@link GameData#collisionMap}
+//	 * @return the collisionMap
+//	 */
+//	public boolean[][] getCollisionMap() {
+//		return collisionMap;
+//	}
+//
+//	/**
+//	 * Sets {@link GameData#collisionMap}
+//	 * @param collisionMap the collisionMap to set
+//	 */
+//	public void setCollisionMap(boolean[][] collisionMap) {
+//		this.collisionMap = collisionMap;
+//	}
 
 	/**
 	 * Returns {@link GameData#levelName}

@@ -2824,6 +2824,13 @@ class OptionsMenu extends MenuScreen
 			}
 			else if (selectedIndex == 4)
 			{
+				if (Main.preloadCollisionMap)
+					Main.preloadCollisionMap = false;
+				else
+					Main.preloadCollisionMap = true;
+			}
+			else if (selectedIndex == 5)
+			{
 				menu.changeMenu("Main");
 			}
 
@@ -2832,8 +2839,8 @@ class OptionsMenu extends MenuScreen
 
 		if (selectedIndex < 0)
 			selectedIndex = 0;
-		else if (selectedIndex > 4)
-			selectedIndex = 4;
+		else if (selectedIndex > 5)
+			selectedIndex = 5;
 	}
 
 	/* (non-Javadoc)
@@ -2908,7 +2915,20 @@ class OptionsMenu extends MenuScreen
 			g2d.setColor(Color.BLACK);
 		}
 		
-		g2d.drawString("Main Menu", 180, 500);
+		g2d.drawString("Preload Collision:", 80, 500);
+
+		g2d.drawString(""+(Main.preloadCollisionMap), 250, 500);
+		
+		if (selectedIndex == 5)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Main Menu", 480, 500);
 	}
 
 	/* (non-Javadoc)

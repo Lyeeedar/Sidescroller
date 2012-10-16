@@ -937,13 +937,13 @@ public class Entity implements Serializable{
 		
 		for (int[] point : pointList)
 		{
-			if ((point[0] < 0) || (point[0] > Main.gamedata.collisionMap.length)
-					|| (point[1] < 0) || (point[1] > Main.gamedata.collisionMap[0].length))
+			if ((point[0] < 0) || (point[0] > Main.gamedata.collisionX)
+					|| (point[1] < 0) || (point[1] > Main.gamedata.collisionY))
 			{
 				return false;
 			}
 			
-			if (Main.gamedata.collisionMap[point[0]][point[1]])
+			if (Main.gamedata.checkCollision(point[0], point[1]))
 			{
 				return false;
 			}
@@ -1013,9 +1013,9 @@ public class Entity implements Serializable{
 		{
 			for (int ny = y+collisionShape[3]-1; ny >= y+collisionShape[3]-4; ny--)
 			{
-				if (nx >= Main.gamedata.getCollisionMap().length)
+				if (nx >= Main.gamedata.collisionX)
 					return this.getName();
-				else if (Main.gamedata.getCollisionMap()[nx][ny])
+				else if (Main.gamedata.checkCollision(nx, ny))
 					return this.getName();
 			}
 		}
@@ -1025,9 +1025,9 @@ public class Entity implements Serializable{
 		{
 			for (int ny = y; ny < y+3; ny++)
 			{
-				if (nx >= Main.gamedata.getCollisionMap().length)
+				if (nx >= Main.gamedata.collisionX)
 					return this.getName();
-				else if (Main.gamedata.getCollisionMap()[nx][ny])
+				else if (Main.gamedata.checkCollision(nx, ny))
 					return this.getName();
 			}
 		}
@@ -1039,9 +1039,9 @@ public class Entity implements Serializable{
 			{
 				for (int ny = y; ny < y+collisionShape[3]; ny++)
 				{
-					if (nx >= Main.gamedata.getCollisionMap().length)
+					if (nx >= Main.gamedata.collisionX)
 						return this.getName();
-					else if (Main.gamedata.getCollisionMap()[nx][ny])
+					else if (Main.gamedata.checkCollision(nx, ny))
 						return this.getName();
 				}
 			}
@@ -1052,25 +1052,13 @@ public class Entity implements Serializable{
 			{
 				for (int ny = y; ny < y+collisionShape[3]; ny++)
 				{
-					if (nx >= Main.gamedata.getCollisionMap().length)
+					if (nx >= Main.gamedata.collisionX)
 						return this.getName();
-					else if (Main.gamedata.getCollisionMap()[nx][ny])
+					else if (Main.gamedata.checkCollision(nx, ny))
 						return this.getName();
 				}
 			}
 		}
-		
-//		// Check the collision box for this entity to see if any of the level is inside it (any non-transparent pixels)
-//		for (int nx = x; nx < x+collisionShape[2]; nx++)
-//		{
-//			for (int ny = y+collisionShape[3]-1; ny >= y; ny--)
-//			{
-//				if (nx >= Main.gamedata.getCollisionMap().length)
-//					return this.getName();
-//				else if (Main.gamedata.getCollisionMap()[nx][ny])
-//					return this.getName();
-//			}
-//		}
 
 		return null;
 	}

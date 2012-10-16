@@ -409,7 +409,7 @@ class OptionsPanel extends JPanel
 					}
 
 					EditorFrame.mapPanel.repaint();
-					EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.collisionMap.length, MapEditor.gamedata.collisionMap[0].length));
+					EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.collisionX, MapEditor.gamedata.collisionY));
 					EditorFrame.mapPanel.revalidate();
 				}
 
@@ -562,9 +562,7 @@ class BackgroundFrame extends JFrame
 				GameData.levelSize[0] = MapEditor.gamedata.background[0].getWidth();
 				GameData.levelSize[1] = MapEditor.gamedata.background[0].getHeight();
 
-				MapEditor.gamedata.collisionMap = new boolean[GameData.levelSize[0]][GameData.levelSize[1]];
-
-				MapEditor.gamedata.createCollisionMap();
+				MapEditor.gamedata.fillCollisionMap();
 				
 				EditorFrame.mapPanel.setPreferredSize(new Dimension(MapEditor.gamedata.background[0].getWidth(), MapEditor.gamedata.background[0].getHeight()));
 				EditorFrame.mapPanel.revalidate();

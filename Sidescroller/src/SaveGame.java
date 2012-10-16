@@ -187,7 +187,11 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadStage = 6;
 		Main.gamedata.loadText = "Generating Collision Map";
 		Main.maincanvas.paintLoad(gc);
-		gamedata.createCollisionMap();
+		
+		if (Main.preloadCollisionMap)
+			gamedata.fillCollisionMap();
+		else
+			gamedata.createCollisionMap();
 		
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Setting references";
@@ -308,7 +312,11 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadText = "Calculating collision map";
 		Main.maincanvas.paintLoad(gc);
 		Main.gamedata.transformAllowed = level.transformAllowed;
-		gamedata.createCollisionMap();
+
+		if (Main.preloadCollisionMap)
+			gamedata.fillCollisionMap();
+		else
+			gamedata.createCollisionMap();
 		
 		gamedata.changeSong(level.getBGM());
 		

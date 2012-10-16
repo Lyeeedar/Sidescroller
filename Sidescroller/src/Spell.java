@@ -409,20 +409,20 @@ class Spell extends Entity
 		if (npos[0] < 0)
 			npos[0] = 0;
 		
-		if (npos[0] > Main.gamedata.collisionMap.length-1-width)
-			npos[0] = Main.gamedata.collisionMap.length-1-width;
+		if (npos[0] > Main.gamedata.collisionX-1-width)
+			npos[0] = Main.gamedata.collisionX-1-width;
 		
-		boolean ground = Main.gamedata.collisionMap[npos[0]][npos[1]];
+		boolean ground = Main.gamedata.checkCollision(npos[0], npos[1]);
 		
 		while (!ground)
 		{
 			npos[1]++;
 			
-			ground = Main.gamedata.collisionMap[npos[0]][npos[1]];
+			ground = Main.gamedata.checkCollision(npos[0], npos[1]);
 			
 			if (!ground)
 			{
-				ground = Main.gamedata.collisionMap[npos[0]+width][npos[1]];
+				ground = Main.gamedata.checkCollision(npos[0]+width, npos[1]);
 			}
 		}
 		
