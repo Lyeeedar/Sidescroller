@@ -83,8 +83,8 @@ class Spell extends Entity
 		// width and height of a frame
 		if (spriteSheet != null)
 		{
-			int width = spriteSheet.getWidth();
-			int height = spriteSheet.getHeight();
+			int width = spriteSheet.getWidth() / animStages;
+			int height = spriteSheet.getHeight() / this.getTotalAnimateStrip();
 
 			this.size[0] = width;
 			this.size[1] = height;

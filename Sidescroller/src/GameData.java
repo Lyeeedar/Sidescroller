@@ -204,7 +204,7 @@ public class GameData {
 		{
 			image = "Data/Resources/Spritesheets/"+image;
 		}
-		else if (type.equals("Spells"))
+		else if (type.equals("Spell"))
 		{
 			image = "Data/Resources/Spells/"+image;
 		}

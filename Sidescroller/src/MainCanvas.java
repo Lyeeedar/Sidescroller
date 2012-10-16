@@ -30,7 +30,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 	public static int[] resolution = new int[2];
 	public static BufferStrategy bufferStrategy;
 	public static int[] screenPosition = new int[2];
-	public BufferedImage[] HUDImages = new BufferedImage[4];
+	public BufferedImage[] HUDImages = new BufferedImage[5];
 	public static Menu menu = new Menu();
 
 	public MainCanvas(GraphicsConfiguration gc)
@@ -54,6 +54,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 		HUDImages[1] = GameData.getImage("GUI", "spellIconBase.png");
 		HUDImages[2] = GameData.getImage("GUI", "HUDMale.png");
 		HUDImages[3] = GameData.getImage("GUI", "HUDFemale.png");
+		HUDImages[4] = GameData.getImage("GUI", "HUDNoTransform.png");
 
 	}
 
@@ -337,7 +338,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 			}
 
 		}
-
+		
 		if (Character.gender == 0)
 		{
 			g2d.drawImage(HUDImages[3], x+8, y+3, null);
@@ -345,6 +346,11 @@ public class MainCanvas extends Canvas implements KeyListener{
 		else if (Character.gender == 1)
 		{
 			g2d.drawImage(HUDImages[2], x+8, y+3, null);
+		}
+		
+		if (!Main.gamedata.transformAllowed)
+		{
+			g2d.drawImage(HUDImages[4], x+8, y+3, null);
 		}
 
 		if (Character.genderSwapCD < 1)

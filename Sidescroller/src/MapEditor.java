@@ -393,6 +393,8 @@ class OptionsPanel extends JPanel
 
 					name.setText(level.name);
 					bgmname.setText(level.BGM);
+					Main.gamedata.transformAllowed = level.transformAllowed;
+					
 					MapEditor.gamedata.setBackground(level.getBackground());
 					MapEditor.gamedata.setGameEntities(level.gameEntities);
 					MapEditor.gamedata.createCollisionMap();
@@ -890,7 +892,14 @@ class EntityFrame extends JFrame
 
 	public void filechoose()
 	{
-		final JFileChooser fc = new JFileChooser(spritefile);
+		String location = spritefile;
+		
+		if (location.equals(""))
+		{
+			location = new File("").getAbsolutePath();
+		}
+		
+		final JFileChooser fc = new JFileChooser(location);
 
 		int returnVal = fc.showOpenDialog(this);
 
@@ -1029,6 +1038,7 @@ class DialogueFrame extends JFrame
 		
 		final String[] bubbleType = {"Speech", "Examine"};
 		final JComboBox bubbleBox = new JComboBox(bubbleType);
+		bubbleBox.setSelectedIndex(d.type);
 		bubbleBox.addItemListener(new ItemListener(){
 
 			@Override

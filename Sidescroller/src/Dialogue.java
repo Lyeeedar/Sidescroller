@@ -44,7 +44,7 @@ public class Dialogue implements Serializable{
 	
 	/**
 	 * The dialogue type. Effects the way the dialogue is drawn to the screen. <br>
-	 * Currently has types 'Speech', 'Examine', 'Change Level' and 'Change Position'
+	 * Currently has types 'Speech', 'Examine'
 	 */
 	public int type;
 	
