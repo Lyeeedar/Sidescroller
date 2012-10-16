@@ -48,6 +48,13 @@ public class Dialogue implements Serializable{
 	 */
 	public int type;
 	
+	public Dialogue(int type)
+	{
+		this.type = type;
+		this.quest1 = new ArrayList<ArrayList<String>>();
+		this.quest2 = new ArrayList<ArrayList<String>>();
+	}
+	
 	public Dialogue(ArrayList<ArrayList<String>> text1, ArrayList<ArrayList<String>> text2, int type)
 	{
 		this.type = type;

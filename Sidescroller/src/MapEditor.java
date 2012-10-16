@@ -46,7 +46,6 @@ public class MapEditor {
 	 */
 	public static void main(String[] args) {
 		new EditorFrame();
-		Main.gamedata.BGM.stop();
 	}
 
 }
@@ -268,6 +267,8 @@ class OptionsPanel extends JPanel
 	 */
 	private static final long serialVersionUID = 1L;
 
+	JPanel panel = this;
+	
 	public OptionsPanel()
 	{
 		this.add(new JLabel("Level Name"));
@@ -277,6 +278,10 @@ class OptionsPanel extends JPanel
 		this.add(new JLabel("BGM Name"));
 		final JTextField bgmname = new JTextField(10);
 		this.add(bgmname);
+		
+		final JCheckBox transform = new JCheckBox("Transform Allowed");
+		transform.setSelected(Main.gamedata.transformAllowed);
+		this.add(transform);
 
 		JButton background = new JButton("Choose Background");
 		background.addActionListener(new ActionListener(){
@@ -348,7 +353,7 @@ class OptionsPanel extends JPanel
 				file.mkdirs();
 				
 				Level level = new Level();
-				level.create(name.getText(), MapEditor.gamedata.getGameEntities(), bgmname.getText());
+				level.create(name.getText(), MapEditor.gamedata.getGameEntities(), bgmname.getText(), transform.isSelected());
 
 				Level.save(level);
 				
@@ -391,6 +396,10 @@ class OptionsPanel extends JPanel
 					MapEditor.gamedata.setBackground(level.getBackground());
 					MapEditor.gamedata.setGameEntities(level.gameEntities);
 					MapEditor.gamedata.createCollisionMap();
+					transform.setSelected(Main.gamedata.transformAllowed);
+					panel.revalidate();
+					panel.repaint();
+					
 					for (Map.Entry<String, Entity> entry : level.gameEntities.entrySet())
 					{
 						Entity ent = entry.getValue();
@@ -999,7 +1008,7 @@ class DialogueFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Character.gender = genderBox.getSelectedIndex();
+				d.lastGender = genderBox.getSelectedIndex();
 				init();
 				
 			}});
@@ -1032,6 +1041,19 @@ class DialogueFrame extends JFrame
 				init();
 			}});
 		bottom.add(add);
+		
+		JButton delete = new JButton("Delete Dialogue");
+		delete.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (d.getQuest().size() == 0)
+					return;
+				
+				d.getQuest().remove(d.getQuest().size()-1);
+				init();
+			}});
+		bottom.add(delete);
 		
 		JButton close = new JButton("Close");
 		close.addActionListener(new ActionListener(){
@@ -1070,6 +1092,7 @@ class DialogueFrame extends JFrame
 		}
 		
 		dialoguePanel.revalidate();
+		dialoguePanel.repaint();
 	}
 }
 

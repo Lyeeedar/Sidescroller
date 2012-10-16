@@ -197,6 +197,12 @@ public class Character {
 	 */
 	public static void beginGenderSwap()
 	{
+		if (!Main.gamedata.transformAllowed)
+		{
+			Main.gamedata.systemMessages.add(new SystemMessage("Transform not allowed in this area!", Color.PINK, 10000));
+			return;
+		}
+		
 		if (genderSwapCD > 0)
 			return;
 

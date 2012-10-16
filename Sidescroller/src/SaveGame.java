@@ -214,6 +214,7 @@ public class SaveGame implements Serializable{
 		
 		Main.gamedata.loadStage = 8;
 		Main.gamedata.loadText = "Reloading character images";
+		Main.gamedata.transformAllowed = level.transformAllowed;
 		Main.maincanvas.paintLoad(gc);
 		Character.reloadAllImages();
 		
@@ -306,6 +307,7 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Calculating collision map";
 		Main.maincanvas.paintLoad(gc);
+		Main.gamedata.transformAllowed = level.transformAllowed;
 		gamedata.createCollisionMap();
 		
 		gamedata.changeSong(level.getBGM());

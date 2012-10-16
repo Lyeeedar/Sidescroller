@@ -34,6 +34,8 @@ public class Level implements Serializable{
 	
 	String BGM;
 	
+	boolean transformAllowed;
+	
 	public Level()
 	{
 		
@@ -44,15 +46,19 @@ public class Level implements Serializable{
 	 * @param name
 	 * @param gameEntities
 	 */
-	public void create(String name, HashMap<String, Entity> gameEntities, String BGM)
+	public void create(String name, HashMap<String, Entity> gameEntities, String BGM, boolean transformAllowed)
 	{
 		this.BGM = BGM;
 		this.name = name;
 		this.gameEntities = gameEntities;
+		this.transformAllowed = transformAllowed;
 	}
 	
 	public OggClip getBGM()
 	{
+		if (BGM.equals(""))
+			return null;
+		
 		OggClip bgm = null;
 		try {
 			bgm = new OggClip(BGM);

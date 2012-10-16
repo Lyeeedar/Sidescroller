@@ -110,7 +110,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 	/**
 	 * Draws all the in-game graphics
 	 */
-	public void paintMenu(GraphicsConfiguration gc)
+	public void paintMenu(long framerate, GraphicsConfiguration gc)
 	{
 		Graphics2D g2d = null;
 
@@ -138,7 +138,13 @@ public class MainCanvas extends Canvas implements KeyListener{
 			g2d.fillRect(0, 0, resolution[0], resolution[1]);
 
 			menu.drawMenus(g2d);
+			
+			// Setup fonts and colour for fps
+			g2d.setFont(g2d.getFont().deriveFont((float) 20));
+			g2d.setColor(Color.YELLOW);
 
+			// Draw fps
+			g2d.drawString(Long.toString(framerate), 750, 50);
 
 		} finally {
 			// Dispose of the graphics object

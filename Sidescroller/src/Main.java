@@ -198,11 +198,25 @@ public class Main {
 		long totalTime = 0;
 		int frames = 0;
 		int framerate = 0;
+		int updateTimer = 0;
 
 		while(true)
 		{
 			// Make sure the focus is on the canvas
 			maincanvas.requestFocusInWindow();
+			
+			// Update fps every 0.5 seconds
+			if (totalTime < 500)
+			{
+				totalTime += System.currentTimeMillis() - lastTime;
+				frames++;
+			}
+			else
+			{
+				totalTime = 0;
+				framerate = frames*2;
+				frames = 0;
+			}
 
 			// ------------------- State 0 Start ------------------- //
 			// This state is used to quit the game
@@ -216,19 +230,6 @@ public class Main {
 			// This state is used to run the normal game. AI updates, animation updates and etc
 			else if (state == 1)
 			{
-
-				// Update fps every 0.5 seconds
-				if (totalTime < 500)
-				{
-					totalTime += System.currentTimeMillis() - lastTime;
-					frames++;
-				}
-				else
-				{
-					totalTime = 0;
-					framerate = frames*2;
-					frames = 0;
-				}
 
 				// Store current time
 				lastTime = System.currentTimeMillis();
@@ -299,24 +300,11 @@ public class Main {
 			// This state is used to draw and update the menus
 			else if (state == 3)
 			{
-				// Update fps every 0.5 seconds
-				if (totalTime < 500)
-				{
-					totalTime += System.currentTimeMillis() - lastTime;
-					frames++;
-				}
-				else
-				{
-					totalTime = 0;
-					framerate = frames*2;
-					frames = 0;
-				}
-
 				// Store current time
 				lastTime = System.currentTimeMillis();
 
 				// Paint menu graphics
-				Main.maincanvas.paintMenu(gc);
+				Main.maincanvas.paintMenu(framerate, gc);
 
 				// Work out time taken to draw graphics and evaluate AI
 				elapsedTime = System.currentTimeMillis() - lastTime;

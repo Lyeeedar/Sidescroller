@@ -97,6 +97,8 @@ public class GameData {
 	 * The volume of the BGM
 	 */
 	public static float gain = 0.75f;
+	
+	public boolean transformAllowed = true;
 
 	public GameData()
 	{
@@ -107,16 +109,7 @@ public class GameData {
 	 * Method to clear all the game data kept in GameData
 	 */
 	public void clearGame()
-	{
-		OggClip bgm = null;
-		try {
-			bgm = new OggClip("Data/Resources/Sounds/MainMenu.ogg");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-		changeSong(bgm);
-		
+	{		
 		gameEntities.clear();
 		
 		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
@@ -204,7 +197,7 @@ public class GameData {
 		}
 		else
 		{
-			this.loadLevel("level1");
+			this.loadLevel("Tutorial");
 		}
 	}
 	
