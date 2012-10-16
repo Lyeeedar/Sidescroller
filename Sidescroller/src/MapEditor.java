@@ -538,7 +538,13 @@ class BackgroundFrame extends JFrame
 
 			BufferedImage im = null;
 
-			im = GameData.getImage(file.getPath());
+			try{
+				im = ImageIO.read(file);
+			}
+			catch (IOException ioe)
+			{
+				ioe.printStackTrace();
+			}
 			
 			if (im == null)
 			{
@@ -626,6 +632,11 @@ class EntityFrame extends JFrame
 		final JTextField animUpdate = new JTextField(5);
 		animUpdate.setText(Long.toString(e.getAnimateTime()));
 		panel.add(animUpdate);
+		
+		panel.add(new JLabel("Animation Stages: "));
+		final JTextField animStages = new JTextField(5);
+		animStages.setText(Integer.toString(e.getAnimStages()));
+		panel.add(animStages);
 
 		panel.add(new JLabel("Total Animation Strips: "));
 		final JTextField animStrips = new JTextField(5);
@@ -646,7 +657,7 @@ class EntityFrame extends JFrame
 
 			}});
 		panel.add(spritesheet);
-		final JTextField spriteFile = new JTextField(e.getSpriteFile());
+		final JTextField spriteFile = new JTextField(spritefile);
 		panel.add(spriteFile);
 
 		panel.add(new JLabel("Collision Values: "));
@@ -798,6 +809,7 @@ class EntityFrame extends JFrame
 					e.setAnimateTime(Long.parseLong(animUpdate.getText()));
 					e.setTotalAnimateStrip(Integer.parseInt(animStrips.getText()));
 					e.speed = Integer.parseInt(speed.getText());
+					e.setAnimStages(Integer.parseInt(animStages.getText()));
 					e.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));
 					e.setWeight(Integer.parseInt(weight.getText()));
 					e.setSpriteFile(spriteFile.getText());
@@ -878,12 +890,12 @@ class EntityFrame extends JFrame
 
 	public void filechoose()
 	{
-		final JFileChooser fc = new JFileChooser(new File("").getAbsolutePath());
+		final JFileChooser fc = new JFileChooser(spritefile);
 
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			spritefile = fc.getSelectedFile().getAbsolutePath();
+			spritefile = fc.getSelectedFile().getName();
 
 			init();
 

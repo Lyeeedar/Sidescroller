@@ -169,13 +169,6 @@ public class SaveGame implements Serializable{
 		}
 		gamedata.levelName = level.name;
 		
-//		Entity oldPlayer = level.gameEntities.get("Player");
-//		level.gameEntities.remove("Player");
-//		
-//		save.player.setPos(oldPlayer.getPos());
-//		
-//		gameEntities.put("Player", save.player);
-		
 		Main.gamedata.loadStage = 4;
 		Main.gamedata.loadText = "Processing spritesheets";
 		Main.maincanvas.paintLoad(gc);
@@ -277,6 +270,7 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadStage = 4;
 		Main.gamedata.loadText = "Updating player stats";
 		Main.maincanvas.paintLoad(gc);
+		
 		if (save.player != null)
 		{
 			Entity oldPlayer = level.gameEntities.get("Player");
@@ -286,6 +280,12 @@ public class SaveGame implements Serializable{
 				save.player.setPos(oldPlayer.getPos());
 
 			gameEntities.put("Player", save.player);
+			
+			save.player.spriteFile = "male.png";
+		}
+		else
+		{
+			level.gameEntities.remove("Player");
 		}
 		
 		Main.gamedata.loadStage = 5;

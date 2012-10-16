@@ -55,7 +55,7 @@ public class Character {
 	/**
 	 * The sprite used for the genderswap animation
 	 */
-	public static BufferedImage genderSwapSprite = GameData.getImage("Data/Resources/Spritesheets/transform.png");
+	public static BufferedImage genderSwapSprite = GameData.getImage("Spritesheet", "transform.png");
 	
 	/**
 	 * The cooldown for each of the socketed spells
@@ -220,14 +220,14 @@ public class Character {
 		if (gender == 0)
 		{
 			gender = 1;
-			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Data/Resources/Spritesheets/male.png"));
-			Main.gamedata.getGameEntities().get("Player").setSpriteFile("Data/Resources/Spritesheets/male.png");
+			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Spritesheet", "male.png"));
+			Main.gamedata.getGameEntities().get("Player").setSpriteFile("male.png");
 		}
 		else
 		{
 			gender = 0;
-			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Data/Resources/Spritesheets/female.png"));
-			Main.gamedata.getGameEntities().get("Player").setSpriteFile("Data/Resources/Spritesheets/female.png");
+			Main.gamedata.getGameEntities().get("Player").setSpriteSheet(GameData.getImage("Spritesheet", "female.png"));
+			Main.gamedata.getGameEntities().get("Player").setSpriteFile("female.png");
 		}
 		
 	}
@@ -299,7 +299,7 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("SmallHeal", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Life/spellIconSmallHeal.png","Data/Resources/GUI/Life/spellIconLifeMaster.png"},
+				new String[]{"Life/spellIconSmallHeal.png","Life/spellIconLifeMaster.png"},
 				"Heal a little of your health.", 500, element));
 		
 		lifeSpells = spells;
@@ -317,7 +317,7 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("ImpI", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Death/spellIconImpI.png","Data/Resources/GUI/Death/spellIconDeathMaster.png"},
+				new String[]{"Death/spellIconImpI.png","Death/spellIconDeathMaster.png"},
 				"Summon an imp to attack your foe.", 500, element));
 		
 		deathSpells = spells;
@@ -335,7 +335,7 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Water/spellIconIceSpike.png","Data/Resources/GUI/Water/spellIconWaterMaster.png"},
+				new String[]{"Water/spellIconIceSpike.png","Water/spellIconWaterMaster.png"},
 				"Send a spike of ice at your foe.", 500, element));
 		
 		waterSpells = spells;
@@ -353,15 +353,15 @@ public class Character {
 		}
 		
 		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Earth/spellIconRockSpike.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
+				new String[]{"Earth/spellIconRockSpike.png","Earth/spellIconEarthMaster.png"},
 				"Send a series of rock spikes flying out in front of you.", 500, element));
 		
 		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 0, new int[]{400, 200},
-				new String[]{"Data/Resources/GUI/Earth/spellIconRockWall.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
+				new String[]{"Earth/spellIconRockWall.png","Earth/spellIconEarthMaster.png"},
 				"Raise a wall of rock from the ground to stop foes.", 580, element));
 		
 		spells.get(1).spells.add(new SpellsStageEntry("Stone", new String[]{"RockSpike"}, 0, new int[]{600, 200},
-				new String[]{"Data/Resources/GUI/Earth/spellIconStone.png","Data/Resources/GUI/Earth/spellIconEarthMaster.png"},
+				new String[]{"Earth/spellIconStone.png","Earth/spellIconEarthMaster.png"},
 				"Send a stone flying at an opponent.", 580, element));
 		
 		earthSpells = spells;
@@ -379,7 +379,7 @@ public class Character {
 		}
 		
 		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Air/spellIconWindBlade.png","Data/Resources/GUI/Air/spellIconAirMaster.png"},
+				new String[]{"Air/spellIconWindBlade.png","Air/spellIconAirMaster.png"},
 				"Slice a foe with a blade of air.", 500, element));
 	}
 	
@@ -395,19 +395,19 @@ public class Character {
 		}
 		
 		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 2, new int[]{500, 100},
-				new String[]{"Data/Resources/GUI/Fire/spellIconFireBall.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
+				new String[]{"Fire/spellIconFireBall.png","Fire/spellIconFireMaster.png"},
 				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{400, 200},
-				new String[]{"Data/Resources/GUI/Fire/spellIconScorch.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
+				new String[]{"Fire/spellIconScorch.png","Fire/spellIconFireMaster.png"},
 				"Sets fire to a spot, scorching all who enter it.", 700, element));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", new String[]{"FireBall"}, 0, new int[]{600, 200},
-				new String[]{"Data/Resources/GUI/Fire/spellIconFlameWall.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
+				new String[]{"Fire/spellIconFlameWall.png","Fire/spellIconFireMaster.png"},
 				"Creates a wall of fire, burning any who pass through it.", 580, element));
 		
 		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 0, new int[]{400, 300},
-				new String[]{"Data/Resources/GUI/Fire/spellIconWildFire.png","Data/Resources/GUI/Fire/spellIconFireMaster.png"},
+				new String[]{"Fire/spellIconWildFire.png","Fire/spellIconFireMaster.png"},
 				"Sets fire to a line, scorching all who enter it.", 900, element));
 
 	
@@ -651,7 +651,7 @@ class SpellsStageEntry implements Serializable
 	{
 		images = new BufferedImage[2];
 		for (int i = 0; i < 2; i++)
-			images[i] = GameData.getImage(imageFiles[i]);
+			images[i] = GameData.getImage("GUI", imageFiles[i]);
 	}
 	
 	public int isUnlocked()

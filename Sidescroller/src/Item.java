@@ -43,6 +43,28 @@ public class Item extends Entity {
 		launch();
 	}
 	
+	@Override
+	public void processSpritesheet()
+	{
+
+		if (!visible)
+			return;
+
+		if (spriteFile != null)
+			this.spriteSheet = GameData.getImage("Item", spriteFile);
+
+		// If spritesheet exists (and the Entity is therefore visible) then work out
+		// width and height of a frame
+		if (spriteSheet != null)
+		{
+			int width = spriteSheet.getWidth();
+			int height = spriteSheet.getHeight();
+
+			this.size[0] = width;
+			this.size[1] = height;
+		}
+	}
+	
 	public void calculateCollision()
 	{
 		collisionShape[2] = spriteSheet.getWidth();

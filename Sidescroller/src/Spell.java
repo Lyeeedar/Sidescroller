@@ -68,6 +68,28 @@ class Spell extends Entity
 			this.pos[0] -= size[0];
 		}
 	}
+	
+	@Override
+	public void processSpritesheet()
+	{
+
+		if (!visible)
+			return;
+
+		if (spriteFile != null)
+			this.spriteSheet = GameData.getImage("Spell", spriteFile);
+
+		// If spritesheet exists (and the Entity is therefore visible) then work out
+		// width and height of a frame
+		if (spriteSheet != null)
+		{
+			int width = spriteSheet.getWidth();
+			int height = spriteSheet.getHeight();
+
+			this.size[0] = width;
+			this.size[1] = height;
+		}
+	}
 
 	@Override
 	public void activate()

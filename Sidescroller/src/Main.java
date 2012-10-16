@@ -18,6 +18,8 @@ import javax.swing.JFrame;
 public class Main {
 
 	public static boolean fullscreen = true;
+	
+	public static boolean debug = true;
 
 	/**
 	 *  Game state. <p>
@@ -199,9 +201,23 @@ public class Main {
 		int frames = 0;
 		int framerate = 0;
 		int updateTimer = 0;
+		long loopTime = System.currentTimeMillis();
 
 		while(true)
 		{
+			// Store current time
+			lastTime = System.currentTimeMillis();
+			
+			while (updateTimer > 0)
+			{
+				loopTime = System.currentTimeMillis();
+				
+				Thread.yield();
+				updateTimer -= (System.currentTimeMillis()-loopTime);
+			}
+			
+			updateTimer = 10;
+			
 			// Make sure the focus is on the canvas
 			maincanvas.requestFocusInWindow();
 			
@@ -230,10 +246,6 @@ public class Main {
 			// This state is used to run the normal game. AI updates, animation updates and etc
 			else if (state == 1)
 			{
-
-				// Store current time
-				lastTime = System.currentTimeMillis();
-
 				// Paint game graphics
 				Main.maincanvas.paintGame(framerate, gc);
 
@@ -300,9 +312,6 @@ public class Main {
 			// This state is used to draw and update the menus
 			else if (state == 3)
 			{
-				// Store current time
-				lastTime = System.currentTimeMillis();
-
 				// Paint menu graphics
 				Main.maincanvas.paintMenu(framerate, gc);
 

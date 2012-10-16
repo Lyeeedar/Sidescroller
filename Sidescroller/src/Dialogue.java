@@ -71,6 +71,9 @@ public class Dialogue implements Serializable{
 	{
 		ArrayList<String> stagetext = null;
 		
+		if (getQuest().size() == 0)
+			return null;
+		
 		// Make sure there is never a null reference passed back (unless the dialogue object is empty)
 		if (getStage() == getQuest().size())
 			stagetext = getQuest().get(getStage()-1);
@@ -231,11 +234,15 @@ public class Dialogue implements Serializable{
 	}
 	
 	/**
-	 * This method calls the customized increment mehtods for the current block type
+	 * This method calls the customized increment methods for the current block type
 	 */
 	public void incrStage()
 	{
 		ArrayList<String> stagetext = null;
+		
+		if (getQuest().size() == 0)
+			return;
+		
 		if (getStage() == getQuest().size())
 			stagetext = getQuest().get(getStage()-1);
 		else
@@ -250,7 +257,7 @@ public class Dialogue implements Serializable{
 			incrKill();
 		}
 		
-		if (getStage() > this.getQuest().size()-1)
+		if (getStage() >= this.getQuest().size())
 			setStage(getQuest().size()-1);
 	}
 	

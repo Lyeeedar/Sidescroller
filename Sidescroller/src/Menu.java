@@ -3,6 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -105,7 +106,7 @@ abstract class MenuScreen
 	{
 		this.menu = menu;
 
-		backImage = GameData.getImage("Data/Resources/GUI/SpellbookBack.png");
+		backImage = GameData.getImage("GUI", "SpellbookBack.png");
 	}
 
 	public void draw(Graphics2D g2d)
@@ -135,9 +136,9 @@ class GameMenu extends MenuScreen
 	public GameMenu(Menu menu) {
 		super(menu);
 
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookGameText.png");
-		images[1] = GameData.getImage("Data/Resources/GUI/spellbookButton.png");
-		images[2] = GameData.getImage("Data/Resources/GUI/spellbookButtonSelected.png");
+		images[0] = GameData.getImage("GUI", "spellbookGameText.png");
+		images[1] = GameData.getImage("GUI", "spellbookButton.png");
+		images[2] = GameData.getImage("GUI", "spellbookButtonSelected.png");
 	}
 
 	int selectedIndex;
@@ -328,11 +329,11 @@ class SpellMenu extends MenuScreen
 	public SpellMenu(Menu menu) {
 		super(menu);
 
-		images[0] = GameData.getImage("Data/Resources/GUI/spellIconBase.png");
-		images[1] = GameData.getImage("Data/Resources/GUI/spellIconBaseSelected.png");
-		images[2] = GameData.getImage("Data/Resources/GUI/spellbookSpellText.png");
-		images[3] = GameData.getImage("Data/Resources/GUI/spellbookSpellTree.png");
-		images[4] = GameData.getImage("Data/Resources/GUI/spellbookSpellTreeSelected.png");
+		images[0] = GameData.getImage("GUI", "spellIconBase.png");
+		images[1] = GameData.getImage("GUI", "spellIconBaseSelected.png");
+		images[2] = GameData.getImage("GUI", "spellbookSpellText.png");
+		images[3] = GameData.getImage("GUI", "spellbookSpellTree.png");
+		images[4] = GameData.getImage("GUI", "spellbookSpellTreeSelected.png");
 	}
 
 	@Override
@@ -1180,7 +1181,7 @@ class SaveMenu extends MenuScreen
 			saves[i] = loadFile(files[i]);
 		}
 
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesText.png");
+		images[0] = GameData.getImage("GUI", "spellbookFilesText.png");
 	}
 
 	@Override
@@ -1394,7 +1395,7 @@ class LoadMenu extends MenuScreen
 		{
 			saves[i] = loadFile(files[i]);
 		}
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
+		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
 
 	@Override
@@ -1591,9 +1592,9 @@ class CharacterMenu extends MenuScreen
 	public CharacterMenu(Menu menu) {
 		super(menu);
 
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookCharText.png");
-		images[1] = GameData.getImage("Data/Resources/GUI/spellbookCharItems.png");
-		images[2] = GameData.getImage("Data/Resources/GUI/spellbookCharItemsSelected.png");
+		images[0] = GameData.getImage("GUI", "spellbookCharText.png");
+		images[1] = GameData.getImage("GUI", "spellbookCharItems.png");
+		images[2] = GameData.getImage("GUI", "spellbookCharItemsSelected.png");
 
 		for (Map.Entry<String, Item> entry : Character.inventory.get(0).entrySet())
 		{
@@ -2288,9 +2289,18 @@ class MainMenu extends MenuScreen
 	public MainMenu(Menu menu) {
 		super(menu);
 
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookGameText.png");
-		images[1] = GameData.getImage("Data/Resources/GUI/spellbookButton.png");
-		images[2] = GameData.getImage("Data/Resources/GUI/spellbookButtonSelected.png");
+		images[0] = GameData.getImage("GUI", "spellbookGameText.png");
+		images[1] = GameData.getImage("GUI", "spellbookButton.png");
+		images[2] = GameData.getImage("GUI", "spellbookButtonSelected.png");
+		
+		OggClip bgm = null;
+		try {
+			bgm = new OggClip("Data/Resources/Sounds/MainMenu.ogg");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		Main.gamedata.changeSong(bgm);
 	}
 
 	int selectedIndex;
@@ -2502,7 +2512,7 @@ class MainLoadMenu extends MenuScreen
 		{
 			saves[i] = loadFile(files[i]);
 		}
-		images[0] = GameData.getImage("Data/Resources/GUI/spellbookFilesLoadText.png");
+		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
 
 	@Override
@@ -2805,7 +2815,14 @@ class OptionsMenu extends MenuScreen
 					SoundEffect.volume = SoundEffect.Volume.MUTE;
 				}
 			}
-			if (selectedIndex == 3)
+			else if (selectedIndex == 3)
+			{
+				if (Main.debug)
+					Main.debug = false;
+				else
+					Main.debug = true;
+			}
+			else if (selectedIndex == 4)
 			{
 				menu.changeMenu("Main");
 			}
@@ -2815,8 +2832,8 @@ class OptionsMenu extends MenuScreen
 
 		if (selectedIndex < 0)
 			selectedIndex = 0;
-		else if (selectedIndex > 3)
-			selectedIndex = 3;
+		else if (selectedIndex > 4)
+			selectedIndex = 4;
 	}
 
 	/* (non-Javadoc)
@@ -2870,6 +2887,19 @@ class OptionsMenu extends MenuScreen
 		g2d.drawString(""+(int)(GameData.gain*100), 250, 300);
 		
 		if (selectedIndex == 3)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Debug Info:", 80, 400);
+
+		g2d.drawString(""+(Main.debug), 250, 400);
+		
+		if (selectedIndex == 4)
 		{
 			g2d.setColor(Color.BLUE);
 		}

@@ -109,7 +109,7 @@ public class GameData {
 	 * Method to clear all the game data kept in GameData
 	 */
 	public void clearGame()
-	{		
+	{
 		gameEntities.clear();
 		
 		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
@@ -160,13 +160,13 @@ public class GameData {
 		boolean a = true;
 		if (!a)
 		{
-			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "Data/Resources/Spritesheets/male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
+			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 			gameEntities.put("Player", e);
 			e.setFaction("Player");
 
 			for (int i = 0; i<2; i++)
 			{
-				Entity ef = new Entity("NPC"+i, 60, 7, 8, new int[]{300+(i*50), 90, 0}, 3, "Data/Resources/Spritesheets/female.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
+				Entity ef = new Entity("NPC"+i, 60, 7, 8, new int[]{300+(i*50), 90, 0}, 3, "female.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
 
 				ef.setFaction("Enemy");
 				gameEntities.put("NPC"+i, ef);
@@ -178,16 +178,6 @@ public class GameData {
 			//		gameEntities.add(efd);	
 			//		gameEntities.add(eff);	
 			//		gameEntities.add(efg);
-
-			background[0] = GameData.getImage("Data/Resources/Levels/level1/back0.png");
-
-			background[1] = GameData.getImage("Data/Resources/Levels/level1/back1.png");
-
-			background[2] = GameData.getImage("Data/Resources/Levels/level1/back2.png");
-
-			background[3] = GameData.getImage("Data/Resources/Levels/level1/back3.png");
-
-			background[4] = GameData.getImage("Data/Resources/Levels/level1/back4.png");
 			
 			createCollisionMap();
 			
@@ -207,8 +197,31 @@ public class GameData {
 	 * @param image
 	 * @return
 	 */
-	public static BufferedImage getImage(String image)
+	public static BufferedImage getImage(String type, String image)
 	{
+		
+		if (type.equals("Spritesheet"))
+		{
+			image = "Data/Resources/Spritesheets/"+image;
+		}
+		else if (type.equals("Spells"))
+		{
+			image = "Data/Resources/Spells/"+image;
+		}
+		else if (type.equals("Items"))
+		{
+			image = "Data/Resources/Items/"+image;
+		}
+		else if (type.equals("GUI"))
+		{
+			image = "Data/Resources/GUI/"+image;
+		}
+		else
+		{
+			System.err.println("Error loading image file: Invalid type "+type + "     File to be loaded: "+image);
+			return null;
+		}
+		
 		if (gameImages.containsKey(image))
 			return gameImages.get(image);
 		else

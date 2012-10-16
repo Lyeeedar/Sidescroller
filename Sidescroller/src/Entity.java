@@ -407,7 +407,7 @@ public class Entity implements Serializable{
 		{
 			Character.beginGenderSwap();
 			
-			MainCanvas.tab = false;
+			MainCanvas.space = false;
 		}
 
 		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
@@ -1287,7 +1287,7 @@ public class Entity implements Serializable{
 			return;
 
 		if (spriteFile != null)
-			this.spriteSheet = GameData.getImage(spriteFile);
+			this.spriteSheet = GameData.getImage("Spritesheet", spriteFile);
 
 		// If spritesheet exists (and the Entity is therefore visible) then work out
 		// width and height of a frame

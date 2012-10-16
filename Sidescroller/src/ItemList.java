@@ -16,12 +16,12 @@ public class ItemList {
 		else if (item.equals("Speed Sigil - Fire"))
 		{
 			i = new Sigil(item, "A sigil that will increase your speed, at the expense of some defense", Entity.FIRE,
-					"Data/Resources/Items/testsigil.png", pos, new int[]{0, 1, -5, -5, -5, -5, -5, -5, -5});
+					"testsigil.png", pos, new int[]{0, 1, -5, -5, -5, -5, -5, -5, -5});
 		}
 		else if (item.equals("Speed Sigil - Life"))
 		{
 			i = new Sigil(item, "A sigil that will increase your speed, at the expense of some defense", Entity.LIFE,
-					"Data/Resources/Items/testsigil.png", pos, new int[]{0, 1, -5, -5, -5, -5, -5, -5, -5});
+					"testsigil.png", pos, new int[]{0, 1, -5, -5, -5, -5, -5, -5, -5});
 		}
 		
 		return i;

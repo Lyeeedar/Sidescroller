@@ -37,26 +37,26 @@ public class MainCanvas extends Canvas implements KeyListener{
 	{
 		// Initialise the Frame with the given graphics configuration
 		super(gc);
-		
+
 		// Set the game resolution
 		MainCanvas.resolution = new int[]{800, 600};
 
 		this.setIgnoreRepaint(true);
-		
+
 		this.setPreferredSize(new Dimension(resolution[0], resolution[1]));
 		this.setIgnoreRepaint(true);
 		this.requestFocusInWindow();
 
 		// Add a key listener to the frame to record key presses
 		this.addKeyListener(this);
-		
-		HUDImages[0] = GameData.getImage("Data/Resources/GUI/HUD.png");
-		HUDImages[1] = GameData.getImage("Data/Resources/GUI/spellIconBase.png");
-		HUDImages[2] = GameData.getImage("Data/Resources/GUI/HUDMale.png");
-		HUDImages[3] = GameData.getImage("Data/Resources/GUI/HUDFemale.png");
+
+		HUDImages[0] = GameData.getImage("GUI", "HUD.png");
+		HUDImages[1] = GameData.getImage("GUI", "spellIconBase.png");
+		HUDImages[2] = GameData.getImage("GUI", "HUDMale.png");
+		HUDImages[3] = GameData.getImage("GUI", "HUDFemale.png");
 
 	}
-	
+
 	public void createStrategy()
 	{
 		// Initialise the buffer strategy
@@ -65,14 +65,14 @@ public class MainCanvas extends Canvas implements KeyListener{
 		// Store the buffer Strategy
 		bufferStrategy = this.getBufferStrategy();
 	}
-	
+
 	public void paintLoad(GraphicsConfiguration gc)
 	{
 		Graphics2D g2d = null;
 
 		try {
-			 // Let the OS have a little time...
-		    Thread.yield();
+			// Let the OS have a little time...
+			Thread.yield();
 
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
@@ -81,17 +81,17 @@ public class MainCanvas extends Canvas implements KeyListener{
 					RenderingHints.VALUE_ANTIALIAS_ON);
 
 			g2d.setColor(Color.DARK_GRAY);
-			
+
 			g2d.fillRect(0, 0, resolution[0], resolution[1]);
-			
+
 			g2d.setColor(Color.GREEN);
 			for (int i = 0; i < Main.gamedata.loadStage; i++)
 			{
 				g2d.fillRect(200+(20*i), 300, 20, 50);
 			}
-			
+
 			g2d.setColor(Color.WHITE);
-			
+
 			g2d.drawString(Main.gamedata.loadText, 250, 450);
 
 
@@ -101,9 +101,9 @@ public class MainCanvas extends Canvas implements KeyListener{
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-	    if( !bufferStrategy.contentsLost() )
-	    	bufferStrategy.show();
-	    
+		if( !bufferStrategy.contentsLost() )
+			bufferStrategy.show();
+
 		Toolkit.getDefaultToolkit().sync();	
 	}
 
@@ -115,8 +115,8 @@ public class MainCanvas extends Canvas implements KeyListener{
 		Graphics2D g2d = null;
 
 		try {
-			 // Let the OS have a little time...
-		    Thread.yield();
+			// Let the OS have a little time...
+			Thread.yield();
 
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
@@ -138,13 +138,16 @@ public class MainCanvas extends Canvas implements KeyListener{
 			g2d.fillRect(0, 0, resolution[0], resolution[1]);
 
 			menu.drawMenus(g2d);
-			
-			// Setup fonts and colour for fps
-			g2d.setFont(g2d.getFont().deriveFont((float) 20));
-			g2d.setColor(Color.YELLOW);
 
-			// Draw fps
-			g2d.drawString(Long.toString(framerate), 750, 50);
+			if (Main.debug)
+			{
+				// Setup fonts and colour for fps
+				g2d.setFont(g2d.getFont().deriveFont((float) 20));
+				g2d.setColor(Color.YELLOW);
+
+				// Draw fps
+				g2d.drawString(Long.toString(framerate), 750, 50);
+			}
 
 		} finally {
 			// Dispose of the graphics object
@@ -152,9 +155,9 @@ public class MainCanvas extends Canvas implements KeyListener{
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-	    if( !bufferStrategy.contentsLost() )
-	    	bufferStrategy.show();
-	    
+		if( !bufferStrategy.contentsLost() )
+			bufferStrategy.show();
+
 		Toolkit.getDefaultToolkit().sync();	
 	}
 
@@ -166,12 +169,12 @@ public class MainCanvas extends Canvas implements KeyListener{
 		Graphics2D g2d = null;
 
 		try {
-		    // Let the OS have a little time...
-		    Thread.yield();
+			// Let the OS have a little time...
+			Thread.yield();
 
 			// Calculate the screen position
 			this.calculateScreen();
-			
+
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
@@ -199,12 +202,12 @@ public class MainCanvas extends Canvas implements KeyListener{
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-	    if( !bufferStrategy.contentsLost() )
-	    	bufferStrategy.show();
-	    
+		if( !bufferStrategy.contentsLost() )
+			bufferStrategy.show();
+
 		Toolkit.getDefaultToolkit().sync();	
 	}
-	
+
 	/**
 	 * Draws all the in-game graphics
 	 */
@@ -213,12 +216,12 @@ public class MainCanvas extends Canvas implements KeyListener{
 		Graphics2D g2d = null;
 
 		try {
-		    // Let the OS have a little time...
-		    Thread.yield();
+			// Let the OS have a little time...
+			Thread.yield();
 
 			// Calculate the screen position
 			this.calculateScreen();
-			
+
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 
 			// Enable AA
@@ -239,13 +242,13 @@ public class MainCanvas extends Canvas implements KeyListener{
 
 			// Draw HUD
 			drawHUD(g2d, 0);
-			
+
 			g2d.setColor(new Color(0, 0, 0, 180));
-			
+
 			g2d.fillRect(0, 0, resolution[0], resolution[1]);
-			
+
 			g2d.setColor(Color.WHITE);
-			
+
 			g2d.drawString("Paused", resolution[0]/2, resolution[1]/2);
 
 		} finally {
@@ -254,9 +257,9 @@ public class MainCanvas extends Canvas implements KeyListener{
 				g2d.dispose();
 		}
 		// Show the back buffer (Page Flipping)
-	    if( !bufferStrategy.contentsLost() )
-	    	bufferStrategy.show();
-	    
+		if( !bufferStrategy.contentsLost() )
+			bufferStrategy.show();
+
 		Toolkit.getDefaultToolkit().sync();	
 	}
 
@@ -274,7 +277,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 			// Draw fps
 			g2d.drawString(Main.gamedata.systemMessages.get(i).message, 20, 50+(20*i));
 		}
-		
+
 
 		double health = ((Main.gamedata.getGameEntities().get("Player").getHealth()/Main.gamedata.getGameEntities().get("Player").getMaxHealth())*100);
 
@@ -290,51 +293,51 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			g2d.setColor(Color.RED);
 		}
-		
+
 		int x = 260;
 		int y = 30;
-		
+
 		health = health*1.24;
-		
+
 		g2d.fillRect(x+58, y+18, (int)health, 25);
-		
+
 		g2d.drawImage(HUDImages[0], x, y, null);
-		
+
 		for (int i = 0; i < 5; i++)
 		{
 			g2d.drawImage(HUDImages[1], x-8+(i*40), y+59-8, null);
-			
+
 			if (Character.socketedSpells[i].unlocked == 3)
 			{
 				g2d.drawImage(Character.socketedSpells[i].images[1], x-8+(i*40), y+59-8, null);
 			}
-			
+
 			if (Character.socketedSpells[i].unlocked > 1)
 			{
 				g2d.drawImage(Character.socketedSpells[i].images[0], x-8+(i*40), y+59-8, null);
 			}
-			
+
 			if (Character.spellCooldown[i] < 1)
 			{
-				
+
 			}
 			else if (Character.spellCooldown[i] > 2550)
 			{
 				g2d.setColor(Color.BLACK);
-				
+
 				g2d.fillRoundRect(x+(i*40), y+59, 40, 40, 40, 40);
 			}
 			else
 			{
 				double trans = 0.1 * Character.spellCooldown[i];
-				
+
 				g2d.setColor(new Color(0, 0, 0, (int)trans));
-				
+
 				g2d.fillRoundRect(x+(i*40), y+59, 40, 40, 40, 40);
 			}
 
 		}
-		
+
 		if (Character.gender == 0)
 		{
 			g2d.drawImage(HUDImages[3], x+8, y+3, null);
@@ -343,32 +346,35 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			g2d.drawImage(HUDImages[2], x+8, y+3, null);
 		}
-		
+
 		if (Character.genderSwapCD < 1)
 		{
-			
+
 		}
 		else if (Character.genderSwapCD > 2550)
 		{
 			g2d.setColor(Color.BLACK);
-			
+
 			g2d.fillRoundRect(x+16, y+11, 40, 40, 40, 40);
 		}
 		else
 		{
 			double trans = 0.1 * Character.genderSwapCD;
-			
+
 			g2d.setColor(new Color(0, 0, 0, (int)trans));
-			
+
 			g2d.fillRoundRect(x+16, y+11, 40, 40, 40, 40);
 		}
-		
-		// Setup fonts and colour for fps
-		g2d.setFont(g2d.getFont().deriveFont((float) 20));
-		g2d.setColor(Color.YELLOW);
 
-		// Draw fps
-		g2d.drawString(Long.toString(totalTime), 750, 50);
+		if (Main.debug)
+		{
+			// Setup fonts and colour for fps
+			g2d.setFont(g2d.getFont().deriveFont((float) 20));
+			g2d.setColor(Color.YELLOW);
+
+			// Draw fps
+			g2d.drawString(Long.toString(totalTime), 750, 50);
+		}
 	}
 
 	public void drawSpeech(Graphics2D g2d)
@@ -379,6 +385,14 @@ public class MainCanvas extends Canvas implements KeyListener{
 			Entity e = entry.getValue();
 			if (e.isTalking())
 			{
+				String text = e.getDialogue().getText();
+
+				if (text == null)
+				{
+					e.setTalking(false);
+					continue;
+				}
+
 				// Create the colours used in the speech bubbles
 				Color dark = null;
 				Color pale = null;
@@ -399,13 +413,13 @@ public class MainCanvas extends Canvas implements KeyListener{
 				}
 
 				// Calculate the width and height of the dialogue bubble depending on how much text needs to be drawn
-				int width = 20+e.getDialogue().getText().length()*6;
+				int width = 20+text.length()*6;
 
-				if (width > 200)
-					width = 200;
+				if (width > 230)
+					width = 230;
 
-				String[] text = wrapText(e.getDialogue().getText(), 34);
-				int height = text.length*25;
+				String[] textLines = wrapText(text, 34);
+				int height = textLines.length*25;
 
 				// Is the dialogue is of the type 'Speech' then do a speech bubble.
 				if (e.getDialogue().getType() == 0)
@@ -428,9 +442,9 @@ public class MainCanvas extends Canvas implements KeyListener{
 					g2d.drawLine(xp[1], yp[1], xp[2], yp[2]);
 
 					g2d.setColor(dark);
-					for (int i = 0; i < text.length; i++)
+					for (int i = 0; i < textLines.length; i++)
 					{
-						g2d.drawString(text[i], x+15, y+((i+1)*20));
+						g2d.drawString(textLines[i], x+15, y+((i+1)*20));
 					}
 
 				}
@@ -457,9 +471,9 @@ public class MainCanvas extends Canvas implements KeyListener{
 					g2d.setColor(pale);
 
 					g2d.setColor(dark);
-					for (int i = 0; i < text.length; i++)
+					for (int i = 0; i < textLines.length; i++)
 					{
-						g2d.drawString(text[i], x+15, y+((i+1)*20));
+						g2d.drawString(textLines[i], x+15, y+((i+1)*20));
 					}
 				}
 
@@ -493,7 +507,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 					e.damaged--;
 					i = tintImage(i, e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip());
 				}
-					
+
 				if (e.getPos()[2] == 1)
 				{
 					// Draw only a single frame from the spritesheet onto the Graphics object
@@ -510,28 +524,30 @@ public class MainCanvas extends Canvas implements KeyListener{
 							e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip(),
 							null);
 				}
+				if (Main.debug)
+				{
+					g2d.setColor(Color.RED);
 
-				g2d.setColor(Color.RED);
+					g2d.drawRect(e.getCollisionShape()[0]-MainCanvas.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainCanvas.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
 
-				g2d.drawRect(e.getCollisionShape()[0]-MainCanvas.screenPosition[0]+e.getPos()[0], e.getCollisionShape()[1]-MainCanvas.screenPosition[1]+e.getPos()[1], e.getCollisionShape()[2], e.getCollisionShape()[3]);
-//
-//				if (e.alerted)
-//				{
-//					g2d.drawString("!", e.getPos()[0]+e.getCollisionShape()[0]-MainFrame.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainFrame.screenPosition[1]-30);
-//				}
-				
+					if (e.alerted)
+					{
+						g2d.drawString("!", e.getPos()[0]+e.getCollisionShape()[0]-MainCanvas.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainCanvas.screenPosition[1]-30);
+					}
+				}
+
 				for (SystemMessage sysM : e.getInfoText())
 				{
 					int yPos = (3000 - sysM.aliveTime)/100;
 					g2d.setColor(sysM.colour);
-					
+
 					g2d.drawString(sysM.message, e.getPos()[0]-MainCanvas.screenPosition[0]+e.getCollisionShape()[0], e.getPos()[1]-MainCanvas.screenPosition[1]+e.getCollisionShape()[1]-yPos);
 				}
-				
-				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)))
+
+				if ((!e.getName().equals("Player")) && (! (e instanceof Spell)) && (! (e instanceof Item)) && (!(e.getFaction().equals(""))))
 				{
 					double health = (e.getHealth()/e.getMaxHealth())*100;
-					
+
 					if (health > 66)
 					{
 						g2d.setColor(Color.GREEN);
@@ -546,13 +562,13 @@ public class MainCanvas extends Canvas implements KeyListener{
 					}
 
 					health /= 5;
-						
+
 					g2d.fillRect(e.getPos()[0]+e.getCollisionShape()[0]-MainCanvas.screenPosition[0], e.getPos()[1]+e.getCollisionShape()[1]-MainCanvas.screenPosition[1]-10, (int)health, 5);
 				}
 
 			}
 		}
-		
+
 		if (Character.genderSwapAnimating)
 		{
 			Entity e = Main.gamedata.getGameEntities().get("Player");
@@ -797,16 +813,16 @@ public class MainCanvas extends Canvas implements KeyListener{
 		if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
 			MainCanvas.esc = true;
-			
+
 			if ((Main.getState() == 1) || (Main.getState() == 4))
 			{
 				if (Main.gamedata.BGM.isPaused())
 					Main.gamedata.BGM.resume();
-				
+
 				menu.changeMenu("Game");
 				MainCanvas.esc = false;
 			}
-			
+
 			Main.setState(3);
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
