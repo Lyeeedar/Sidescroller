@@ -11,7 +11,7 @@ public class ItemList {
 		
 		if (item.equals("Chest"))
 		{
-			i = new Item(item, "A chest full of stuff. May be useful to someone.", "Data/Resources/Items/chest.png", pos, 1, 2);			
+			i = new Item(item, "A chest full of stuff. May be useful to someone.", "chest.png", pos, 1, 2);			
 		}
 		else if (item.equals("Speed Sigil - Fire"))
 		{
@@ -23,6 +23,12 @@ public class ItemList {
 			i = new Sigil(item, "A sigil that will increase your speed, at the expense of some defense", Entity.LIFE,
 					"testsigil.png", pos, new int[]{0, 1, -5, -5, -5, -5, -5, -5, -5});
 		}
+		else if (item.equals("Tutorial Key"))
+		{
+			i = new Item(item, "A key used in the tutorial to unlock something.", "TutorialKey.png", pos, 1, 2);			
+		}
+		else
+			System.err.println("Item not found: "+item);
 		
 		return i;
 	}

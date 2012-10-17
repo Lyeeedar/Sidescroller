@@ -892,7 +892,7 @@ class EntityFrame extends JFrame
 	{
 		String location = spritefile;
 		
-		if (location.equals(""))
+		if ((location == null) || (location.equals("")))
 		{
 			location = new File("").getAbsolutePath();
 		}
@@ -1046,7 +1046,7 @@ class DialogueFrame extends JFrame
 			}});
 		bottom.add(bubbleBox);
 		
-		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible"};
+		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible", "GetItem", "Suicide"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
 		bottom.add(comboBox);
 		
@@ -1169,6 +1169,14 @@ class DialogueBlockFrame extends JFrame
 		else if (block.get(0).equals("ChangeVisible"))
 		{
 			changeVisible();
+		}
+		else if (block.get(0).equals("GetItem"))
+		{
+			getItem();
+		}
+		else if (block.get(0).equals("Suicide"))
+		{
+			suicide();
 		}
 		
 		
@@ -1471,6 +1479,73 @@ class DialogueBlockFrame extends JFrame
 		panel.add(apply);
 	}
 	
+	public void getItem()
+	{
+		while (block.size() < 4)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(10, 2));
+		
+		panel.add(new JLabel("Item Name: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		panel.add(new JLabel("Success Text: "));
+		final JTextField success = new JTextField(30);
+		success.setText(block.get(2));
+		panel.add(success);
+		
+		panel.add(new JLabel("Fail Text: "));
+		final JTextField fail = new JTextField(30);
+		fail.setText(block.get(3));
+		panel.add(fail);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
+				block.set(2, success.getText());
+				block.set(3, fail.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
+	
+	public void suicide()
+	{
+		while (block.size() < 2)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Target: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
+	}
 	
 }
 
@@ -1563,6 +1638,7 @@ class DropListFrame extends JFrame
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				dropsHash.clear();
 				for (JTextField[] drop : drops)
 				{
 					dropsHash.put(drop[0].getText(), Integer.parseInt(drop[1].getText()));

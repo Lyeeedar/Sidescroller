@@ -1659,7 +1659,12 @@ class CharacterMenu extends MenuScreen
 			}
 			else
 			{
-				selectedIndex--;
+				if (selectedIndex == 3)
+				{
+					selectedIndex = 1;
+				}
+				else
+					selectedIndex--;
 			}
 
 			MainCanvas.up = false;
@@ -1672,7 +1677,7 @@ class CharacterMenu extends MenuScreen
 			}
 			else
 			{
-				selectedIndex++;
+				selectedIndex = 3;
 			}
 
 			MainCanvas.down = false;

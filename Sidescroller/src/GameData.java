@@ -211,7 +211,7 @@ public class GameData {
 		{
 			image = "Data/Resources/Spells/"+image;
 		}
-		else if (type.equals("Items"))
+		else if (type.equals("Item"))
 		{
 			image = "Data/Resources/Items/"+image;
 		}

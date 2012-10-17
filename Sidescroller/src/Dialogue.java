@@ -75,8 +75,8 @@ public class Dialogue implements Serializable{
 			return null;
 		
 		// Make sure there is never a null reference passed back (unless the dialogue object is empty)
-		if (getStage() == getQuest().size())
-			stagetext = getQuest().get(getStage()-1);
+		if (getStage() >= getQuest().size())
+			stagetext = getQuest().get(getQuest().size()-1);
 		else
 			stagetext = getQuest().get(getStage());
 		
@@ -107,6 +107,14 @@ public class Dialogue implements Serializable{
 		else if (stagetext.get(0).equals("ChangeVisible"))
 		{
 			return changeVisible(stagetext);
+		}
+		else if (stagetext.get(0).equals("GetItem"))
+		{
+			return getItem(stagetext);
+		}
+		else if (stagetext.get(0).equals("Suicide"))
+		{
+			return suicide(stagetext);
 		}
 		
 		return null;
@@ -234,6 +242,48 @@ public class Dialogue implements Serializable{
 	}
 	
 	/**
+	 * Method that returns the current text for the kill block type
+	 * @param stagetext
+	 * @return
+	 */
+	private String getItem (ArrayList<String> stagetext)
+	{
+		Item item = Character.inventory.get(2).get(stagetext.get(1));
+		if (item != null)
+		{
+			return stagetext.get(2);
+		}
+		else
+		{
+			return stagetext.get(3);
+		}
+	}
+	
+	/**
+	 * Method that increments internalstage and stage for the kill block type
+	 */
+	private void incrgetItem()
+	{
+		Item item = Character.inventory.get(2).get(getQuest().get(getStage()).get(1));
+		if (item != null)
+		{
+			item.number--;
+			setStage(getStage()+1);
+			setInternalstage(0);
+		}
+	}
+	
+	private String suicide(ArrayList<String> stagetext)
+	{
+		Main.gamedata.getGameEntities().get(stagetext.get(1)).death();
+		
+		setStage(getStage()+1);
+		setInternalstage(0);
+		
+		return "";
+	}
+	
+	/**
 	 * This method calls the customized increment methods for the current block type
 	 */
 	public void incrStage()
@@ -255,6 +305,10 @@ public class Dialogue implements Serializable{
 		else if (stagetext.get(0).equals("Kill"))
 		{
 			incrKill();
+		}
+		else if (stagetext.get(0).equals("GetItem"))
+		{
+			incrgetItem();
 		}
 		
 		if (getStage() >= this.getQuest().size())

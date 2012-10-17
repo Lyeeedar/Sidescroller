@@ -1004,7 +1004,7 @@ public class Entity implements Serializable{
 			return this.getName();
 		}
 
-		String s = this.collideEntities(pos);
+		String s = this.collideEntitiesOther(pos);
 		if (s != null)
 			return s;
 
@@ -1063,7 +1063,7 @@ public class Entity implements Serializable{
 		return null;
 	}
 
-	public String collideEntities(int[] pos)
+	public String collideEntitiesCombat(int[] pos)
 	{
 		int x = pos[0]+collisionShape[0];
 		int y = pos[1]+collisionShape[1];
@@ -1097,6 +1097,34 @@ public class Entity implements Serializable{
 		return null;
 	}
 
+	public String collideEntitiesOther(int[] pos)
+	{
+		int x = pos[0]+collisionShape[0];
+		int y = pos[1]+collisionShape[1];
+
+		// Create a rectangle simulating the collision box of the entity
+		Rectangle r = new Rectangle(x, y, collisionShape[2], collisionShape[3]);
+
+		// Iterate through all the game Entities and check if there is a collision is an entity that isnt passable
+		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
+		{
+			Entity e = entry.getValue();
+			if ((e.getName().equals(this.getName())) || (e.isPassable()) || ((e.getFaction() != null) && (e.getFaction().equals(this.getFaction()))))
+				continue;
+			
+			// Create a collision box for the entity that is being checked
+			Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
+					e.getCollisionShape()[2], e.getCollisionShape()[3]);
+
+			// If the two rectangles intersect (overlap) then return the entity name that the collision happened with
+			if (r.intersects(rn))
+			{
+				return e.getName();
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Method that allows this entity to be talked to
@@ -1332,7 +1360,12 @@ public class Entity implements Serializable{
 	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
 	public void death()
 	{
-		Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN, 10000));
+		if (faction.equals(""))
+		{
+			
+		}
+		else
+			Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN, 10000));
 
 		for (Map.Entry<String, Integer> entry : dropList.entrySet())
 		{
@@ -1352,6 +1385,12 @@ public class Entity implements Serializable{
 				Main.gamedata.getGameEntities().put("EXP"+System.currentTimeMillis()+i, new EXPOrb(new int[]{pos[0], pos[1], pos[2]}, orbExp));
 			}
 		}
+		
+		this.animateStrip = 2;
+		this.animateStage = 3;
+		this.newAnimStrip = 2;
+		this.newAnimStage = 3;
+		this.passable = true;
 	}
 
 

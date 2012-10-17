@@ -18,7 +18,7 @@ public class SpellList {
 		if (spell.equals("FireBall"))
 		{
 			s = new Spell("FireBall", 60, pos, new int[]{0,0,37,30},
-					new boolean[]{true, false, false, false, false}, new int[]{17, 0}, "fireball.png", 0, true, true, 2000, 700, Entity.FIRE, 50, exclude);	
+					new boolean[]{true, false, false, false, false}, new int[]{17, 0}, "fireball.png", 0, true, true, 2000, 700, Entity.FIRE, 2, exclude);	
 		}
 		else if (spell.equals("RockSpike"))
 		{

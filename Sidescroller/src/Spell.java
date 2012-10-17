@@ -229,7 +229,7 @@ class Spell extends Entity
 		if (!alive)
 			return;
 		
-		String s = super.collideEntities(pos);
+		String s = super.collideEntitiesCombat(pos);
 		
 		if ((s != null) && (!s.equals(this.name)))
 		{
@@ -295,7 +295,7 @@ class Spell extends Entity
 			pos[0] += 2*collisionShape[2]/2;
 		}
 		
-		String s = super.collideEntities(pos);
+		String s = super.collideEntitiesCombat(pos);
 		
 		if ((s != null) && (!s.equals(this.getName())))
 		{
