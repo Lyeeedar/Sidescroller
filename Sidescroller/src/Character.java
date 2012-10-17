@@ -398,7 +398,7 @@ public class Character {
 				new String[]{"Fire/spellIconFireBall.png","Fire/spellIconFireMaster.png"},
 				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element));
 		
-		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 2, new int[]{400, 200},
+		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 0, new int[]{400, 200},
 				new String[]{"Fire/spellIconScorch.png","Fire/spellIconFireMaster.png"},
 				"Sets fire to a spot, scorching all who enter it.", 700, element));
 		

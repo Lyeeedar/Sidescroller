@@ -1327,6 +1327,9 @@ public class Entity implements Serializable{
 		if (!alive)
 			return;
 		
+		if (this.faction.equals(""))
+			return;
+		
 		double eleDefense = defense.get(type);
 
 		if (eleDefense != 0)

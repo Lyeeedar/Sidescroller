@@ -2300,7 +2300,7 @@ class MainMenu extends MenuScreen
 		
 		OggClip bgm = null;
 		try {
-			bgm = new OggClip("Data/Resources/Sounds/MainMenu.ogg");
+			bgm = new OggClip("MainMenu.ogg");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -2452,7 +2452,7 @@ class MainMenu extends MenuScreen
 			else if (selectedIndex == 2)
 			{
 				Main.setState(1);
-				Main.gamedata.test();
+				Main.gamedata.newGame();
 			}
 			else if (selectedIndex == 3)
 			{

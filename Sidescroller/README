@@ -6,7 +6,6 @@ Dialogue types:
 
 Edit other gender dialogue stage
 Change gender
-Kill
 Play anim
 Move
 Disable/enable player move
@@ -20,6 +19,11 @@ tested serialized save games + levels on both linux and windows
 
 Scenes
 
-Box that when entering starts scene. Player dropped vertically down to ground at this point. Game zooms in to the scene location.
-Scene special scene entity, with width, height and dialogue sequence in memory.
+Scenes launched through dialogue
 
+400x300
+
+when starting scene stop drawing entities and zoom in on location
+once zoomed in then draw and store the the scene background
+position sprites on the scene grid (not relative to overall level)
+Store spritesheets, dialogues and actions 

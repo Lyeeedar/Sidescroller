@@ -530,6 +530,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 							e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip(),
 							null);
 				}
+				
 				if (Main.debug)
 				{
 					g2d.setColor(Color.RED);

@@ -1,3 +1,5 @@
+import java.awt.Color;
+
 /**
  * 
  */
@@ -68,6 +70,7 @@ public class Scroll extends Upgrade {
 		if (s.unlocked < 3)
 		{
 			s.unlocked = 2;
+			Main.gamedata.systemMessages.add(new SystemMessage("Learned "+s.name, Color.ORANGE, 10000));
 		}
 	}
 

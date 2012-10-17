@@ -60,6 +60,8 @@ public class OggClip {
 	 */
 	public OggClip(String ref) throws IOException {
 		setName(ref);
+		
+		ref = "Data/Resources/Sounds/"+ref;
 		try {
 			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ref);
 	    	if (in == null)

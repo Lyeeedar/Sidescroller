@@ -157,45 +157,20 @@ public class GameData {
 	/**
 	 * Test method
 	 */
-	public void test()
+	public void newGame()
 	{	
 		Character.resetAll();
-		boolean a = true;
-		if (!a)
-		{
-			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
-			gameEntities.put("Player", e);
-			e.setFaction("Player");
-
-			for (int i = 0; i<2; i++)
-			{
-				Entity ef = new Entity("NPC"+i, 60, 7, 8, new int[]{300+(i*50), 90, 0}, 3, "female.png", new int[]{46, 18, 27, 65}, new boolean[]{false, true, true, false}, null);
-
-				ef.setFaction("Enemy");
-				gameEntities.put("NPC"+i, ef);
-				ef.expAmount = 100;
-				ef.getDropList().put("Chest", 100);
-				ef.getDropList().put("Speed Sigil - Fire", 100);
-				ef.getDropList().put("Speed Sigil - Life", 100);
-			}
-			//		gameEntities.add(efd);	
-			//		gameEntities.add(eff);	
-			//		gameEntities.add(efg);
-			
-			//createCollisionMap();
-			
-			//this.loadGame(new File("Data/Saves/test.sav"));
-			
-			this.saveGame(new File("Data/Saves/autosave.sav"));
-		}
-		else
-		{
-			this.loadLevel("Tutorial");
-		}
+		
+		File autosave = new File("Data/Saves/autosave.sav");
+		
+		if (autosave.exists())
+			autosave.delete();
+		
+		this.loadLevel("Tutorial");
 	}
 	
 	/**
-	 * Method to load an image. Will ceck if the image has already been loaded, and returns a reference if it has.
+	 * Method to load an image. Will check if the image has already been loaded, and returns a reference if it has.
 	 * If it hasn't been loaded then load the image and store it for future use
 	 * @param image
 	 * @return

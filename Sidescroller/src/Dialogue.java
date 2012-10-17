@@ -183,11 +183,13 @@ public class Dialogue implements Serializable{
 		Main.gamedata.saveGame(new File("Data/Saves/autosave.sav"));
 		Main.gamedata.loadLevel(stagetext.get(1));
 		
-		int posX = Integer.parseInt(stagetext.get(2));
-		int posY = Integer.parseInt(stagetext.get(3));
+		Entity player = Main.gamedata.getGameEntities().get("Player");
+		
+		int posX = Integer.parseInt(stagetext.get(2)) - player.getCollisionShape()[0];
+		int posY = Integer.parseInt(stagetext.get(3)) - player.getCollisionShape()[1];
 		int dir = Integer.parseInt(stagetext.get(4));
 		
-		Main.gamedata.getGameEntities().get("Player").setPos(new int[]{posX, posY, dir});
+		player.setPos(new int[]{posX, posY, dir});
 		
 		setStage(getStage()+1);
 		setInternalstage(0);
