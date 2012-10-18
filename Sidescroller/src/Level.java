@@ -1,4 +1,3 @@
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,8 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-
-import javax.imageio.ImageIO;
 
 /**
  * Class that holds all the data for a level. Designed to be serialized
@@ -69,28 +66,6 @@ public class Level implements Serializable{
 		}
 		
 		return bgm;
-	}
-	
-	/**
-	 * Method that loads and returns the background images for this level name
-	 * @return
-	 */
-	public BufferedImage[] getBackground()
-	{
-		BufferedImage[] back = new BufferedImage[5];
-		
-		for (int i = 0; i < 5; i++)
-		{
-			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
-			
-			try {
-				back[i] = ImageIO.read(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return back;
 	}
 	
 	/**

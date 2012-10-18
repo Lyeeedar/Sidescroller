@@ -182,16 +182,11 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadText = "Loading background";
 		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
-		gamedata.setBackground(level.getBackground());
+		gamedata.loadLevelImages(level.name);
 		
 		Main.gamedata.loadStage = 6;
 		Main.gamedata.loadText = "Generating Collision Map";
 		Main.maincanvas.paintLoad(gc);
-		
-		if (Main.preloadCollisionMap)
-			gamedata.fillCollisionMap();
-		else
-			gamedata.createCollisionMap();
 		
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Setting references";
@@ -315,17 +310,12 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadText = "Loading background";
 		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
-		gamedata.setBackground(level.getBackground());
+		gamedata.loadLevelImages(level.name);
 		
 		Main.gamedata.loadStage = 7;
 		Main.gamedata.loadText = "Calculating collision map";
 		Main.maincanvas.paintLoad(gc);
 		Main.gamedata.transformAllowed = level.transformAllowed;
-
-		if (Main.preloadCollisionMap)
-			gamedata.fillCollisionMap();
-		else
-			gamedata.createCollisionMap();
 		
 		gamedata.changeSong(level.getBGM());
 		

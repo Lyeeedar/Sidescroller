@@ -25,6 +25,8 @@ public class GameData {
 	 */
 	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
 	
+	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(6);
+	
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
@@ -234,6 +236,45 @@ public class GameData {
 			gameImages.put(image, im);
 			return im;
 		}
+	}
+	
+	public void loadLevelImages(String name)
+	{
+		for (TempLevelData tld : storedLevels)
+		{
+			if (tld == null)
+				continue;
+			
+			if (name.equals(tld.name))
+			{
+				background = tld.background;
+				collisionMap = tld.collisionMap;
+				
+				return;
+			}
+		}
+		
+		BufferedImage[] back = new BufferedImage[5];
+		
+		for (int i = 0; i < 5; i++)
+		{
+			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
+			
+			try {
+				back[i] = ImageIO.read(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		background = back;
+		
+		if (Main.preloadCollisionMap)
+			fillCollisionMap();
+		else
+			createCollisionMap();
+		
+		storedLevels.add(new TempLevelData(back, name, collisionMap));
 	}
 	
 	/**

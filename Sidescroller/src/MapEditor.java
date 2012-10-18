@@ -395,7 +395,7 @@ class OptionsPanel extends JPanel
 					bgmname.setText(level.BGM);
 					Main.gamedata.transformAllowed = level.transformAllowed;
 					
-					MapEditor.gamedata.setBackground(level.getBackground());
+					MapEditor.gamedata.loadLevelImages(level.name);
 					MapEditor.gamedata.setGameEntities(level.gameEntities);
 					MapEditor.gamedata.createCollisionMap();
 					transform.setSelected(Main.gamedata.transformAllowed);
