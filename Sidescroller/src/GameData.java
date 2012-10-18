@@ -19,13 +19,15 @@ import javax.imageio.ImageIO;
  *
  */
 public class GameData {
+	
+	public static String gameSessionID;
 
 	/**
 	 * The images used by the game. Stored with thier filename so each image is only ever loaded once
 	 */
 	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
 	
-	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(6);
+	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(4);
 	
 	/**
 	 *  The rate at which the game runs (evaluates AI)
@@ -137,16 +139,17 @@ public class GameData {
 	{
 		if (bgm == null)
 		{
-			
+
 		}
 		else if (BGM == null)
 		{
 			BGM = bgm;
 			BGM.loop();
+
 		}
 		else if (bgm.getName().equals(BGM.getName()))
 		{
-			
+
 		}
 		else
 		{
@@ -154,6 +157,8 @@ public class GameData {
 			BGM = bgm;
 			BGM.loop();
 		}
+		
+		BGM.setGain(gain);
 	}
 
 	/**
@@ -163,10 +168,7 @@ public class GameData {
 	{	
 		Character.resetAll();
 		
-		File autosave = new File("Data/Saves/autosave.sav");
-		
-		if (autosave.exists())
-			autosave.delete();
+		gameSessionID = Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()));
 		
 		this.loadLevel("Tutorial");
 	}
@@ -249,8 +251,9 @@ public class GameData {
 			{
 				background = tld.background;
 				collisionMap = tld.collisionMap;
+				this.levelName = name;
 				
-				return;
+				//return;
 			}
 		}
 		
@@ -261,7 +264,7 @@ public class GameData {
 			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
 			
 			try {
-				back[i] = ImageIO.read(file);
+				back[i] = toCompatibleImage(ImageIO.read(file));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

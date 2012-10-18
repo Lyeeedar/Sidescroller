@@ -59,8 +59,6 @@ public class Level implements Serializable{
 		OggClip bgm = null;
 		try {
 			bgm = new OggClip(BGM);
-			bgm.loop();
-			bgm.setGain(GameData.gain);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

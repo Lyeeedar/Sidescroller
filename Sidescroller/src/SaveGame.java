@@ -7,6 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public class SaveGame implements Serializable{
 	ArrayList<ArrayList<SpellsStage>> spellTrees = new ArrayList<ArrayList<SpellsStage>>();
 	long timePlayed = 0;
 	int gender = 0;
+	String sessionID;
 
 	public static boolean save(GameData gamedata, File file)
 	{
@@ -97,6 +100,8 @@ public class SaveGame implements Serializable{
 		
 		save.timePlayed = Character.timePlayed;
 		save.gender = Character.gender;
+		
+		save.sessionID = GameData.gameSessionID;
 		
 		try
 		{
@@ -214,6 +219,8 @@ public class SaveGame implements Serializable{
 		
 		gamedata.changeSong(level.getBGM());
 		
+		GameData.gameSessionID = save.sessionID;
+		
 		return true;
 	}
 	
@@ -225,12 +232,12 @@ public class SaveGame implements Serializable{
 		File dir = new File("Data/Saves");
 		dir.mkdirs();
 		
-		File file = new File("Data/Saves/autosave.sav");
+		File file = getMostRecentFile(GameData.gameSessionID);
 		
 		Main.gamedata.loadStage = 1;
 		Main.gamedata.loadText = "Loading old file";
 		Main.maincanvas.paintLoad(gc);
-		if (file.exists())
+		if ((file != null) && (file.exists()))
 		{
 			try {
 				FileInputStream fin = new FileInputStream(file);
@@ -320,6 +327,57 @@ public class SaveGame implements Serializable{
 		gamedata.changeSong(level.getBGM());
 		
 		return true;
+	}
+	
+	private static File getMostRecentFile(String sessionID)
+	{		
+		File file = null;
+		
+		File files[] = null;
+		File directory = new File("Data/Saves");
+		files = directory.listFiles();
+		Arrays.sort(files, new Comparator<File>(){
+			public int compare(File f1, File f2)
+			{
+				return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+			} });
+
+		for (int i = 0; i < files.length; i++)
+		{
+			SaveGame save = loadFile(files[i]);
+			
+			if (save == null)
+				continue;
+			
+			if (save.sessionID.equals(sessionID))
+			{
+				file = files[i];
+				break;
+			}
+		}
+		
+		return file;
+	}
+
+	private static SaveGame loadFile(File file)
+	{
+
+		SaveGame save = null;
+
+		try{
+			FileInputStream fin = new FileInputStream(file);
+			ObjectInputStream oin = new ObjectInputStream(fin);
+			save = (SaveGame) oin.readObject();
+			oin.close();
+			fin.close();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return save;
+
 	}
 
 }
