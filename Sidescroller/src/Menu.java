@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -1162,6 +1163,7 @@ class SaveMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
+	ArrayList<Integer> saveIndexes = new ArrayList<Integer>();
 
 	public SaveMenu(Menu menu) {
 		super(menu);
@@ -1179,6 +1181,14 @@ class SaveMenu extends MenuScreen
 		for (int i = 0; i < files.length; i++)
 		{
 			saves[i] = loadFile(files[i]);
+		}
+		
+		for (int i = 0; i < files.length; i++)
+		{
+			if (GameData.gameSessionID.equals(saves[i].sessionID))
+			{
+				saveIndexes.add(i);
+			}
 		}
 
 		images[0] = GameData.getImage("GUI", "spellbookFilesText.png");
@@ -1228,18 +1238,18 @@ class SaveMenu extends MenuScreen
 		}
 		else if (MainCanvas.enter)
 		{
-			if (selectedIndex < files.length)
+			if (selectedIndex < saveIndexes.size())
 			{
-				Main.gamedata.saveGame(files[selectedIndex]);
+				Main.gamedata.saveGame(files[saveIndexes.get(selectedIndex)]);
 				menu.changeMenu("Game");
 			}
-			else if (selectedIndex == files.length)
+			else if (selectedIndex == saveIndexes.size())
 			{
 				File file = new File("Data/Saves/"+System.currentTimeMillis()+".sav");
 				Main.gamedata.saveGame(file);
 				menu.changeMenu("Game");
 			}
-			else if (selectedIndex == files.length+1)
+			else if (selectedIndex == saveIndexes.size()+1)
 			{
 				menu.changeMenu("Game");
 			}
@@ -1251,9 +1261,9 @@ class SaveMenu extends MenuScreen
 		{
 			selectedIndex = 0;
 		}
-		if (selectedIndex > files.length+1)
+		if (selectedIndex > saveIndexes.size()+1)
 		{
-			selectedIndex = files.length+1;
+			selectedIndex = saveIndexes.size()+1;
 		}
 	}
 
@@ -1281,25 +1291,27 @@ class SaveMenu extends MenuScreen
 	 */
 	@Override
 	protected void drawLeft(Graphics2D g2d) {
-		if (selectedIndex < files.length)
+		if (selectedIndex < saveIndexes.size())
 		{
+			int i = saveIndexes.get(selectedIndex);
+			
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+			calendar.setTimeInMillis(files[i].lastModified());
 
 			String timePlayed = String.format("%d min, %d sec", 
-					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[i].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed))
 					);
 
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
-			g2d.drawString(files[selectedIndex].getName(), 200, 190);
+			g2d.drawString(files[i].getName(), 200, 190);
 			g2d.drawString("Last Saved:", 70, 210);
 			g2d.drawString(formatter.format(calendar.getTime()), 200, 210);
 			g2d.drawString("Current Level:", 70, 240);
-			g2d.drawString(saves[selectedIndex].currentLevel, 200, 240);
+			g2d.drawString(saves[i].currentLevel, 200, 240);
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
@@ -1314,14 +1326,14 @@ class SaveMenu extends MenuScreen
 
 		int filePos = selectedIndex;
 
-		if (filePos >= files.length)
+		if (filePos >= saveIndexes.size())
 		{
-			filePos = files.length-1;
+			filePos = saveIndexes.size()-1;
 		}
 
 		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
 
-		if (selectedIndex == files.length)
+		if (selectedIndex == saveIndexes.size())
 		{
 			g2d.setColor(Color.BLUE);
 		}
@@ -1332,7 +1344,7 @@ class SaveMenu extends MenuScreen
 
 		g2d.drawString("New Save", 495, 545);
 
-		if (selectedIndex == files.length+1)
+		if (selectedIndex == saveIndexes.size()+1)
 		{
 			g2d.setColor(Color.BLUE);
 		}
@@ -1346,10 +1358,10 @@ class SaveMenu extends MenuScreen
 
 	private BufferedImage getImage()
 	{
-		BufferedImage im = new BufferedImage(195, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(195, 30+(saveIndexes.size()*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
 
-		for (int i = 0; i < files.length; i++)
+		for (int i = 0; i < saveIndexes.size(); i++)
 		{
 			if (selectedIndex == i)
 			{
@@ -1360,7 +1372,7 @@ class SaveMenu extends MenuScreen
 				g2d.setColor(Color.BLACK);
 			}
 
-			g2d.drawString(files[i].getName(), 15, 30+(i*20));
+			g2d.drawString(files[saveIndexes.get(i)].getName(), 15, 30+(i*20));
 		}
 
 		g2d.dispose();
@@ -1377,6 +1389,7 @@ class LoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
+	HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
 
 	public LoadMenu(Menu menu) {
 		super(menu);
@@ -1395,6 +1408,22 @@ class LoadMenu extends MenuScreen
 		{
 			saves[i] = loadFile(files[i]);
 		}
+		
+		for (int i = 0; i < files.length; i++)
+		{
+			if (saveIndexes.containsKey(saves[i].sessionID))
+			{
+				ArrayList<Integer> saveblock = saveIndexes.get(saves[i].sessionID);
+				saveblock.add(i);
+			}
+			else
+			{
+				ArrayList<Integer> saveblock = new ArrayList<Integer>();
+				saveblock.add(i);
+				saveIndexes.put(saves[i].sessionID, saveblock);
+			}
+		}
+		
 		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
 
@@ -1444,7 +1473,7 @@ class LoadMenu extends MenuScreen
 			if (selectedIndex < files.length)
 			{
 				Main.setState(1);
-				Main.gamedata.loadGame(files[selectedIndex]);
+				Main.gamedata.loadGame(files[getSelectedFileIndex()]);
 			}
 			else if (selectedIndex == files.length)
 			{
@@ -1462,6 +1491,52 @@ class LoadMenu extends MenuScreen
 		{
 			selectedIndex = files.length;
 		}
+	}
+	
+	public Integer getSelectedFileIndex()
+	{
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			for (Integer saveI : saveblock)
+			{
+				if (selectedIndex == i)
+				{
+					return saveI;
+				}
+				
+				i++;
+			}
+		}
+
+		return 0;
+	}
+	
+	public Integer getSelectedFilePosition()
+	{
+		int selectedI = selectedIndex;
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			i++;
+			
+			if (selectedI-saveblock.size() <= 0)
+			{
+				i += selectedI;
+				break;
+			}
+			else
+			{
+				selectedI -= saveblock.size();
+				i += saveblock.size();
+			}
+		}
+
+		return i;
 	}
 
 	public SaveGame loadFile(File file)
@@ -1490,23 +1565,25 @@ class LoadMenu extends MenuScreen
 	protected void drawLeft(Graphics2D g2d) {
 		if (selectedIndex < files.length)
 		{
+			int i = getSelectedFileIndex();
+			
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+			calendar.setTimeInMillis(files[i].lastModified());
 
 			String timePlayed = String.format("%d min, %d sec", 
-					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[i].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed))
 					);
 
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
-			g2d.drawString(files[selectedIndex].getName(), 200, 190);
+			g2d.drawString(files[i].getName(), 200, 190);
 			g2d.drawString("Last Saved:", 70, 210);
 			g2d.drawString(formatter.format(calendar.getTime()), 200, 210);
 			g2d.drawString("Current Level:", 70, 240);
-			g2d.drawString(saves[selectedIndex].currentLevel, 200, 240);
+			g2d.drawString(saves[i].currentLevel, 200, 240);
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
@@ -1525,8 +1602,9 @@ class LoadMenu extends MenuScreen
 		{
 			filePos = files.length-1;
 		}
-
-		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
+		
+		int i = getSelectedFilePosition();
+		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(i*20), 195, 295+(i*20), null);
 
 
 		if (selectedIndex == files.length)
@@ -1543,21 +1621,46 @@ class LoadMenu extends MenuScreen
 
 	private BufferedImage getImage()
 	{
-		BufferedImage im = new BufferedImage(270, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(270, 80+(files.length*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
 
-		for (int i = 0; i < files.length; i++)
+		int i = 0;
+		int selectedI = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
 		{
-			if (selectedIndex == i)
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			g2d.setColor(Color.BLACK);
+			g2d.drawString(entry.getKey(), 5, 30+(i*20));
+			
+			i++;
+			
+			int savenum = 0;
+			for (Integer saveI : saveblock)
 			{
-				g2d.setColor(Color.BLUE);
-			}
-			else
-			{
-				g2d.setColor(Color.BLACK);
-			}
+				if (selectedIndex == selectedI)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
 
-			g2d.drawString(files[i].getName(), 15, 30+(i*20));
+				String name = "Save "+savenum;
+				if (files[saveI].getName().equals("autosave.sav"))
+				{
+					name = "Autosave";
+				}
+				else
+				{
+					savenum++;
+				}
+				g2d.drawString(name, 15, 30+(i*20));
+				
+				i++;
+				selectedI++;				
+			}
 		}
 
 		g2d.dispose();
@@ -2499,6 +2602,7 @@ class MainLoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
+	HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
 
 	public MainLoadMenu(Menu menu) {
 		super(menu);
@@ -2517,6 +2621,22 @@ class MainLoadMenu extends MenuScreen
 		{
 			saves[i] = loadFile(files[i]);
 		}
+		
+		for (int i = 0; i < files.length; i++)
+		{
+			if (saveIndexes.containsKey(saves[i].sessionID))
+			{
+				ArrayList<Integer> saveblock = saveIndexes.get(saves[i].sessionID);
+				saveblock.add(i);
+			}
+			else
+			{
+				ArrayList<Integer> saveblock = new ArrayList<Integer>();
+				saveblock.add(i);
+				saveIndexes.put(saves[i].sessionID, saveblock);
+			}
+		}
+		
 		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
 
@@ -2558,7 +2678,7 @@ class MainLoadMenu extends MenuScreen
 		}
 		else if (MainCanvas.esc)
 		{
-			menu.changeMenu("Main");
+			menu.changeMenu("Game");
 			MainCanvas.esc = false;
 		}
 		else if (MainCanvas.enter)
@@ -2566,7 +2686,7 @@ class MainLoadMenu extends MenuScreen
 			if (selectedIndex < files.length)
 			{
 				Main.setState(1);
-				Main.gamedata.loadGame(files[selectedIndex]);
+				Main.gamedata.loadGame(files[getSelectedFileIndex()]);
 			}
 			else if (selectedIndex == files.length)
 			{
@@ -2584,6 +2704,52 @@ class MainLoadMenu extends MenuScreen
 		{
 			selectedIndex = files.length;
 		}
+	}
+	
+	public Integer getSelectedFileIndex()
+	{
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			for (Integer saveI : saveblock)
+			{
+				if (selectedIndex == i)
+				{
+					return saveI;
+				}
+				
+				i++;
+			}
+		}
+
+		return 0;
+	}
+	
+	public Integer getSelectedFilePosition()
+	{
+		int selectedI = selectedIndex;
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			i++;
+			
+			if (selectedI-saveblock.size() <= 0)
+			{
+				i += selectedI;
+				break;
+			}
+			else
+			{
+				selectedI -= saveblock.size();
+				i += saveblock.size();
+			}
+		}
+
+		return i;
 	}
 
 	public SaveGame loadFile(File file)
@@ -2612,23 +2778,25 @@ class MainLoadMenu extends MenuScreen
 	protected void drawLeft(Graphics2D g2d) {
 		if (selectedIndex < files.length)
 		{
+			int i = getSelectedFileIndex();
+			
 			DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
 			Calendar calendar = Calendar.getInstance();
-			calendar.setTimeInMillis(files[selectedIndex].lastModified());
+			calendar.setTimeInMillis(files[i].lastModified());
 
 			String timePlayed = String.format("%d min, %d sec", 
-					TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed),
-					TimeUnit.MILLISECONDS.toSeconds(saves[selectedIndex].timePlayed) - 
-					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[selectedIndex].timePlayed))
+					TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed),
+					TimeUnit.MILLISECONDS.toSeconds(saves[i].timePlayed) - 
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(saves[i].timePlayed))
 					);
 
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("Filename:", 70, 190);
-			g2d.drawString(files[selectedIndex].getName(), 200, 190);
+			g2d.drawString(files[i].getName(), 200, 190);
 			g2d.drawString("Last Saved:", 70, 210);
 			g2d.drawString(formatter.format(calendar.getTime()), 200, 210);
 			g2d.drawString("Current Level:", 70, 240);
-			g2d.drawString(saves[selectedIndex].currentLevel, 200, 240);
+			g2d.drawString(saves[i].currentLevel, 200, 240);
 			g2d.drawString("Time Played:", 70, 270);
 			g2d.drawString(timePlayed, 200, 270);
 		}
@@ -2647,8 +2815,10 @@ class MainLoadMenu extends MenuScreen
 		{
 			filePos = files.length-1;
 		}
+		
+		int i = getSelectedFilePosition();
+		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(i*20), 195, 295+(i*20), null);
 
-		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
 
 		if (selectedIndex == files.length)
 		{
@@ -2664,21 +2834,46 @@ class MainLoadMenu extends MenuScreen
 
 	private BufferedImage getImage()
 	{
-		BufferedImage im = new BufferedImage(270, 30+(files.length*20), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage im = new BufferedImage(270, 80+(files.length*20), BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = im.createGraphics();
 
-		for (int i = 0; i < files.length; i++)
+		int i = 0;
+		int selectedI = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
 		{
-			if (selectedIndex == i)
+			ArrayList<Integer> saveblock = entry.getValue();
+			
+			g2d.setColor(Color.BLACK);
+			g2d.drawString(entry.getKey(), 5, 30+(i*20));
+			
+			i++;
+			
+			int savenum = 0;
+			for (Integer saveI : saveblock)
 			{
-				g2d.setColor(Color.BLUE);
-			}
-			else
-			{
-				g2d.setColor(Color.BLACK);
-			}
+				if (selectedIndex == selectedI)
+				{
+					g2d.setColor(Color.BLUE);
+				}
+				else
+				{
+					g2d.setColor(Color.BLACK);
+				}
 
-			g2d.drawString(files[i].getName(), 15, 30+(i*20));
+				String name = "Save "+savenum;
+				if (files[saveI].getName().equals("autosave.sav"))
+				{
+					name = "Autosave";
+				}
+				else
+				{
+					savenum++;
+				}
+				g2d.drawString(name, 15, 30+(i*20));
+				
+				i++;
+				selectedI++;
+			}
 		}
 
 		g2d.dispose();
@@ -2687,6 +2882,7 @@ class MainLoadMenu extends MenuScreen
 	}
 
 }
+
 
 class CreditsMenu extends MenuScreen
 {

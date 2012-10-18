@@ -271,8 +271,6 @@ public class OggClip {
 	 * Loop the clip - maybe for background music
 	 */
 	public void loop() {
-		System.out.println("Launching loop for: " + name);
-		
 		stop();
 		
 		try {

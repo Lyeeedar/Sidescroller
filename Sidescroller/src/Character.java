@@ -519,6 +519,11 @@ public class Character {
 		{
 			ss.loadImages();
 		}
+		
+		for (int i = 0; i < Character.socketedSpells.length; i++)
+		{
+			Character.socketedSpells[i].loadImage();
+		}
 	}
 		
 }
