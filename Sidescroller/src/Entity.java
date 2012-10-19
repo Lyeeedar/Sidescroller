@@ -436,9 +436,12 @@ public class Entity implements Serializable{
 
 			MainCanvas.space = false;
 		}
-
-		// Cast the spell bound to Key1 (the number 1 key on the keyboard)
-		if (MainCanvas.key1)
+		
+		if (crouched)
+		{
+			
+		}
+		else if (MainCanvas.key1)
 		{
 			// If still in cooldown then don't allow spell casting 
 			if ((Character.spellCooldown[0] > 0) || (isAnimating))
