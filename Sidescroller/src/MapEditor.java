@@ -149,13 +149,13 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 			{
 				g.drawImage(e.getSpriteSheet(),
 						e.getPos()[0]+e.getSize()[0], e.getPos()[1], e.getPos()[0],	e.getPos()[1]+e.getSize()[1],
-						0, e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0], e.getSize()[1]*e.getAnimateStrip(), null);
+						e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*(e.getAnimateStage()), e.getSize()[1]*e.getAnimateStrip(), null);
 			}
 			else
 			{
 				g.drawImage(e.getSpriteSheet(),
 						e.getPos()[0], e.getPos()[1], e.getPos()[0]+e.getSize()[0],	e.getPos()[1]+e.getSize()[1],
-						0, e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0], e.getSize()[1]*e.getAnimateStrip(), null);
+						e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*(e.getAnimateStage()), e.getSize()[1]*e.getAnimateStrip(), null);
 			}
 
 			g.drawRect(e.getCollisionShape()[0]+e.getPos()[0], e.getCollisionShape()[1]+e.getPos()[1],
@@ -616,7 +616,7 @@ class EntityFrame extends JFrame
 	public void init()
 	{
 		panel.removeAll();
-		panel.setLayout(new GridLayout(25, 2));
+		panel.setLayout(new GridLayout(27, 2));
 
 		panel.add(new JLabel("Name: "));
 		final JTextField name = new JTextField(10);
@@ -647,6 +647,11 @@ class EntityFrame extends JFrame
 		final JTextField cuanimStrips = new JTextField(5);
 		cuanimStrips.setText(Integer.toString(e.getAnimateStrip()));
 		panel.add(cuanimStrips);
+		
+		panel.add(new JLabel("Current Animation Stage: "));
+		final JTextField cuanimStage = new JTextField(5);
+		cuanimStage.setText(Integer.toString(e.getAnimateStage()));
+		panel.add(cuanimStage);
 
 		JButton spritesheet = new JButton("Spritesheet");
 		spritesheet.addActionListener(new ActionListener(){
@@ -811,6 +816,7 @@ class EntityFrame extends JFrame
 					e.speed = Integer.parseInt(speed.getText());
 					e.setAnimStages(Integer.parseInt(animStages.getText()));
 					e.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));
+					e.setAnimateStage(Integer.parseInt(cuanimStage.getText()));
 					e.setWeight(Integer.parseInt(weight.getText()));
 					e.setSpriteFile(spriteFile.getText());
 					e.processSpritesheet();

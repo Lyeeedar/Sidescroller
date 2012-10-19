@@ -2,11 +2,13 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,16 +21,16 @@ import javax.imageio.ImageIO;
  *
  */
 public class GameData {
-	
+
 	public static String gameSessionID;
 
 	/**
 	 * The images used by the game. Stored with thier filename so each image is only ever loaded once
 	 */
 	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
-	
+
 	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(4);
-	
+
 	/**
 	 *  The rate at which the game runs (evaluates AI)
 	 */
@@ -67,14 +69,14 @@ public class GameData {
 	 * A map of which pixels are collidable with
 	 */
 	private int[][] collisionMap;
-	
+
 	public int collisionX = 1;
 	public int collisionY = 1;
 
 	/**
 	 * Strength of gravity in the game
 	 */
-	public static final int gravity = 2;
+	public static final int gravity = 3;
 
 	/**
 	 * Strength of friction in the game
@@ -85,17 +87,17 @@ public class GameData {
 	 * The name of the level
 	 */
 	public String levelName = "";
-	
+
 	/**
 	 * Messages to be displayed in the chatbox
 	 */
 	public ArrayList<SystemMessage> systemMessages = new ArrayList<SystemMessage>();
-	
+
 	/**
 	 * The current savefile
 	 */
 	public File saveFile;
-	
+
 	/**
 	 * The current Background music
 	 */
@@ -104,33 +106,33 @@ public class GameData {
 	 * The volume of the BGM
 	 */
 	public static float gain = 0.75f;
-	
+
 	public boolean transformAllowed = true;
 
 	public GameData()
 	{
 		clearGame();
 	}
-	
+
 	/**
 	 * Method to clear all the game data kept in GameData
 	 */
 	public void clearGame()
 	{
 		gameEntities.clear();
-		
+
 		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 		gameEntities.put("Player", e);
-		
+
 		for (int i = 0; i < 5; i++)
 		{
 			BufferedImage im = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 			background[i] = im;
 		}
-		
+
 		this.createCollisionMap(1, 1);
 	}
-	
+
 	/**
 	 * Method to change the current BGM. If theres an old song playing then stop it, and then start the new one.
 	 * @param bgm
@@ -157,7 +159,7 @@ public class GameData {
 			BGM = bgm;
 			BGM.loop();
 		}
-		
+
 		BGM.setGain(gain);
 	}
 
@@ -167,12 +169,55 @@ public class GameData {
 	public void newGame()
 	{	
 		Character.resetAll();
+
+
+//		gameSessionID = Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()));
+
+//		String name = System.getProperty("user.name");
+//
+//		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss.SSS");
+//		Calendar calendar = Calendar.getInstance();
+//		calendar.setTimeInMillis(System.currentTimeMillis());
+//
+//		String date = formatter.format(calendar.getTime());
 		
-		gameSessionID = Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()))+Long.toHexString(Double.doubleToLongBits(Math.random()));
+//		gameSessionID = name + " " + date;
+		
+		String thisLine;
+		ArrayList<String> words = new ArrayList<String>();
+		try {
+			// Try to load the image from the .jar file
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("dictionary.txt");
+
+			if (in == null)
+			{
+				try{
+					// Try to load it from the local file system
+					in = new FileInputStream("dictionary.txt");
+				}
+				catch (FileNotFoundException fne)
+				{
+					// Try to load it from the src folder (only useful if run from eclipse)
+					in = new FileInputStream("src/"+"dictionary.txt");
+				}
+			}
+			BufferedReader myInput = new BufferedReader
+					(new InputStreamReader(in));
+			while ((thisLine = myInput.readLine()) != null) {  
+				words.add(thisLine);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		gameSessionID = words.get(Main.ran.nextInt(words.size()));
+		
+		gameSessionID = gameSessionID.substring(0, 1).toUpperCase() + gameSessionID.substring(1);
 		
 		this.loadLevel("Tutorial");
 	}
-	
+
 	/**
 	 * Method to load an image. Will check if the image has already been loaded, and returns a reference if it has.
 	 * If it hasn't been loaded then load the image and store it for future use
@@ -181,7 +226,7 @@ public class GameData {
 	 */
 	public static BufferedImage getImage(String type, String image)
 	{
-		
+
 		if (type.equals("Spritesheet"))
 		{
 			image = "Data/Resources/Spritesheets/"+image;
@@ -203,7 +248,7 @@ public class GameData {
 			System.err.println("Error loading image file: Invalid type "+type + "     File to be loaded: "+image);
 			return null;
 		}
-		
+
 		if (gameImages.containsKey(image))
 			return gameImages.get(image);
 		else
@@ -211,23 +256,23 @@ public class GameData {
 			BufferedImage im = null;
 			try{
 				// Try to load the image from the .jar file
-		    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(image);
-		    	
-		    	if (in == null)
-		    	{
-		    		try{
-		    			// Try to load it from the local file system
-		    			in = new FileInputStream(image);
-		    		}
-		    		catch (FileNotFoundException fne)
-		    		{
-		    			// Try to load it from the src folder (only useful if run from eclipse)
-		    			in = new FileInputStream("src/"+image);
-		    		}
-		    	}
-		    	
+				InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(image);
+
+				if (in == null)
+				{
+					try{
+						// Try to load it from the local file system
+						in = new FileInputStream(image);
+					}
+					catch (FileNotFoundException fne)
+					{
+						// Try to load it from the src folder (only useful if run from eclipse)
+						in = new FileInputStream("src/"+image);
+					}
+				}
+
 				im = ImageIO.read(in);
-				
+
 				if (im != null)
 					im = toCompatibleImage(im);
 			}
@@ -239,47 +284,47 @@ public class GameData {
 			return im;
 		}
 	}
-	
+
 	public void loadLevelImages(String name)
 	{
 		for (TempLevelData tld : storedLevels)
 		{
 			if (tld == null)
 				continue;
-			
+
 			if (name.equals(tld.name))
 			{
 				background = tld.background;
 				collisionMap = tld.collisionMap;
 				this.levelName = name;
-				
+
 				//return;
 			}
 		}
-		
+
 		BufferedImage[] back = new BufferedImage[5];
-		
+
 		for (int i = 0; i < 5; i++)
 		{
 			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
-			
+
 			try {
 				back[i] = toCompatibleImage(ImageIO.read(file));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		background = back;
-		
+
 		if (Main.preloadCollisionMap)
 			fillCollisionMap();
 		else
 			createCollisionMap();
-		
+
 		storedLevels.add(new TempLevelData(back, name, collisionMap));
 	}
-	
+
 	/**
 	 * Method to convert the image passed into an image optimised for the current display mode
 	 * @param image
@@ -289,8 +334,8 @@ public class GameData {
 	{
 		// obtain the current system graphical settings
 		GraphicsConfiguration gfx_config = GraphicsEnvironment.
-			getLocalGraphicsEnvironment().getDefaultScreenDevice().
-			getDefaultConfiguration();
+				getLocalGraphicsEnvironment().getDefaultScreenDevice().
+				getDefaultConfiguration();
 
 		/*
 		 * if image is already compatible and optimized for current system 
@@ -404,7 +449,7 @@ public class GameData {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is used to save the game (state of all the entities in the current level)
 	 * @return
@@ -414,7 +459,7 @@ public class GameData {
 		SaveGame.save(this, file);
 		System.gc();
 	}
-	
+
 	volatile int loadStage = 0;
 	volatile String loadText = "";
 
@@ -424,25 +469,25 @@ public class GameData {
 		loadText = "";
 		final int state = Main.getState();
 		final GameData gd = this;
-		
+
 		SaveGame.loadGame(file, gd);
 		Main.setState(state);
 		System.gc();	
 	}
-	
+
 	public void loadLevel(final String levelName)
 	{
 		loadStage = 0;
 		loadText = "";
 		final int state = Main.getState();
 		final GameData gd = this;
-		
+
 		SaveGame.loadLevel(levelName, gd);
 		Main.setState(state);
 		System.gc();	
-		
+
 	}
-	
+
 
 	/**
 	 * Method to calculate and store the collision map for the entity. Created from the collision layer (background[3]). Collisionable pixels are the non-transparent ones
@@ -453,7 +498,7 @@ public class GameData {
 		levelSize[1] = background[3].getHeight();
 
 		createCollisionMap(levelSize[0], levelSize[1]);
-		
+
 		boolean collide = false;
 
 		for (int x = 0; x < levelSize[0]; x++)
@@ -467,7 +512,7 @@ public class GameData {
 				int alpha = (colour>>24) & 0xff;
 
 				collide = (alpha != 0);
-				
+
 				if (collide)
 				{
 					// If alpha is not 0 then store true in the collision map
@@ -481,11 +526,11 @@ public class GameData {
 			}
 		}
 	}
-	
+
 	public boolean checkCollision(int x, int y)
 	{
 		boolean collide = false;
-		
+
 		if (collisionMap[x][y] == 1)
 		{
 			collide = false;
@@ -503,7 +548,7 @@ public class GameData {
 			int alpha = (colour>>24) & 0xff;
 
 			collide = (alpha != 0);
-			
+
 			if (collide)
 			{
 				// If alpha is not 0 then store true in the collision map
@@ -515,26 +560,26 @@ public class GameData {
 				collisionMap[x][y] = 1;
 			}
 		}
-		
-		
+
+
 		return collide;
 	}
 
 	public void createCollisionMap(int x, int y)
 	{	
 		collisionMap = new int[x][y];
-		
+
 		collisionX = x;
 		collisionY = y;
 	}
-	
+
 	public void createCollisionMap()
 	{
 		levelSize[0] = background[3].getWidth();
 		levelSize[1] = background[3].getHeight();
-		
+
 		collisionMap = new int[levelSize[0]][levelSize[1]];
-		
+
 		collisionX = levelSize[0];
 		collisionY = levelSize[1];
 	}
@@ -622,22 +667,22 @@ public class GameData {
 	public void setBackground(BufferedImage[] background) {
 		this.background = background;
 	}
-//
-//	/**
-//	 * Returns {@link GameData#collisionMap}
-//	 * @return the collisionMap
-//	 */
-//	public boolean[][] getCollisionMap() {
-//		return collisionMap;
-//	}
-//
-//	/**
-//	 * Sets {@link GameData#collisionMap}
-//	 * @param collisionMap the collisionMap to set
-//	 */
-//	public void setCollisionMap(boolean[][] collisionMap) {
-//		this.collisionMap = collisionMap;
-//	}
+	//
+	//	/**
+	//	 * Returns {@link GameData#collisionMap}
+	//	 * @return the collisionMap
+	//	 */
+	//	public boolean[][] getCollisionMap() {
+	//		return collisionMap;
+	//	}
+	//
+	//	/**
+	//	 * Sets {@link GameData#collisionMap}
+	//	 * @param collisionMap the collisionMap to set
+	//	 */
+	//	public void setCollisionMap(boolean[][] collisionMap) {
+	//		this.collisionMap = collisionMap;
+	//	}
 
 	/**
 	 * Returns {@link GameData#levelName}

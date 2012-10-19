@@ -300,7 +300,7 @@ public class Character {
 		
 		spells.get(0).spells.add(new SpellsStageEntry("SmallHeal", null, 2, new int[]{500, 100},
 				new String[]{"Life/spellIconSmallHeal.png","Life/spellIconLifeMaster.png"},
-				"Heal a little of your health.", 500, element));
+				"Heal a little of your health.", 500, element, 0, 0));
 		
 		lifeSpells = spells;
 	}
@@ -318,7 +318,7 @@ public class Character {
 		
 		spells.get(0).spells.add(new SpellsStageEntry("ImpI", null, 2, new int[]{500, 100},
 				new String[]{"Death/spellIconImpI.png","Death/spellIconDeathMaster.png"},
-				"Summon an imp to attack your foe.", 500, element));
+				"Summon an imp to attack your foe.", 500, element, 0, 0));
 		
 		deathSpells = spells;
 	}
@@ -336,7 +336,7 @@ public class Character {
 		
 		spells.get(0).spells.add(new SpellsStageEntry("IceSpike", null, 2, new int[]{500, 100},
 				new String[]{"Water/spellIconIceSpike.png","Water/spellIconWaterMaster.png"},
-				"Send a spike of ice at your foe.", 500, element));
+				"Send a spike of ice at your foe.", 500, element, 0, 0));
 		
 		waterSpells = spells;
 	}
@@ -354,15 +354,15 @@ public class Character {
 		
 		spells.get(0).spells.add(new SpellsStageEntry("RockSpike", null, 2, new int[]{500, 100},
 				new String[]{"Earth/spellIconRockSpike.png","Earth/spellIconEarthMaster.png"},
-				"Send a series of rock spikes flying out in front of you.", 500, element));
+				"Send a series of rock spikes flying out in front of you.", 500, element, 0, 0));
 		
 		spells.get(1).spells.add(new SpellsStageEntry("RockWall", null, 0, new int[]{400, 200},
 				new String[]{"Earth/spellIconRockWall.png","Earth/spellIconEarthMaster.png"},
-				"Raise a wall of rock from the ground to stop foes.", 580, element));
+				"Raise a wall of rock from the ground to stop foes.", 580, element, 1, 0));
 		
 		spells.get(1).spells.add(new SpellsStageEntry("Stone", new String[]{"RockSpike"}, 0, new int[]{600, 200},
 				new String[]{"Earth/spellIconStone.png","Earth/spellIconEarthMaster.png"},
-				"Send a stone flying at an opponent.", 580, element));
+				"Send a stone flying at an opponent.", 580, element, 1, 1));
 		
 		earthSpells = spells;
 	}
@@ -380,7 +380,7 @@ public class Character {
 		
 		airSpells.get(0).spells.add(new SpellsStageEntry("WindBlade", null, 2, new int[]{500, 100},
 				new String[]{"Air/spellIconWindBlade.png","Air/spellIconAirMaster.png"},
-				"Slice a foe with a blade of air.", 500, element));
+				"Slice a foe with a blade of air.", 500, element, 0, 0));
 	}
 	
 	public static void populateFireSpells()
@@ -396,19 +396,19 @@ public class Character {
 		
 		fireSpells.get(0).spells.add(new SpellsStageEntry("FireBall", null, 2, new int[]{500, 100},
 				new String[]{"Fire/spellIconFireBall.png","Fire/spellIconFireMaster.png"},
-				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element));
+				"A ball of burning fire. Will singe a target somewhat fierce.", 500, element, 0, 0));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("Scorch", null, 0, new int[]{400, 200},
 				new String[]{"Fire/spellIconScorch.png","Fire/spellIconFireMaster.png"},
-				"Sets fire to a spot, scorching all who enter it.", 700, element));
+				"Sets fire to a spot, scorching all who enter it.", 700, element, 1, 0));
 		
 		fireSpells.get(1).spells.add(new SpellsStageEntry("FlameWall", new String[]{"FireBall"}, 0, new int[]{600, 200},
 				new String[]{"Fire/spellIconFlameWall.png","Fire/spellIconFireMaster.png"},
-				"Creates a wall of fire, burning any who pass through it.", 580, element));
+				"Creates a wall of fire, burning any who pass through it.", 580, element, 1, 1));
 		
 		fireSpells.get(2).spells.add(new SpellsStageEntry("WildFire", new String[]{"Scorch"}, 0, new int[]{400, 300},
 				new String[]{"Fire/spellIconWildFire.png","Fire/spellIconFireMaster.png"},
-				"Sets fire to a line, scorching all who enter it.", 900, element));
+				"Sets fire to a line, scorching all who enter it.", 900, element, 2, 0));
 
 	
 		unlockSpells(fireSpells);
@@ -522,7 +522,9 @@ public class Character {
 		
 		for (int i = 0; i < Character.socketedSpells.length; i++)
 		{
-			Character.socketedSpells[i].loadImage();
+			SpellsStageEntry sse = Character.socketedSpells[i];
+			
+			Character.socketedSpells[i] = getSpell(sse.element).get(sse.stage).spells.get(sse.index);
 		}
 	}
 		
@@ -631,8 +633,13 @@ class SpellsStageEntry implements Serializable
 	 */
 	public String element;
 	
-	public SpellsStageEntry(String name, String[] parents, int unlocked, int[] pos, String[] imageFiles, String description, int maxEXP, String element)
+	public int stage;
+	public int index;
+	
+	public SpellsStageEntry(String name, String[] parents, int unlocked, int[] pos, String[] imageFiles, String description, int maxEXP, String element, int stage, int index)
 	{
+		this.stage = stage;
+		this.index = index;
 		this.element = element;
 		this.maxEXP = maxEXP;
 		this.imageFiles = imageFiles;

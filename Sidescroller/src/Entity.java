@@ -229,16 +229,18 @@ public class Entity implements Serializable{
 	 * the speed of this entity
 	 */
 	protected int speed;
-	
+
 	/**
 	 * The exp this entity drops
 	 */
 	protected int expAmount = 0;
-	
+
 	/**
 	 * The jump cd for this entity, allows the entity to jump just after falling off something
 	 */
 	protected long jumpCD = 0;
+	
+	protected boolean crouched = false;
 
 	/**
 	 * The system messages to be displayed about the entities head
@@ -306,7 +308,7 @@ public class Entity implements Serializable{
 	public void AI()
 	{
 		if (behavior[1])
-			behavior1();
+			behavior1Alt();
 
 		if (!this.isAlive())
 			return;
@@ -316,10 +318,10 @@ public class Entity implements Serializable{
 
 		if (behavior.length < 3)
 			return;
-		
+
 		if (behavior[2])
 			behavior2();
-		
+
 		if (behavior.length < 4)
 			return;
 
@@ -360,12 +362,37 @@ public class Entity implements Serializable{
 
 			}
 		}
+		
+		if (MainCanvas.down)
+		{
+			if ((grounded) && (!crouched))
+			{
+				collisionShape[3] /= 2;
+				collisionShape[1] += collisionShape[3];
+				crouched = true;
+			}
+		}
+		else if (crouched)
+		{
+			collisionShape[1] -= collisionShape[3];
+			collisionShape[3] *= 2;
+			
+			if (checkCollision(pos) == null)
+			{
+				crouched = false;
+			}
+			else
+			{
+				collisionShape[3] /= 2;
+				collisionShape[1] += collisionShape[3];
+			}
+		}
 
 		// Jump
-		if ((MainCanvas.up) && (jumpCD > 0))
+		if ((MainCanvas.up) && (jumpCD > 0) && (!crouched))
 		{
 			jumpCD = 0;
-			this.getVelocity()[1] = -25;
+			this.getVelocity()[1] = -32;
 			setGrounded(false);
 			//MainCanvas.up = false;
 		}
@@ -402,11 +429,11 @@ public class Entity implements Serializable{
 			}
 
 		}
-		
+
 		if (MainCanvas.space)
 		{
 			Character.beginGenderSwap();
-			
+
 			MainCanvas.space = false;
 		}
 
@@ -648,10 +675,10 @@ public class Entity implements Serializable{
 					//velocity[1] = 0;
 					applyFriction();
 					this.changePosition(npos[0], npos[1], this.getPos()[2]);
-					
+
 					if (checkCollision(new int[]{npos[0], npos[1]+10}) == null)
 					{
-						
+
 					}
 					else
 					{
@@ -719,6 +746,119 @@ public class Entity implements Serializable{
 		}
 	}
 
+	public void behavior1Alt()
+	{
+		// Scale X velocity so it can never exceed 30
+		if ((velocity[0] < 0) && (velocity[0] < -30))
+		{
+			velocity[0] = -30;
+		}
+		else if ((velocity[0] > 0) && (velocity[0] > 30))
+		{
+			velocity[0] = 30;
+		}
+
+
+		// Modify the Y velocity with gravity
+		velocity[1] += (weight * GameData.gravity);
+
+
+		// Scale Y velocity so it never exceeds 40
+		if (velocity[1] > 40)
+		{
+			velocity[1] = 40;
+		}
+
+		int npos[] = {pos[0], pos[1], pos[2]};
+
+		if (velocity[0] != 0)
+		{
+			npos[0] += velocity[0];
+
+			String collision = checkCollision(npos);
+
+			if (collision != null)
+			{
+				boolean found = false;
+				int cpos[] = {npos[0]-(velocity[0]/3), npos[1], npos[2]};
+
+				for (int i = 0; i < (this.collisionShape[3]/3); i++)
+				{
+					if (checkCollision(cpos) == null)
+					{
+						npos[0] = cpos[0];
+						npos[1] = cpos[1];
+						
+						found = true;
+						break;
+					}
+					
+					cpos[1]--;
+
+				}
+
+				if (!found)
+				{
+					velocity[0] = 0;
+					npos[0] = pos[0];
+				}
+			}
+		}
+
+		if (velocity[1] != 0)
+		{
+
+			npos[1] += velocity[1];
+
+			String collision = checkCollision(npos);
+
+			if (collision != null)
+			{
+				if (velocity[1] < 0)
+				{
+					npos[1] -= velocity[1];
+					velocity[1] = 0;
+				}
+				else
+				{
+					npos[1] -= velocity[1];
+					for (int i = 0; i < velocity[1]; i++)
+					{
+						if (checkCollision(npos) != null)
+						{
+							npos[1]--;
+							grounded = true;
+							break;
+						}
+
+						npos[1]++;
+
+					}
+				}
+			}
+			else
+			{
+				grounded = false;
+			}
+
+		}
+		
+		this.changePosition(npos[0], npos[1], npos[2]);
+
+		updateJumpAnim(grounded);
+
+		if (velocity[1] < 0)
+		{
+			this.setGrounded(false);
+		}
+
+		if (isGrounded())
+		{
+			velocity[1] = 0;
+			applyFriction();
+		}
+	}
+
 	boolean alerted = false;
 	int patrolDistance = 300;
 	int[] lastTargetPos;
@@ -740,12 +880,12 @@ public class Entity implements Serializable{
 				pos[2] = 1;
 			}
 			newAnimStrip = 1;
-			
+
 			if ((Main.ran.nextInt(340) == 1) && (grounded))
 			{
 				velocity[1] -= 15;
 			}
-			
+
 			if ((Math.abs(pos[0] - lastTargetPos[0]) < 50) &&
 					(Math.abs(pos[1] - lastTargetPos[1]) < 50))
 			{
@@ -769,7 +909,7 @@ public class Entity implements Serializable{
 
 				spellToCast = s;
 				castSpellAt = 5;
-				
+
 			}
 		}
 		else
@@ -800,9 +940,9 @@ public class Entity implements Serializable{
 				}
 			}
 
-			
+
 		}
-		
+
 		String s = enemyRayCast();
 
 		if ((s != null) && (s != this.getName()))
@@ -827,13 +967,13 @@ public class Entity implements Serializable{
 	public void behavior3()
 	{
 		Entity p = Main.gamedata.getGameEntities().get("Player");
-		
+
 		Rectangle rp = new Rectangle(p.getPos()[0]+p.getCollisionShape()[0], p.getPos()[1]+p.getCollisionShape()[1],
 				p.getCollisionShape()[2], p.getCollisionShape()[3]);
-		
+
 		Rectangle re = new Rectangle(getPos()[0]+getCollisionShape()[0], getPos()[1]+getCollisionShape()[1],
 				getCollisionShape()[2], getCollisionShape()[3]);
-		
+
 		if (re.intersects(rp))
 		{
 			this.activate();
@@ -876,17 +1016,17 @@ public class Entity implements Serializable{
 	{
 		velocity[0] = 0;
 	}
-	
+
 	public String enemyRayCast()
 	{
 		int totDist = 250*250;
-		
+
 		ArrayList<Entity> rayEntities = new ArrayList<Entity>();
-		
+
 		for (Map.Entry<String, Entity> entry : Main.gamedata.getGameEntities().entrySet())
 		{
 			Entity e = entry.getValue();
-			
+
 			if ((!e.getFaction().equals("")) && (!e.getFaction().equals(faction)) && (!e.getName().equals(name)) && (!e.isPassable()))
 			{
 				if (pos[2] == 0)
@@ -911,11 +1051,11 @@ public class Entity implements Serializable{
 				}
 			}
 		}
-		
+
 		String s = null;
-		
+
 		int minDist = totDist;
-		
+
 		for (Entity e : rayEntities)
 		{
 			if (rayCast(e.getPos()))
@@ -927,14 +1067,14 @@ public class Entity implements Serializable{
 				}
 			}
 		}
-		
+
 		return s;
 	}
 
 	public boolean rayCast(int[] targetpos)
 	{
 		ArrayList<int[]> pointList = BresenhamsLineAlgorithm(pos[0]+collisionShape[0], pos[1]+collisionShape[1], targetpos[0], targetpos[1]);
-		
+
 		for (int[] point : pointList)
 		{
 			if ((point[0] < 0) || (point[0] > Main.gamedata.collisionX)
@@ -942,7 +1082,7 @@ public class Entity implements Serializable{
 			{
 				return false;
 			}
-			
+
 			if (Main.gamedata.checkCollision(point[0], point[1]))
 			{
 				return false;
@@ -1019,7 +1159,7 @@ public class Entity implements Serializable{
 					return this.getName();
 			}
 		}
-		
+
 		// Check top
 		for (int nx = x; nx < x+collisionShape[2]; nx++)
 		{
@@ -1031,7 +1171,7 @@ public class Entity implements Serializable{
 					return this.getName();
 			}
 		}
-		
+
 		//Check side
 		if (this.pos[2] == 0)
 		{
@@ -1082,7 +1222,7 @@ public class Entity implements Serializable{
 			{
 				continue;
 			}
-			
+
 			// Create a collision box for the entity that is being checked
 			Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 					e.getCollisionShape()[2], e.getCollisionShape()[3]);
@@ -1111,7 +1251,7 @@ public class Entity implements Serializable{
 			Entity e = entry.getValue();
 			if ((e.getName().equals(this.getName())) || (e.isPassable()) || ((e.getFaction() != null) && (e.getFaction().equals(this.getFaction()))))
 				continue;
-			
+
 			// Create a collision box for the entity that is being checked
 			Rectangle rn = new Rectangle(e.getPos()[0]+e.getCollisionShape()[0], e.getPos()[1]+e.getCollisionShape()[1],
 					e.getCollisionShape()[2], e.getCollisionShape()[3]);
@@ -1157,12 +1297,12 @@ public class Entity implements Serializable{
 	public void updateTime(long time)
 	{
 		this.spellCD -= time;
-		
+
 		if (jumpCD > 0)
 			this.jumpCD -= time;
 
 		animate(time);
-		
+
 		ArrayList<SystemMessage> newInfoText = new ArrayList<SystemMessage>();
 		for (SystemMessage sysM : infoText)
 		{
@@ -1213,10 +1353,10 @@ public class Entity implements Serializable{
 						}
 
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
-						
+
 						if (name.equals("Player"))
 							Character.spellCooldown[castSpellIndex] = spellToCast.spellCDTime;
-						
+
 						spellToCast = null;
 					}
 				}
@@ -1326,19 +1466,19 @@ public class Entity implements Serializable{
 	{
 		if (!alive)
 			return;
-		
+
 		if (this.faction.equals(""))
 			return;
-		
+
 		double eleDefense = defense.get(type);
 
 		if (eleDefense != 0)
-			amount -= amount/defense.get(Entity.PHYSICAL);
+			amount *= (100-eleDefense)/100;
 
 		health -= amount;
 
 		infoText.add(new SystemMessage("-"+amount, Color.RED, 3000));
-		
+
 		if (health <= 0)
 		{
 			death();
@@ -1347,13 +1487,13 @@ public class Entity implements Serializable{
 
 		this.setDamaged(15);
 	}
-	
+
 	public void heal(double amount)
 	{		
 		health += amount;
 
 		infoText.add(new SystemMessage("+"+amount, Color.CYAN, 3000));
-		
+
 		if (health > maxHealth)
 		{
 			health = maxHealth;
@@ -1365,7 +1505,7 @@ public class Entity implements Serializable{
 	{
 		if (faction.equals(""))
 		{
-			
+
 		}
 		else
 			Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN, 10000));
@@ -1376,11 +1516,11 @@ public class Entity implements Serializable{
 			{
 				Main.gamedata.getGameEntities().put(entry.getKey()+System.currentTimeMillis(), ItemList.getItem(entry.getKey(), new int[]{pos[0], pos[1], pos[2]}, 1));
 			}
-			
+
 		}
-		
+
 		int orbExp = this.expAmount/5;
-		
+
 		if (orbExp > 0)
 		{
 			for (int i = 0; i < 5; i++)
@@ -1388,7 +1528,7 @@ public class Entity implements Serializable{
 				Main.gamedata.getGameEntities().put("EXP"+System.currentTimeMillis()+i, new EXPOrb(new int[]{pos[0], pos[1], pos[2]}, orbExp));
 			}
 		}
-		
+
 		this.animateStrip = 2;
 		this.animateStage = 3;
 		this.newAnimStrip = 2;

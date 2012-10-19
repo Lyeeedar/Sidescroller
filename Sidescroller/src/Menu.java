@@ -92,6 +92,10 @@ public class Menu {
 		{
 			this.menu = new OptionsMenu(this);
 		}
+		else if (menu.equals("GameOptions"))
+		{
+			this.menu = new GameOptionsMenu(this);
+		}
 	}
 
 
@@ -175,15 +179,15 @@ class GameMenu extends MenuScreen
 
 		if (selectedIndex == 1)
 		{
-			g2d.drawImage(images[2], 490, 90, null);
+			g2d.drawImage(images[2], 490, 50, null);
 			g2d.setColor(selected);
-			g2d.drawString("Save", 600, 155);
+			g2d.drawString("Save", 600, 115);
 		}
 		else
 		{
-			g2d.drawImage(images[1], 490, 90, null);
+			g2d.drawImage(images[1], 490, 50, null);
 			g2d.setColor(normal);
-			g2d.drawString("Save", 600, 155);
+			g2d.drawString("Save", 600, 115);
 		}
 
 		if (selectedIndex == 2)
@@ -201,15 +205,15 @@ class GameMenu extends MenuScreen
 
 		if (selectedIndex == 3)
 		{
-			g2d.drawImage(images[2], 490, 220, null);
+			g2d.drawImage(images[2], 490, 180, null);
 			g2d.setColor(selected);
-			g2d.drawString("Load", 600, 285);
+			g2d.drawString("Load", 600, 245);
 		}
 		else
 		{
-			g2d.drawImage(images[1], 490, 220, null);
+			g2d.drawImage(images[1], 490, 180, null);
 			g2d.setColor(normal);
-			g2d.drawString("Load", 600, 285);
+			g2d.drawString("Load", 600, 245);
 		}
 
 		if (selectedIndex == 4)
@@ -227,15 +231,28 @@ class GameMenu extends MenuScreen
 
 		if (selectedIndex == 5)
 		{
-			g2d.drawImage(images[2], 490, 350, null);
+			g2d.drawImage(images[2], 490, 310, null);
 			g2d.setColor(selected);
-			g2d.drawString("Main Menu", 600, 415);
+			g2d.drawString("Options", 600, 375);
 		}
 		else
 		{
-			g2d.drawImage(images[1], 490, 350, null);
+			g2d.drawImage(images[1], 490, 310, null);
 			g2d.setColor(normal);
-			g2d.drawString("Main Menu", 600, 415);
+			g2d.drawString("Options", 600, 375);
+		}
+		
+		if (selectedIndex == 6)
+		{
+			g2d.drawImage(images[2], 490, 440, null);
+			g2d.setColor(selected);
+			g2d.drawString("Main Menu", 600, 505);
+		}
+		else
+		{
+			g2d.drawImage(images[1], 490, 440, null);
+			g2d.setColor(normal);
+			g2d.drawString("Main Menu", 600, 505);
 		}
 	}
 
@@ -293,6 +310,10 @@ class GameMenu extends MenuScreen
 			}
 			else if (selectedIndex == 5)
 			{
+				menu.changeMenu("GameOptions");
+			}
+			else if (selectedIndex == 6)
+			{
 				menu.changeMenu("Main");
 				Main.gamedata.clearGame();
 			}
@@ -304,9 +325,9 @@ class GameMenu extends MenuScreen
 		{
 			selectedIndex = 0;
 		}
-		else if (selectedIndex > 5)
+		else if (selectedIndex > 6)
 		{
-			selectedIndex = 5;
+			selectedIndex = 6;
 		}
 
 	}
@@ -1330,8 +1351,14 @@ class SaveMenu extends MenuScreen
 		{
 			filePos = saveIndexes.size()-1;
 		}
+		
+		g2d.setColor(Color.BLACK);
+		
+		g2d.drawString("Save Name: ", 520, 110);
+		
+		g2d.drawString(GameData.gameSessionID, 620, 110);
 
-		g2d.drawImage(getImage(), 500, 90, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
+		g2d.drawImage(getImage(), 500, 140, 695, 485, 0, -100+(filePos*20), 195, 245+(filePos*20), null);
 
 		if (selectedIndex == saveIndexes.size())
 		{
@@ -1382,6 +1409,20 @@ class SaveMenu extends MenuScreen
 
 }
 
+class SaveBlock
+{
+	String name;
+	long latestSave;
+	ArrayList<Integer> saveIndexes;
+	
+	public SaveBlock(String name, ArrayList<Integer> saveIndexes, long latestSave)
+	{
+		this.name = name;
+		this.saveIndexes = saveIndexes;
+		this.latestSave = latestSave;
+	}
+}
+
 class LoadMenu extends MenuScreen
 {
 
@@ -1389,10 +1430,12 @@ class LoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
-	HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
+	SaveBlock[] saveBlocks;
 
 	public LoadMenu(Menu menu) {
 		super(menu);
+		
+		HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
 
 		File directory = new File("Data/Saves");
 		files = directory.listFiles();
@@ -1423,6 +1466,22 @@ class LoadMenu extends MenuScreen
 				saveIndexes.put(saves[i].sessionID, saveblock);
 			}
 		}
+		
+		saveBlocks = new SaveBlock[saveIndexes.size()];
+		
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			saveBlocks[i] = new SaveBlock(entry.getKey(), entry.getValue(), files[entry.getValue().get(0)].lastModified());
+			
+			i++;
+		}
+		
+		Arrays.sort(saveBlocks, new Comparator<SaveBlock>(){
+			public int compare(SaveBlock sb1, SaveBlock sb2)
+			{
+				return Long.valueOf(sb2.latestSave).compareTo(sb1.latestSave);
+			} });
 		
 		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
@@ -1496,9 +1555,9 @@ class LoadMenu extends MenuScreen
 	public Integer getSelectedFileIndex()
 	{
 		int i = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			for (Integer saveI : saveblock)
 			{
@@ -1518,9 +1577,9 @@ class LoadMenu extends MenuScreen
 	{
 		int selectedI = selectedIndex;
 		int i = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			i++;
 			
@@ -1626,12 +1685,12 @@ class LoadMenu extends MenuScreen
 
 		int i = 0;
 		int selectedI = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			g2d.setColor(Color.BLACK);
-			g2d.drawString(entry.getKey(), 5, 30+(i*20));
+			g2d.drawString(sb.name, 5, 30+(i*20));
 			
 			i++;
 			
@@ -2602,10 +2661,12 @@ class MainLoadMenu extends MenuScreen
 	File[] files;
 	SaveGame[] saves;
 	BufferedImage[] images = new BufferedImage[1];
-	HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
+	SaveBlock[] saveBlocks;
 
 	public MainLoadMenu(Menu menu) {
 		super(menu);
+		
+		HashMap<String, ArrayList<Integer>> saveIndexes = new HashMap<String, ArrayList<Integer>>();
 
 		File directory = new File("Data/Saves");
 		files = directory.listFiles();
@@ -2636,6 +2697,22 @@ class MainLoadMenu extends MenuScreen
 				saveIndexes.put(saves[i].sessionID, saveblock);
 			}
 		}
+		
+		saveBlocks = new SaveBlock[saveIndexes.size()];
+		
+		int i = 0;
+		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		{
+			saveBlocks[i] = new SaveBlock(entry.getKey(), entry.getValue(), files[entry.getValue().get(0)].lastModified());
+			
+			i++;
+		}
+		
+		Arrays.sort(saveBlocks, new Comparator<SaveBlock>(){
+			public int compare(SaveBlock sb1, SaveBlock sb2)
+			{
+				return Long.valueOf(sb2.latestSave).compareTo(sb1.latestSave);
+			} });
 		
 		images[0] = GameData.getImage("GUI", "spellbookFilesLoadText.png");
 	}
@@ -2678,7 +2755,7 @@ class MainLoadMenu extends MenuScreen
 		}
 		else if (MainCanvas.esc)
 		{
-			menu.changeMenu("Game");
+			menu.changeMenu("Main");
 			MainCanvas.esc = false;
 		}
 		else if (MainCanvas.enter)
@@ -2709,9 +2786,9 @@ class MainLoadMenu extends MenuScreen
 	public Integer getSelectedFileIndex()
 	{
 		int i = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			for (Integer saveI : saveblock)
 			{
@@ -2731,9 +2808,9 @@ class MainLoadMenu extends MenuScreen
 	{
 		int selectedI = selectedIndex;
 		int i = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			i++;
 			
@@ -2839,12 +2916,12 @@ class MainLoadMenu extends MenuScreen
 
 		int i = 0;
 		int selectedI = 0;
-		for (Map.Entry<String, ArrayList<Integer>> entry : saveIndexes.entrySet())
+		for (SaveBlock sb : saveBlocks)
 		{
-			ArrayList<Integer> saveblock = entry.getValue();
+			ArrayList<Integer> saveblock = sb.saveIndexes;
 			
 			g2d.setColor(Color.BLACK);
-			g2d.drawString(entry.getKey(), 5, 30+(i*20));
+			g2d.drawString(sb.name, 5, 30+(i*20));
 			
 			i++;
 			
@@ -2872,7 +2949,7 @@ class MainLoadMenu extends MenuScreen
 				g2d.drawString(name, 15, 30+(i*20));
 				
 				i++;
-				selectedI++;
+				selectedI++;				
 			}
 		}
 
@@ -2882,7 +2959,6 @@ class MainLoadMenu extends MenuScreen
 	}
 
 }
-
 
 class CreditsMenu extends MenuScreen
 {
@@ -3033,6 +3109,210 @@ class OptionsMenu extends MenuScreen
 			else if (selectedIndex == 5)
 			{
 				menu.changeMenu("Main");
+			}
+
+			MainCanvas.enter = false;
+		}
+
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		else if (selectedIndex > 5)
+			selectedIndex = 5;
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawLeft(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawLeft(Graphics2D g2d) {
+		if (selectedIndex == 0)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+
+		g2d.drawString("Fullscreen:", 80, 100);
+		g2d.drawString(""+Main.fullscreen, 250, 100);
+
+		if (selectedIndex == 1)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+
+		g2d.drawString("Sound Effect Muted:", 80, 200);
+
+		if (SoundEffect.volume == SoundEffect.Volume.MUTE)
+		{
+			g2d.drawString("true", 250, 200);
+		}
+		else
+		{
+			g2d.drawString("false", 250, 200);
+		}
+		
+		if (selectedIndex == 2)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("BGM volume:", 80, 300);
+
+		g2d.drawString(""+(int)(GameData.gain*100), 250, 300);
+		
+		if (selectedIndex == 3)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Debug Info:", 80, 400);
+
+		g2d.drawString(""+(Main.debug), 250, 400);
+		
+		if (selectedIndex == 4)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Preload Collision:", 80, 500);
+
+		g2d.drawString(""+(Main.preloadCollisionMap), 250, 500);
+		
+		if (selectedIndex == 5)
+		{
+			g2d.setColor(Color.BLUE);
+		}
+		else
+		{
+			g2d.setColor(Color.BLACK);
+		}
+		
+		g2d.drawString("Main Menu", 480, 500);
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#drawRight(java.awt.Graphics2D)
+	 */
+	@Override
+	protected void drawRight(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+
+class GameOptionsMenu extends MenuScreen
+{
+	int selectedIndex = 0;
+
+	/**
+	 * @param menu
+	 */
+	public GameOptionsMenu(Menu menu) {
+		super(menu);
+		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see MenuScreen#evaluateButtons()
+	 */
+	@Override
+	void evaluateButtons() {
+		// TODO Auto-generated method stub
+		if (MainCanvas.esc)
+		{
+			menu.changeMenu("Game");
+
+			MainCanvas.esc = false;
+		}
+		else if (MainCanvas.up)
+		{
+			selectedIndex--;
+
+			MainCanvas.up = false;
+		}
+		else if (MainCanvas.down)
+		{
+			selectedIndex++;
+
+			MainCanvas.down = false;
+		}
+		else if (MainCanvas.right)
+		{
+			if (selectedIndex == 2)
+			{
+				GameData.gain += 0.05f;
+				if (GameData.gain > 1)
+					GameData.gain = 1.0f;
+				Main.gamedata.BGM.setGain(GameData.gain);
+			}
+			
+			MainCanvas.right = false;
+		}
+		else if (MainCanvas.left)
+		{
+			if (selectedIndex == 2)
+			{
+				GameData.gain -= 0.05f;
+				if (GameData.gain < 0)
+					GameData.gain = 0.0f;
+				Main.gamedata.BGM.setGain(GameData.gain);
+			}
+			
+			MainCanvas.left = false;
+		}
+		else if (MainCanvas.enter)
+		{
+			if (selectedIndex == 0)
+			{
+				Main.toggleFullscreen();
+			}
+			else if (selectedIndex == 1)
+			{
+				if (SoundEffect.volume == SoundEffect.Volume.MUTE)
+				{
+					SoundEffect.volume = SoundEffect.Volume.UNMUTE;
+				}
+				else
+				{
+					SoundEffect.volume = SoundEffect.Volume.MUTE;
+				}
+			}
+			else if (selectedIndex == 3)
+			{
+				if (Main.debug)
+					Main.debug = false;
+				else
+					Main.debug = true;
+			}
+			else if (selectedIndex == 4)
+			{
+				if (Main.preloadCollisionMap)
+					Main.preloadCollisionMap = false;
+				else
+					Main.preloadCollisionMap = true;
+			}
+			else if (selectedIndex == 5)
+			{
+				menu.changeMenu("Game");
 			}
 
 			MainCanvas.enter = false;

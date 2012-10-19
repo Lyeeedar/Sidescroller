@@ -17,7 +17,7 @@ public class EXPOrb extends Item {
 	 * @param type
 	 */
 	public EXPOrb(int[] pos, int number) {
-		super("EXP", "", "Data/Resources/Items/exp.png", pos, number, 3);
+		super("EXP", "", "exp.png", pos, number, 3);
 	}
 	
 	@Override

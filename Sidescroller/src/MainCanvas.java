@@ -609,11 +609,20 @@ public class MainCanvas extends Canvas implements KeyListener{
 	public BufferedImage tintImage(BufferedImage image, int minX, int minY, int maxX, int maxY)
 	{
 		BufferedImage im = deepCopy(image);
+		
+		int width = im.getWidth()-1;
+		int height = im.getHeight()-1;
 
 		for (int x = minX; x < maxX; x++)
 		{
+			if ((x < 0) || (x > width))
+				continue;
+			
 			for (int y = minY; y < maxY; y++)
 			{
+				if ((y < 0) || (y > height))
+					continue;
+				
 				int colour = im.getRGB(x, y);
 
 				int alpha = (colour>>24) & 0xff;
@@ -882,8 +891,8 @@ public class MainCanvas extends Canvas implements KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_CONTROL)
 		{
-			Main.oldState = Main.getState();
-			Main.setState(2);
+//			Main.oldState = Main.getState();
+//			Main.setState(2);
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_P)
 		{
