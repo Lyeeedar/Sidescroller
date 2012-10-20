@@ -48,15 +48,17 @@ public class Dialogue implements Serializable{
 	 */
 	public int type;
 	
-	public Dialogue(int type)
+	public String parent;
+	
+	public Dialogue(int type, String parent)
 	{
-		this.type = type;
-		this.quest1 = new ArrayList<ArrayList<String>>();
-		this.quest2 = new ArrayList<ArrayList<String>>();
+		this(new ArrayList<ArrayList<String>>(), new ArrayList<ArrayList<String>>(), type, parent);
 	}
 	
-	public Dialogue(ArrayList<ArrayList<String>> text1, ArrayList<ArrayList<String>> text2, int type)
+	public Dialogue(ArrayList<ArrayList<String>> text1, ArrayList<ArrayList<String>> text2, int type, String parent)
 	{
+		this.type = type;
+		this.parent = parent;
 		this.type = type;
 		this.quest1 = text1;
 		this.quest2 = text2;
@@ -347,7 +349,7 @@ public class Dialogue implements Serializable{
 			newquest2.add(newblock);
 		}
 		
-		Dialogue d = new Dialogue(newquest1, newquest2, type);
+		Dialogue d = new Dialogue(newquest1, newquest2, type, parent);
 		return d;
 	}
 	

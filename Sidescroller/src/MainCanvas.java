@@ -264,6 +264,39 @@ public class MainCanvas extends Canvas implements KeyListener{
 		Toolkit.getDefaultToolkit().sync();	
 	}
 
+	public void paintScene(GraphicsConfiguration gc)
+	{
+		Graphics2D g2d = null;
+
+		try {
+			// Let the OS have a little time...
+			Thread.yield();
+
+			// Calculate the screen position
+			this.calculateScreen();
+
+			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
+
+			// Enable AA
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+
+			Scene s = Main.gamedata.currentScene;
+
+			s.draw(g2d);
+
+		} finally {
+			// Dispose of the graphics object
+			if (g2d != null)
+				g2d.dispose();
+		}
+		// Show the back buffer (Page Flipping)
+		if( !bufferStrategy.contentsLost() )
+			bufferStrategy.show();
+
+		Toolkit.getDefaultToolkit().sync();	
+	}
+
 	public void drawHUD(Graphics2D g2d, long totalTime)
 	{
 		if (Main.gamedata.systemMessages.size() > 0)
@@ -338,7 +371,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 			}
 
 		}
-		
+
 		if (Character.gender == 0)
 		{
 			g2d.drawImage(HUDImages[3], x+8, y+3, null);
@@ -347,7 +380,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			g2d.drawImage(HUDImages[2], x+8, y+3, null);
 		}
-		
+
 		if (!Main.gamedata.transformAllowed)
 		{
 			g2d.drawImage(HUDImages[4], x+8, y+3, null);
@@ -530,7 +563,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 							e.getSize()[0]*(e.getAnimateStage()-1), e.getSize()[1]*(e.getAnimateStrip()-1), e.getSize()[0]*e.getAnimateStage(), e.getSize()[1]*e.getAnimateStrip(),
 							null);
 				}
-				
+
 				if (Main.debug)
 				{
 					g2d.setColor(Color.RED);
@@ -609,7 +642,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 	public BufferedImage tintImage(BufferedImage image, int minX, int minY, int maxX, int maxY)
 	{
 		BufferedImage im = deepCopy(image);
-		
+
 		int width = im.getWidth()-1;
 		int height = im.getHeight()-1;
 
@@ -617,12 +650,12 @@ public class MainCanvas extends Canvas implements KeyListener{
 		{
 			if ((x < 0) || (x > width))
 				continue;
-			
+
 			for (int y = minY; y < maxY; y++)
 			{
 				if ((y < 0) || (y > height))
 					continue;
-				
+
 				int colour = im.getRGB(x, y);
 
 				int alpha = (colour>>24) & 0xff;
@@ -891,8 +924,17 @@ public class MainCanvas extends Canvas implements KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_CONTROL)
 		{
-//			Main.oldState = Main.getState();
-//			Main.setState(2);
+
+			if (Main.gamedata.currentScene == null)
+			{
+				Main.gamedata.currentScene = new Scene("Player");
+
+				Main.gamedata.currentScene.start();
+			}
+			else
+			{
+				Main.gamedata.currentScene.mode = 3;
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_P)
 		{

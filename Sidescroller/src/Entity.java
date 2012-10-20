@@ -280,7 +280,7 @@ public class Entity implements Serializable{
 		{
 			ArrayList<ArrayList<String>> dia1 = new ArrayList<ArrayList<String>>();
 			ArrayList<ArrayList<String>> dia2 = new ArrayList<ArrayList<String>>();
-			this.dialogue = new Dialogue(dia1, dia2, 0);
+			this.dialogue = new Dialogue(dia1, dia2, 0, name);
 		}
 
 		this.spriteFile = spritefile;

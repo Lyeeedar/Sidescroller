@@ -28,8 +28,9 @@ public class Main {
 	 * 0 = Close game <p>
 	 * 1 = Normal loop <p>
 	 * 2 = Toggle Fullscreen <p>
-	 * 3 = Menu
-	 * 4 = Paused
+	 * 3 = Menu <p>
+	 * 4 = Paused <p>
+	 * 5 = scene
 	 * 
 	 */
 	private static int state = 3;
@@ -333,6 +334,19 @@ public class Main {
 				Main.maincanvas.paintPaused(gc);
 			}
 			// ------------------- State 4 End   ------------------- //
+			
+			// ------------------- State 5 Start ------------------- // 
+			else if (state == 5)
+			{
+				Scene s = Main.gamedata.currentScene;
+				
+				elapsedTime = System.currentTimeMillis() - lastTime;
+				
+				Main.maincanvas.paintScene(gc);
+				
+				s.updateTime(elapsedTime);
+			}
+			// ------------------- State 5 End   ------------------- //
 		}
 	}
 

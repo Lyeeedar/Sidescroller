@@ -840,6 +840,7 @@ class EntityFrame extends JFrame
 
 					e.setBehavior(behavior);
 					
+					d.parent = name.getText();
 					e.setDialogue(d);
 					
 					e.setMaxHealth(Double.parseDouble(health.getText()));
