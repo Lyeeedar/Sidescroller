@@ -1279,6 +1279,9 @@ public class Entity implements Serializable{
 
 		if (dialogue == null)
 			return;
+		
+		dialogue.parent = name;
+		
 		if (!this.isTalking())
 			this.setTalking(true);
 		else if (this.getTalkingTimer() < Dialogue.dialogueFade)

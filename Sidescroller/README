@@ -1,5 +1,7 @@
 Stuff to be done:
 
+Check momory usage - set level storage depending on jvm memory
+
 Code:
 
 Dialogue types:
@@ -21,7 +23,6 @@ Scenes launched through dialogue
 
 400x300
 
-when starting scene stop drawing entities and zoom in on location
 once zoomed in then draw and store the the scene background
 position sprites on the scene grid (not relative to overall level)
 Store spritesheets, dialogues and actions 
