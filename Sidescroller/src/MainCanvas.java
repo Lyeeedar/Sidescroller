@@ -27,7 +27,7 @@ public class MainCanvas extends Canvas implements KeyListener{
 	/**
 	 * Frame resolution. X, Y
 	 */
-	public static int[] resolution = new int[2];
+	public static int[] resolution = {800, 600};
 	public static BufferStrategy bufferStrategy;
 	public static int[] screenPosition = new int[2];
 	public BufferedImage[] HUDImages = new BufferedImage[5];
@@ -37,9 +37,6 @@ public class MainCanvas extends Canvas implements KeyListener{
 	{
 		// Initialise the Frame with the given graphics configuration
 		super(gc);
-
-		// Set the game resolution
-		MainCanvas.resolution = new int[]{800, 600};
 
 		this.setIgnoreRepaint(true);
 

@@ -131,6 +131,9 @@ public class Dialogue implements Serializable{
 	private String scene(ArrayList<String> stagetext)
 	{
 		Scene s = sceneList.get(Integer.parseInt(stagetext.get(1)));
+		s.parent = parent;
+		
+		Main.gamedata.currentScene = s;
 		
 		s.start();
 		

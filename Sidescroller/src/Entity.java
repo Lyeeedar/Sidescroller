@@ -245,7 +245,7 @@ public class Entity implements Serializable{
 	/**
 	 * The system messages to be displayed about the entities head
 	 */
-	protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
+	transient protected ArrayList<SystemMessage> infoText = new ArrayList<SystemMessage>();
 
 	/**
 	 * @param name

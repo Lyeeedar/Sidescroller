@@ -145,7 +145,7 @@ public class SaveGame implements Serializable{
 			return false;
 		
 		Main.gamedata.loadStage = 1;
-		Main.gamedata.loadText = "Loading old file";
+		Main.gamedata.loadText = "Searching The Past";
 		Main.maincanvas.paintLoad(gc);
 		if (file.exists())
 		{
@@ -168,7 +168,7 @@ public class SaveGame implements Serializable{
 		}
 		
 		Main.gamedata.loadStage = 2;
-		Main.gamedata.loadText = "Loading level";
+		Main.gamedata.loadText = "Creating The World";
 		Main.maincanvas.paintLoad(gc);
 		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
 		if (level == null)
@@ -177,7 +177,7 @@ public class SaveGame implements Serializable{
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
 		Main.gamedata.loadStage = 3;
-		Main.gamedata.loadText = "Overwriting game entities";
+		Main.gamedata.loadText = "Replacing All Living Things";
 		Main.maincanvas.paintLoad(gc);
 		if (save.gameEntities.containsKey(level.name))
 		{
@@ -186,26 +186,27 @@ public class SaveGame implements Serializable{
 		gamedata.levelName = level.name;
 		
 		Main.gamedata.loadStage = 4;
-		Main.gamedata.loadText = "Processing spritesheets";
+		Main.gamedata.loadText = "Opening Your Eyes";
 		Main.maincanvas.paintLoad(gc);
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
 			ent.processSpritesheet();
+			ent.infoText  = new ArrayList<SystemMessage>();
 		}
 		
 		Main.gamedata.loadStage = 5;
-		Main.gamedata.loadText = "Loading background";
+		Main.gamedata.loadText = "Painting The Land";
 		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
 		gamedata.loadLevelImages(level.name);
 		
 		Main.gamedata.loadStage = 6;
-		Main.gamedata.loadText = "Generating Collision Map";
+		Main.gamedata.loadText = "Finalising Geology";
 		Main.maincanvas.paintLoad(gc);
 		
 		Main.gamedata.loadStage = 7;
-		Main.gamedata.loadText = "Setting references";
+		Main.gamedata.loadText = "Filling Spellbook";
 		Main.maincanvas.paintLoad(gc);
 		Character.inventory = save.inventory;
 		Character.socketedSpells = save.socketedSpells;
@@ -221,7 +222,7 @@ public class SaveGame implements Serializable{
 		Character.gender = save.gender;
 		
 		Main.gamedata.loadStage = 8;
-		Main.gamedata.loadText = "Reloading character images";
+		Main.gamedata.loadText = "Creating Magic";
 		Main.gamedata.transformAllowed = level.transformAllowed;
 		Main.maincanvas.paintLoad(gc);
 		Character.reloadAllImages();
@@ -246,7 +247,7 @@ public class SaveGame implements Serializable{
 		File file = getMostRecentFile(GameData.gameSessionID);
 		
 		Main.gamedata.loadStage = 1;
-		Main.gamedata.loadText = "Loading old file";
+		Main.gamedata.loadText = "Checking The Past";
 		Main.maincanvas.paintLoad(gc);
 		if ((file != null) && (file.exists()))
 		{
@@ -269,14 +270,14 @@ public class SaveGame implements Serializable{
 		}
 		
 		Main.gamedata.loadStage = 2;
-		Main.gamedata.loadText = "Loading new level";
+		Main.gamedata.loadText = "Creating The Land";
 		Main.maincanvas.paintLoad(gc);
 		Level level = Level.load(new File("Data/"+levelName+".data"));
 		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		
 		Main.gamedata.loadStage = 3;
-		Main.gamedata.loadText = "Overwriting game entities";
+		Main.gamedata.loadText = "Annihalting Native Inhabitants";
 		Main.maincanvas.paintLoad(gc);
 		if (save.gameEntities.containsKey(level.name))
 		{
@@ -285,7 +286,7 @@ public class SaveGame implements Serializable{
 		gamedata.levelName = level.name;
 		
 		Main.gamedata.loadStage = 4;
-		Main.gamedata.loadText = "Updating player stats";
+		Main.gamedata.loadText = "Powering You Up";
 		Main.maincanvas.paintLoad(gc);
 		
 		if (save.player != null)
@@ -315,23 +316,25 @@ public class SaveGame implements Serializable{
 		}
 		
 		Main.gamedata.loadStage = 5;
-		Main.gamedata.loadText = "Processing entity images";
+		Main.gamedata.loadText = "Opening Your Eyes";
 		Main.maincanvas.paintLoad(gc);
 		for (Map.Entry<String, Entity> entry : gameEntities.entrySet())
 		{
 			Entity ent = entry.getValue();
 			
 			ent.processSpritesheet();
+			
+			ent.infoText  = new ArrayList<SystemMessage>();
 		}
 		
 		Main.gamedata.loadStage = 6;
-		Main.gamedata.loadText = "Loading background";
+		Main.gamedata.loadText = "Finalising Geology";
 		Main.maincanvas.paintLoad(gc);
 		gamedata.setGameEntities(gameEntities);
 		gamedata.loadLevelImages(level.name);
 		
 		Main.gamedata.loadStage = 7;
-		Main.gamedata.loadText = "Calculating collision map";
+		Main.gamedata.loadText = "Solidfying Ground";
 		Main.maincanvas.paintLoad(gc);
 		Main.gamedata.transformAllowed = level.transformAllowed;
 		

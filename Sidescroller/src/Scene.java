@@ -12,11 +12,11 @@ public class Scene implements Serializable{
 
 	private static final long serialVersionUID = 7976569180276076531L;
 	final static int updateSpeed = 20;
-	int updateTimer = updateSpeed;
+	transient int updateTimer = updateSpeed;
 
-	int zoomAmount = 0;
-	float zoomStepX = 0.4f;
-	float zoomStepY = 0.3f;
+	transient int zoomAmount = 0;
+	final float zoomStepX = 0.4f;
+	final float zoomStepY = 0.3f;
 	
 	/**
 	 * Wait status: <p>
@@ -25,15 +25,15 @@ public class Scene implements Serializable{
 	 * 2 = wait time specified then increase stage <p>
 	 * 3 = increase stage <p>
 	 */
-	int wait = 0;
-	int waitDuration = 0;
+	transient int wait = 0;
+	transient int waitDuration = 0;
 
 	transient ArrayList<SceneActor> actors = new ArrayList<SceneActor>();
 
-	BufferedImage background;
+	transient BufferedImage background;
 
-	int[] screenPosition;
-	int[] resolution = MainCanvas.resolution;
+	transient int[] screenPosition;
+	transient int[] resolution = MainCanvas.resolution;
 
 	/**
 	 * 4 modes: <p>
@@ -42,13 +42,15 @@ public class Scene implements Serializable{
 	 * 2 = normal <p>
 	 * 3 = Zoom out
 	 */
-	int mode = 0;
+	transient int mode = 0;
 
+	Color backgroundColor = new Color(0, 0, 0);
+	
 	String parent;
 
 	ArrayList<SceneAction> sceneActions = new ArrayList<SceneAction>();
 
-	int sceneStage = 0;
+	transient int sceneStage = 0;
 
 	public Scene(String parent)
 	{
@@ -57,9 +59,11 @@ public class Scene implements Serializable{
 	}
 
 	public void start()
-	{	
+	{
 		actors = new ArrayList<SceneActor>();
 		Entity e = Main.gamedata.getGameEntities().get(parent);
+		resolution = MainCanvas.resolution;
+		
 		actors.add(new SceneActor(e.spriteFile, new int[]{0, 0, e.pos[2]}, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime));
 		screenPosition = new int[]{e.pos[0]-(resolution[0]/2), e.pos[1]-(resolution[1]/2)};
 		
@@ -92,6 +96,7 @@ public class Scene implements Serializable{
 				null);
 
 		mode = 1;
+		sceneStage = 0;
 
 		g2d.dispose();
 
@@ -187,6 +192,9 @@ public class Scene implements Serializable{
 	{
 		BufferedImage image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
+		
+		g.setColor(backgroundColor);
+		g.fillRect(0, 0, 800, 600);
 
 		g.drawImage(background, 0, 0, null);
 		for (SceneActor sa : actors)

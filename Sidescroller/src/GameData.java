@@ -29,7 +29,7 @@ public class GameData {
 	 */
 	public static HashMap<String, BufferedImage> gameImages = new HashMap<String, BufferedImage>();
 
-	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(2);
+	public static CircularArrayRing<TempLevelData> storedLevels = new CircularArrayRing<TempLevelData>(3);
 
 	/**
 	 *  The rate at which the game runs (evaluates AI)

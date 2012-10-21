@@ -1107,7 +1107,7 @@ class DialogueFrame extends JFrame
 		
 		init();
 		
-		this.setSize(600, 400);
+		this.setSize(800, 600);
 		this.setVisible(true);
 	}
 	
@@ -1708,6 +1708,10 @@ class DropListFrame extends JFrame
 
 class SceneListFrame extends JFrame
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7636021693468022666L;
 	ArrayList<Scene> sceneList;
 	JPanel panel = new JPanel();
 	String parent;
@@ -1736,13 +1740,14 @@ class SceneListFrame extends JFrame
 	public void init()
 	{
 		panel.removeAll();
-		panel.setLayout(new GridLayout(3, 1));
+		panel.setLayout(new GridLayout(10, 1));
 		
 		JPanel scenebuttonpanel = new JPanel();
 		
+		int i = 0;
 		for (final Scene sc : sceneList)
 		{
-			JButton b = new JButton("Scene");
+			JButton b = new JButton(i + "   :   Scene");
 			b.addActionListener(new ActionListener(){
 
 				@Override
@@ -1751,6 +1756,8 @@ class SceneListFrame extends JFrame
 					
 				}});
 			scenebuttonpanel.add(b);
+			
+			i++;
 		}
 		
 		panel.add(scenebuttonpanel);
@@ -1793,7 +1800,7 @@ class SceneEditorFrame extends JFrame
 		
 		setLayout(new BorderLayout());
 		
-		panel = new ScenePanel(s);
+		panel = new ScenePanel(s, this);
 		
 		add(panel, BorderLayout.CENTER);
 		add(side, BorderLayout.EAST);
@@ -1812,7 +1819,7 @@ class SceneEditorFrame extends JFrame
 		
 		JPanel saPanel = new JPanel();
 		saPanel.setLayout(new GridLayout(20, 1));
-		saPanel.setBackground(Color.DARK_GRAY);
+		saPanel.setBackground(scene.backgroundColor);
 		
 		int i = 0;
 		for (final SceneAction sa : scene.sceneActions)
@@ -1938,25 +1945,79 @@ class SceneActionFrame extends JFrame
 	
 }
 
-class ScenePanel extends JPanel
+class ScenePanel extends JPanel implements MouseListener
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -977776477240398338L;
 	Scene scene;
+	SceneEditorFrame sef;
 	
-	public ScenePanel(Scene scene)
+	public ScenePanel(Scene scene, SceneEditorFrame sef)
 	{
+		this.sef = sef;
 		this.scene = scene;
+		scene.start();
 		scene.zoomAmount = 1000;
 		scene.mode = 2;
+		
+		this.addMouseListener(this);
 	}
 	
 	@Override
 	public void paintComponent(Graphics g)
 	{
 		scene.draw((Graphics2D) g);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		
+		int x = 200+(e.getX()/2);
+		int y = 150+(e.getY()/2);
+		
+		scene.backgroundColor = new Color(scene.background.getRGB(x, y));
+		sef.init();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
