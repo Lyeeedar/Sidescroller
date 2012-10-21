@@ -21,7 +21,7 @@ public class Main {
 	
 	public static boolean debug = true;
 	
-	public static boolean preloadCollisionMap = true;
+	public static boolean preloadCollisionMap = false;
 
 	/**
 	 *  Game state. <p>

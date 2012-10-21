@@ -870,9 +870,13 @@ public class MainCanvas extends Canvas implements KeyListener{
 
 				menu.changeMenu("Game");
 				MainCanvas.esc = false;
+				
+				Main.setState(3);
 			}
-
-			Main.setState(3);
+			else if  (Main.getState() == 5)
+			{
+				
+			}
 		}
 		else if ((e.getKeyCode() == KeyEvent.VK_A) || (e.getKeyCode() == KeyEvent.VK_LEFT))
 		{
