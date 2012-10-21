@@ -50,6 +50,8 @@ public class Dialogue implements Serializable{
 	
 	public String parent;
 	
+	public ArrayList<Scene> sceneList = new ArrayList<Scene>();
+	
 	public Dialogue(int type, String parent)
 	{
 		this(new ArrayList<ArrayList<String>>(), new ArrayList<ArrayList<String>>(), type, parent);
@@ -118,8 +120,24 @@ public class Dialogue implements Serializable{
 		{
 			return suicide(stagetext);
 		}
+		else if (stagetext.get(0).equals("Scene"))
+		{
+			return scene(stagetext);
+		}
 		
 		return null;
+	}
+	
+	private String scene(ArrayList<String> stagetext)
+	{
+		Scene s = sceneList.get(Integer.parseInt(stagetext.get(1)));
+		
+		s.start();
+		
+		setStage(getStage()+1);
+		setInternalstage(0);
+		
+		return "";
 	}
 	
 	/**
@@ -367,6 +385,8 @@ public class Dialogue implements Serializable{
 		}
 		
 		Dialogue d = new Dialogue(newquest1, newquest2, type, parent);
+		d.sceneList = sceneList;
+		
 		return d;
 	}
 	

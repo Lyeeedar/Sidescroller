@@ -1,19 +1,34 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author Lyeeedar
  *
  */
-public class Scene {
+public class Scene implements Serializable{
+
+	private static final long serialVersionUID = 7976569180276076531L;
+	final static int updateSpeed = 20;
+	int updateTimer = updateSpeed;
 
 	int zoomAmount = 0;
 	float zoomStepX = 0.4f;
 	float zoomStepY = 0.3f;
+	
+	/**
+	 * Wait status: <p>
+	 * 0 = no wait <p>
+	 * 1 = wait on enter pressed then increase stage <p>
+	 * 2 = wait time specified then increase stage <p>
+	 * 3 = increase stage <p>
+	 */
+	int wait = 0;
+	int waitDuration = 0;
 
-	ArrayList<SceneActor> actors = new ArrayList<SceneActor>();
+	transient ArrayList<SceneActor> actors = new ArrayList<SceneActor>();
 
 	BufferedImage background;
 
@@ -38,14 +53,16 @@ public class Scene {
 	public Scene(String parent)
 	{
 		this.parent = parent;
-		Entity e = Main.gamedata.getGameEntities().get(parent);
-		actors.add(new SceneActor(e.spriteFile, new int[]{0, 0, e.pos[2]}, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, true, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime));
-
-		screenPosition = new int[]{e.pos[0]-(resolution[0]/2), e.pos[1]-(resolution[1]/2)};
+		
 	}
 
 	public void start()
 	{	
+		actors = new ArrayList<SceneActor>();
+		Entity e = Main.gamedata.getGameEntities().get(parent);
+		actors.add(new SceneActor(e.spriteFile, new int[]{0, 0, e.pos[2]}, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime));
+		screenPosition = new int[]{e.pos[0]-(resolution[0]/2), e.pos[1]-(resolution[1]/2)};
+		
 		background = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D g2d = background.createGraphics();
@@ -80,6 +97,49 @@ public class Scene {
 
 		Main.setState(5);
 	}
+	
+	public void evaluateActions(long time)
+	{
+		updateTimer -= time;
+		
+		if (updateTimer > 0)
+			return;
+		
+		updateTimer = updateSpeed;
+		
+		if (wait == 0)
+		{
+			sceneActions.get(sceneStage).action();
+		}
+		else if (wait == 1)
+		{
+			if (MainCanvas.enter)
+			{
+				MainCanvas.enter = false;
+				
+				sceneStage++;
+				wait = 0;
+			}
+		}
+		else if (wait == 2)
+		{
+			waitDuration -= time;
+			if (waitDuration < 0)
+			{
+				sceneStage++;
+				wait = 0;
+			}
+		}
+		else if (wait == 3)
+		{
+			sceneStage++;
+		}
+		
+		if (sceneStage >= sceneActions.size())
+		{
+			mode = 3;
+		}
+	}
 
 	public void updateTime(long time)
 	{
@@ -102,6 +162,10 @@ public class Scene {
 				zoomAmount = 0;
 				end();
 			}
+		}
+		else
+		{
+			evaluateActions(time);
 		}
 
 		for (SceneActor sa : actors)
@@ -227,7 +291,7 @@ class SceneActor
 	int totalStage;
 	int strip;
 	int totalStrip;
-	String dialogue = "test text is here to see how much can be seen on the screen lol woooooopts this is a big pie lol";
+	String dialogue = "";
 	int totalAnimateTime;
 	int animateTime;
 	boolean visible = true;
@@ -235,7 +299,6 @@ class SceneActor
 	public SceneActor(String image, int[] pos, int[] headPos, boolean animate, int stage, int totalStage, int strip, int totalStrip, int animateTime)
 	{
 		this.headPos = headPos;
-		spriteSheet = GameData.getImage("Spritesheet", image);
 		this.pos = pos;
 		this.animate = animate;
 		this.stage = stage;
@@ -245,7 +308,17 @@ class SceneActor
 		this.totalAnimateTime = animateTime;
 		this.animateTime = animateTime;
 
-		spriteSize = new int[]{spriteSheet.getWidth()/totalStage, spriteSheet.getHeight()/totalStrip};
+		if ((image == null) || (image.equals("")))
+		{
+			
+		}
+		else
+			spriteSheet = GameData.getImage("Spritesheet", image);
+		
+		if (spriteSheet != null)
+			spriteSize = new int[]{spriteSheet.getWidth()/totalStage, spriteSheet.getHeight()/totalStrip};
+		else 
+			visible = false;
 	}
 
 	public void updateTime(long time)
@@ -270,8 +343,9 @@ class SceneActor
 	}
 }
 
-class SceneAction
+class SceneAction implements Serializable
 {
+	private static final long serialVersionUID = 6931684291766473278L;
 	String type;
 	ArrayList<String> arg = new ArrayList<String>();
 	Scene parent;
@@ -280,5 +354,86 @@ class SceneAction
 	{
 		this.type = type;
 		this.parent = parent;
+	}
+	
+	public void action()
+	{
+		if (type.equals("Speech"))
+		{
+			speech();
+		}
+		else if (type.equals("AddNewActor"))
+		{
+			addNewActor();
+		}
+		else if (type.equals("ChangeSpritesheet"))
+		{
+			changeSpritesheet();
+		}
+		else if (type.equals("ChangeAnimate"))
+		{
+			changeAnimate();
+		}
+		else if (type.equals("Pause"))
+		{
+			pause();
+		}
+	}
+	
+	public void speech()
+	{
+		parent.actors.get(Integer.parseInt(arg.get(0))).dialogue = arg.get(1);
+		parent.wait = 1;
+	}
+	
+	public void addNewActor()
+	{
+		String image = arg.get(0);
+		int[] pos = {Integer.parseInt(arg.get(1)), Integer.parseInt(arg.get(2)), Integer.parseInt(arg.get(3))};
+		int[] headPos = {Integer.parseInt(arg.get(4)), Integer.parseInt(arg.get(5))};
+		boolean animate = arg.get(6).equals("true");
+		int stage = Integer.parseInt(arg.get(7));
+		int totalStage = Integer.parseInt(arg.get(8));
+		int strip = Integer.parseInt(arg.get(9));
+		int totalStrip = Integer.parseInt(arg.get(10));
+		int animTime = Integer.parseInt(arg.get(11));
+		
+		SceneActor sa = new SceneActor(image, pos, headPos, animate, stage, totalStage, strip, totalStrip, animTime);
+		
+		parent.actors.add(sa);
+		
+		parent.wait = 3;
+		
+	}
+	
+	public void changeSpritesheet()
+	{
+		SceneActor sa = parent.actors.get(Integer.parseInt(arg.get(0)));
+		
+		sa.spriteSheet = GameData.getImage("Spritesheet", arg.get(1));
+		
+		sa.stage = Integer.parseInt(arg.get(2));
+		sa.totalStage = Integer.parseInt(arg.get(3));
+		sa.strip = Integer.parseInt(arg.get(4));
+		sa.totalStrip = Integer.parseInt(arg.get(5));
+		
+		parent.wait = 3;
+	}
+	
+	public void changeAnimate()
+	{
+		SceneActor sa = parent.actors.get(Integer.parseInt(arg.get(0)));
+		
+		sa.animate = arg.get(1).equals("true");
+		sa.visible = arg.get(2).equals("true");
+		sa.animateTime = Integer.parseInt(arg.get(3));
+		
+		parent.wait = 3;
+	}
+	
+	public void pause()
+	{
+		parent.waitDuration = Integer.parseInt(arg.get(0));
+		parent.wait = 2;
 	}
 }

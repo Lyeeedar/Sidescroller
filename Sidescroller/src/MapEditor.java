@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -596,6 +597,8 @@ class EntityFrame extends JFrame
 		
 		dropList = e.dropList;
 		d = e.getDialogue().copy();
+		d.parent = e.name;
+		
 		spritefile = e.getSpriteFile();
 
 		behavior = new boolean[4];
@@ -1053,7 +1056,7 @@ class DialogueFrame extends JFrame
 			}});
 		bottom.add(bubbleBox);
 		
-		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible", "GetItem", "Suicide"};
+		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible", "GetItem", "Suicide", "Scene"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
 		bottom.add(comboBox);
 		
@@ -1081,6 +1084,16 @@ class DialogueFrame extends JFrame
 				init();
 			}});
 		bottom.add(delete);
+		
+		JButton scene = new JButton("Edit Scenes");
+		scene.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new SceneListFrame(d);
+				
+			}});
+		bottom.add(scene);
 		
 		JButton close = new JButton("Close");
 		close.addActionListener(new ActionListener(){
@@ -1185,9 +1198,41 @@ class DialogueBlockFrame extends JFrame
 		{
 			suicide();
 		}
+		else if (block.get(0).equals("Scene"))
+		{
+			scene();
+		}
 		
 		
 		panel.revalidate();
+	}
+	
+	public void scene()
+	{
+		while (block.size() < 3)
+		{
+			block.add("");
+		}
+		
+		panel.setLayout(new GridLayout(5, 2));
+		
+		panel.add(new JLabel("Scene Index: "));
+		final JTextField target = new JTextField(10);
+		target.setText(block.get(1));
+		panel.add(target);
+		
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				block.set(1, target.getText());
+				
+				frame.dispose();
+				
+			}});
+		panel.add(apply);
 	}
 	
 	public void speech()
@@ -1660,3 +1705,260 @@ class DropListFrame extends JFrame
 		panel.revalidate();
 	}
 }
+
+class SceneListFrame extends JFrame
+{
+	ArrayList<Scene> sceneList;
+	JPanel panel = new JPanel();
+	String parent;
+	
+	public SceneListFrame(Dialogue d)
+	{
+		
+		this.parent = d.parent;
+		
+		this.sceneList = d.sceneList;
+		if (sceneList == null)
+		{
+			d.sceneList = new ArrayList<Scene>();
+			this.sceneList = d.sceneList;
+		}
+		
+		this.add(panel);
+		
+		this.setSize(600, 400);
+		
+		this.setVisible(true);
+		
+		init();
+	}
+	
+	public void init()
+	{
+		panel.removeAll();
+		panel.setLayout(new GridLayout(3, 1));
+		
+		JPanel scenebuttonpanel = new JPanel();
+		
+		for (final Scene sc : sceneList)
+		{
+			JButton b = new JButton("Scene");
+			b.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					new SceneEditorFrame(sc);
+					
+				}});
+			scenebuttonpanel.add(b);
+		}
+		
+		panel.add(scenebuttonpanel);
+		
+		JPanel optionspanel = new JPanel();
+		
+		JButton add = new JButton("Add Scene");
+		add.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				sceneList.add(new Scene(parent));
+				init();
+				
+			}});
+		optionspanel.add(add);
+		
+		panel.add(optionspanel);
+		
+		panel.revalidate();
+		panel.repaint();
+	}
+}
+
+class SceneEditorFrame extends JFrame
+{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6798087625332758290L;
+	
+	Scene scene;
+	JPanel panel;
+	JPanel side = new JPanel();
+	
+	public SceneEditorFrame(Scene s)
+	{
+		scene = s;
+		
+		setLayout(new BorderLayout());
+		
+		panel = new ScenePanel(s);
+		
+		add(panel, BorderLayout.CENTER);
+		add(side, BorderLayout.EAST);
+		
+		init();
+		
+		this.setSize(800, 800);
+		
+		this.setVisible(true);
+	}
+	
+	public void init()
+	{
+		side.removeAll();
+		side.setLayout(new GridLayout(2, 1));
+		
+		JPanel saPanel = new JPanel();
+		saPanel.setLayout(new GridLayout(20, 1));
+		saPanel.setBackground(Color.DARK_GRAY);
+		
+		int i = 0;
+		for (final SceneAction sa : scene.sceneActions)
+		{
+			JButton b = new JButton(i + "  :   " + sa.type);
+			b.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					new SceneActionFrame(sa);
+				}});
+			saPanel.add(b);
+			i++;
+		}
+		
+		JScrollPane saScroll = new JScrollPane(saPanel);
+		saScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		side.add(saScroll);
+		
+		JPanel bottom = new JPanel();
+		
+		final String[] types = {"Speech", "ChangeSpriteSheet", "ChangeAnimation"};
+		final JComboBox typesBox = new JComboBox(types);
+		bottom.add(typesBox);
+		
+		JButton add = new JButton("Add Action");
+		add.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SceneAction sa = new SceneAction(types[typesBox.getSelectedIndex()], scene);
+				scene.sceneActions.add(sa);
+				init();
+				
+			}});
+		bottom.add(add);
+		
+		side.add(bottom);
+		
+		side.revalidate();
+		side.repaint();
+	}
+	
+	
+}
+
+class SceneActionFrame extends JFrame
+{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2141788495788411144L;
+	
+	SceneAction sa;
+	JFrame frame = this;
+	
+	public SceneActionFrame(SceneAction sa)
+	{
+		this.sa = sa;
+		
+		setLayout(new GridLayout(5, 1));
+		
+		init();
+		
+		setSize(600, 400);
+		
+		setVisible(true);
+	}
+	
+	public void init()
+	{
+		if (sa.type.equals("Speech"))
+		{
+			while (sa.arg.size() < 4)
+			{
+				sa.arg.add("");
+			}
+			
+			JPanel p1 = new JPanel();
+			
+			p1.add(new JLabel("Index: "));
+			
+			final JTextField index = new JTextField(15);
+			index.setText(sa.arg.get(0));
+			p1.add(index);
+			
+			JPanel p2 = new JPanel();
+			
+			p2.add(new JLabel("Text: "));
+			
+			final JTextField text = new JTextField(15);
+			text.setText(sa.arg.get(1));
+			
+			p2.add(text);
+			
+			JPanel p3 = new JPanel();
+
+			JButton apply = new JButton("Apply");
+			apply.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					ArrayList<String> args = new ArrayList<String>();
+					
+					args.add(index.getText());
+					args.add(text.getText());
+
+					sa.arg = args;
+					frame.dispose();
+					
+				}});
+			
+			p3.add(apply);
+			
+			add(p1);
+			add(p2);
+			add(p3);
+
+		}
+	}
+	
+}
+
+class ScenePanel extends JPanel
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -977776477240398338L;
+	Scene scene;
+	
+	public ScenePanel(Scene scene)
+	{
+		this.scene = scene;
+		scene.zoomAmount = 1000;
+		scene.mode = 2;
+	}
+	
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		scene.draw((Graphics2D) g);
+	}
+}
+
+
+

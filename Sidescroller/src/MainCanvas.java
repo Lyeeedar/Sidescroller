@@ -931,13 +931,26 @@ public class MainCanvas extends Canvas implements KeyListener{
 
 			if (Main.gamedata.currentScene == null)
 			{
-				Main.gamedata.currentScene = new Scene("Player");
+				Scene sc = new Scene("Player");
+				Main.gamedata.currentScene = sc;
+				
+				SceneAction sa1 = new SceneAction("Speech", sc);
+				sa1.arg.add("0");
+				sa1.arg.add("This is the first line of text");
+				
+				SceneAction sa2 = new SceneAction("Speech", sc);
+				sa2.arg.add("0");
+				sa2.arg.add("This is the second line of text");
+				
+				SceneAction sa3 = new SceneAction("Speech", sc);
+				sa3.arg.add("0");
+				sa3.arg.add("This is the last line of text and should end the scene");
+				
+				sc.sceneActions.add(sa1);
+				sc.sceneActions.add(sa2);
+				sc.sceneActions.add(sa3);
 
-				Main.gamedata.currentScene.start();
-			}
-			else
-			{
-				Main.gamedata.currentScene.mode = 3;
+				sc.start();
 			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_P)

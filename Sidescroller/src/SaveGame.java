@@ -57,6 +57,17 @@ public class SaveGame implements Serializable{
 		else
 		{
 			save = new SaveGame();
+			save.sessionID = GameData.gameSessionID;
+			save.gameEntities = new HashMap<String, HashMap<String, Entity>>();
+		}
+		
+		if (save.sessionID.equals(GameData.gameSessionID))
+		{
+			
+		}
+		else
+		{
+			save = new SaveGame();
 			save.gameEntities = new HashMap<String, HashMap<String, Entity>>();
 		}
 
