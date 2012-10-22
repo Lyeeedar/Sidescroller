@@ -307,7 +307,7 @@ public class SaveGame implements Serializable{
 			Entity oldPlayer = level.gameEntities.get("Player");
 			level.gameEntities.remove("Player");
 			
-			Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, "male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
+			Entity e = new Entity("Player", 80, 8, 8, new int[]{20, 20, 0}, 8, "male.png", new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 			
 			e.setPos(oldPlayer.getPos());
 			e.setFaction("Player");

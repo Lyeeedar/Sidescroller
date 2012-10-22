@@ -342,16 +342,22 @@ public class Entity implements Serializable{
 			this.getVelocity()[0] = -speed;
 			this.getPos()[2] = 0;
 
-			if ((animateStage != 1) && (animateStrip == 2))
-				newAnimStrip = 1;
+			if ((animateStage != 1) && (animateStrip == 2) && (animateStage != 3))
+				if (crouched)
+					newAnimStrip = 3;
+				else
+					newAnimStrip = 1;
 		}
 		else if (MainCanvas.right)
 		{
 			this.getVelocity()[0] = speed;
 			this.getPos()[2] = 1;
 
-			if ((animateStage != 1) && (animateStrip == 2))
-				newAnimStrip = 1;
+			if ((animateStage != 1) && (animateStrip == 2) && (animateStage != 3))
+				if (crouched)
+					newAnimStrip = 3;
+				else
+					newAnimStrip = 1;
 		}
 		else
 		{
@@ -359,18 +365,35 @@ public class Entity implements Serializable{
 			{
 				newAnimStrip = 2;
 				newAnimStage = 2;
-
+			}
+			else if (animateStrip == 3)
+			{
+				newAnimStrip = 2;
+				newAnimStage = 4;
 			}
 		}
 		
 		if (MainCanvas.down)
 		{
-			if ((grounded) && (!crouched))
+			if (grounded)
 			{
-				collisionShape[3] /= 2;
-				collisionShape[1] += collisionShape[3];
-				crouched = true;
+				if (!crouched)
+				{
+					collisionShape[3] /= 2;
+					collisionShape[1] += collisionShape[3];
+					crouched = true;
+				}
+				
+				if (newAnimStrip == 2)
+				{
+					newAnimStage = 4;
+				}
+				else
+				{
+					newAnimStrip = 3;
+				}
 			}
+			
 		}
 		else if (crouched)
 		{
@@ -380,12 +403,22 @@ public class Entity implements Serializable{
 			if (checkCollision(pos) == null)
 			{
 				crouched = false;
+				
+				if (newAnimStrip == 2)
+				{
+					newAnimStage = 2;
+				}
+				else
+				{
+					newAnimStrip = 1;
+				}
 			}
 			else
 			{
 				collisionShape[3] /= 2;
 				collisionShape[1] += collisionShape[3];
 			}
+
 		}
 
 		// Jump
@@ -447,7 +480,7 @@ public class Entity implements Serializable{
 			if ((Character.spellCooldown[0] > 0) || (isAnimating))
 				return;
 
-			newAnimStrip = 3;
+			newAnimStrip = 4;
 
 			int[] pos = {0, 0, this.getPos()[2]};
 
@@ -477,7 +510,7 @@ public class Entity implements Serializable{
 			if ((Character.spellCooldown[1] > 0) || (isAnimating))
 				return;
 
-			newAnimStrip = 4;
+			newAnimStrip = 5;
 
 			int[] pos = {0, 0, this.getPos()[2]};
 
@@ -507,7 +540,7 @@ public class Entity implements Serializable{
 			if ((Character.spellCooldown[2] > 0) || (isAnimating))
 				return;
 
-			newAnimStrip = 5;
+			newAnimStrip = 6;
 
 			int[] pos = {0, 0, this.getPos()[2]};
 
@@ -537,7 +570,7 @@ public class Entity implements Serializable{
 			if ((Character.spellCooldown[3] > 0) || (isAnimating))
 				return;
 
-			newAnimStrip = 6;
+			newAnimStrip = 7;
 
 			int[] pos = {0, 0, this.getPos()[2]};
 
@@ -567,7 +600,7 @@ public class Entity implements Serializable{
 			if ((Character.spellCooldown[4] > 0) || (isAnimating))
 				return;
 
-			newAnimStrip = 7;
+			newAnimStrip = 8;
 
 			int[] pos = {0, 0, this.getPos()[2]};
 
@@ -761,6 +794,8 @@ public class Entity implements Serializable{
 			velocity[0] = 30;
 		}
 
+		if (crouched)
+			velocity[0] /= 2;
 
 		// Modify the Y velocity with gravity
 		velocity[1] += (weight * GameData.gravity);
@@ -1346,7 +1381,7 @@ public class Entity implements Serializable{
 			{
 				this.animateStage++;
 
-				if ((animateStrip > 1) && (animateStage == castSpellAt))
+				if ((animateStrip > 3) && (animateStage == castSpellAt))
 				{
 					if (spellToCast != null)
 					{
@@ -1369,7 +1404,7 @@ public class Entity implements Serializable{
 
 				if (this.animateStage > animStages)
 				{
-					if (animateStrip > 2)
+					if (animateStrip > 3)
 					{
 						isAnimating = false;
 						newAnimStrip = 1;
@@ -1387,6 +1422,7 @@ public class Entity implements Serializable{
 				if (newAnimStrip == 1)
 				{
 					animateStrip = 1;
+					animateStage = 1;
 				}
 				else if (newAnimStrip == 2)
 				{
@@ -1395,24 +1431,22 @@ public class Entity implements Serializable{
 
 					newAnimStage = 0;
 				}
-				else if (newAnimStrip > 2)
+				else if (newAnimStrip == 3)
 				{
-
+					animateStrip = 3;
+					animateStage = 1;
+				}
+				else if (newAnimStrip > 3)
+				{
 					animateStage = 1;
 					animateStrip = newAnimStrip;
 					isAnimating = true;
 				}
 			}
 			// newAnimStrip != animateStrip End
-
-			else if ((newAnimStage > 0) && (newAnimStage != animateStage))
-			{
-				animateStage = newAnimStage;
-				newAnimStage = 0;
-			}
-
+			
 			// animateStrip == 1
-			else if (animateStrip == 1)
+			else if ((animateStrip == 1) || (animateStrip == 3))
 			{	
 				this.animateStage++;
 
@@ -1422,6 +1456,12 @@ public class Entity implements Serializable{
 				}
 			}
 			// animateStrip == 1 End
+			
+			if ((newAnimStage > 0) && (newAnimStage != animateStage))
+			{				
+				animateStage = newAnimStage;
+				newAnimStage = 0;
+			}
 			// -------------------------------------------------------------------------------------------------------------------------
 		}
 	}

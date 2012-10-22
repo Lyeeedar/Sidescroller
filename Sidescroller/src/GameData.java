@@ -123,7 +123,7 @@ public class GameData {
 	{
 		gameEntities.clear();
 
-		Entity e = new Entity("Player", 80, 7, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
+		Entity e = new Entity("Player", 80, 8, 8, new int[]{20, 20, 0}, 8, null, new int[]{46, 18, 27, 69}, new boolean[]{true, true, false, false}, null);
 		gameEntities.put("Player", e);
 
 		for (int i = 0; i < 5; i++)
@@ -308,10 +308,36 @@ public class GameData {
 
 		for (int i = 0; i < 5; i++)
 		{
-			File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("Data/Resources/Levels/"+name+"/back"+i+".png");
+
+			if (in == null)
+			{
+
+				File file = new File("Data/Resources/Levels/"+name+"/back"+i+".png");
+
+				if (!file.exists())
+				{
+					file = new File("src/Data/Resources/Levels/"+name+"/back"+i+".png");
+
+					try {
+						in = new FileInputStream(file);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					try {
+						in = new FileInputStream(file);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
 
 			try {
-				back[i] = toCompatibleImage(ImageIO.read(file));
+				back[i] = toCompatibleImage(ImageIO.read(in));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

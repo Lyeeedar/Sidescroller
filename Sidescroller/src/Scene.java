@@ -262,8 +262,8 @@ public class Scene implements Serializable{
 			String[] textLines = MainCanvas.wrapText(text, 34);
 			int height = textLines.length*25;
 
-			int x = 400+sa.headPos[0]+35;
-			int y = 300+sa.headPos[1]-height-20;
+			int x = 400+sa.pos[0]+sa.headPos[0]+35;
+			int y = 300+sa.pos[1]+sa.headPos[1]-height-20;
 
 			int[] xp = {x+20, x+35, x-10+(sa.spriteSize[0]/4)};
 			int[] yp = {y+height, y+height, y+height+30};
