@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -746,6 +748,11 @@ class EntityFrame extends JFrame
 			}});
 		panel.add(dialogue);
 		
+		panel.add(new JLabel("Show Death Message"));
+		final JCheckBox deathMessage = new JCheckBox();
+		deathMessage.setSelected(e.showDeathMessage);
+		panel.add(deathMessage);
+		
 		panel.add(new JLabel("Health"));
 		final JTextField health = new JTextField(5);
 		health.setText(Double.toString(e.getHealth()));
@@ -848,6 +855,8 @@ class EntityFrame extends JFrame
 					
 					e.setMaxHealth(Double.parseDouble(health.getText()));
 					e.setHealth(Double.parseDouble(health.getText()));
+					
+					e.showDeathMessage = deathMessage.isSelected();
 					
 					HashMap<String, Double> newDefense = new HashMap<String, Double>();
 					newDefense.put(Entity.PHYSICAL, Double.parseDouble(armorPhys.getText()));
@@ -1005,7 +1014,7 @@ class BehaviorFrame extends JFrame
 	}
 }
 
-class DialogueFrame extends JFrame
+class DialogueFrame extends JFrame implements KeyListener
 {
 	/**
 	 * 
@@ -1022,17 +1031,21 @@ class DialogueFrame extends JFrame
 		
 		this.add(panel);
 		panel.setLayout(new BorderLayout());
+		panel.setFocusable(false);
 		
 		JScrollPane sp = new JScrollPane(dialoguePanel);
+		sp.setFocusable(false);
 		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		panel.add(sp, BorderLayout.CENTER);
 		
 		JPanel bottom = new JPanel();
+		bottom.setFocusable(false);
 		panel.add(bottom, BorderLayout.SOUTH);
 		
 		final String[] genders = {"Female", "Male"};
 		final JComboBox genderBox = new JComboBox(genders);
+		genderBox.setFocusable(false);
 		genderBox.addActionListener(new ActionListener(){
 
 			@Override
@@ -1046,6 +1059,7 @@ class DialogueFrame extends JFrame
 		
 		final String[] bubbleType = {"Speech", "Examine"};
 		final JComboBox bubbleBox = new JComboBox(bubbleType);
+		bubbleBox.setFocusable(false);
 		bubbleBox.setSelectedIndex(d.type);
 		bubbleBox.addItemListener(new ItemListener(){
 
@@ -1058,9 +1072,11 @@ class DialogueFrame extends JFrame
 		
 		final String[] dialogueTypes = {"Speech", "Kill", "ChangeLevel", "ChangePosition", "ChangeStage", "ChangePassable", "ChangeVisible", "GetItem", "Suicide", "Scene"};
 		final JComboBox comboBox = new JComboBox(dialogueTypes);
+		comboBox.setFocusable(false);
 		bottom.add(comboBox);
 		
 		JButton add = new JButton("Add Dialogue");
+		add.setFocusable(false);
 		add.addActionListener(new ActionListener(){
 
 			@Override
@@ -1073,6 +1089,7 @@ class DialogueFrame extends JFrame
 		bottom.add(add);
 		
 		JButton delete = new JButton("Delete Dialogue");
+		delete.setFocusable(false);
 		delete.addActionListener(new ActionListener(){
 
 			@Override
@@ -1080,12 +1097,53 @@ class DialogueFrame extends JFrame
 				if (d.getQuest().size() == 0)
 					return;
 				
-				d.getQuest().remove(d.getQuest().size()-1);
+				d.getQuest().remove(selectedIndex);
 				init();
 			}});
 		bottom.add(delete);
 		
+		JButton moveUp = new JButton("Move Up");
+		moveUp.setFocusable(false);
+		moveUp.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedIndex <= 0)
+					return;
+				
+				ArrayList<String> temp = d.getQuest().get(selectedIndex-1);
+				
+				d.getQuest().set(selectedIndex-1, d.getQuest().get(selectedIndex));
+				d.getQuest().set(selectedIndex, temp);
+				
+				selectedIndex--;
+				init();
+				
+			}});
+		bottom.add(moveUp);
+		
+		JButton movDown = new JButton("Move Down");
+		movDown.setFocusable(false);
+		movDown.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedIndex >= d.getQuest().size()-1)
+					return;
+				
+				ArrayList<String> temp = d.getQuest().get(selectedIndex+1);
+				
+				d.getQuest().set(selectedIndex+1, d.getQuest().get(selectedIndex));
+				d.getQuest().set(selectedIndex, temp);
+				
+				selectedIndex++;
+				init();
+				
+			}});
+		bottom.add(movDown);
+		
 		JButton scene = new JButton("Edit Scenes");
+		scene.setFocusable(false);
 		scene.addActionListener(new ActionListener(){
 
 			@Override
@@ -1096,6 +1154,7 @@ class DialogueFrame extends JFrame
 		bottom.add(scene);
 		
 		JButton close = new JButton("Close");
+		close.setFocusable(false);
 		close.addActionListener(new ActionListener(){
 
 			@Override
@@ -1107,12 +1166,23 @@ class DialogueFrame extends JFrame
 		
 		init();
 		
-		this.setSize(800, 600);
+		this.addKeyListener(this);
+		this.requestFocusInWindow();
+		
+		this.setSize(1000, 600);
 		this.setVisible(true);
 	}
 	
+	int selectedIndex = 0;
 	public void init()
 	{
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		else if (selectedIndex >= d.getQuest().size()-1)
+			selectedIndex = d.getQuest().size()-1;
+		
+		this.requestFocusInWindow();
+		
 		dialoguePanel.removeAll();
 		dialoguePanel.setLayout(new GridLayout(50, 1));
 		
@@ -1120,6 +1190,12 @@ class DialogueFrame extends JFrame
 		for (final ArrayList<String> block : d.getQuest())
 		{
 			JButton blockBtn = new JButton(i+ " " + block.get(0));
+			
+			blockBtn.setFocusable(false);
+			
+			if (selectedIndex == i)
+				blockBtn.setBackground(Color.RED);
+			
 			blockBtn.addActionListener(new ActionListener(){
 
 				@Override
@@ -1133,6 +1209,38 @@ class DialogueFrame extends JFrame
 		
 		dialoguePanel.revalidate();
 		dialoguePanel.repaint();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			selectedIndex--;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			selectedIndex++;
+		}
+		
+		init();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
@@ -1782,7 +1890,7 @@ class SceneListFrame extends JFrame
 	}
 }
 
-class SceneEditorFrame extends JFrame
+class SceneEditorFrame extends JFrame implements KeyListener
 {
 
 	/**
@@ -1801,23 +1909,35 @@ class SceneEditorFrame extends JFrame
 		setLayout(new BorderLayout());
 		
 		panel = new ScenePanel(s, this);
+		panel.setFocusable(false);
 		
 		add(panel, BorderLayout.CENTER);
 		add(side, BorderLayout.EAST);
 		
 		init();
 		
+		this.addKeyListener(this);
+		
 		this.setSize(800, 800);
 		
 		this.setVisible(true);
 	}
 	
+	int selectedIndex = 0;
 	public void init()
 	{
+		
+		if (selectedIndex < 0)
+			selectedIndex = 0;
+		else if (selectedIndex >= scene.sceneActions.size()-1)
+			selectedIndex = scene.sceneActions.size()-1;
+		
+		
 		side.removeAll();
 		side.setLayout(new GridLayout(2, 1));
 		
 		JPanel saPanel = new JPanel();
+		saPanel.setFocusable(false);
 		saPanel.setLayout(new GridLayout(20, 1));
 		saPanel.setBackground(scene.backgroundColor);
 		
@@ -1825,6 +1945,11 @@ class SceneEditorFrame extends JFrame
 		for (final SceneAction sa : scene.sceneActions)
 		{
 			JButton b = new JButton(i + "  :   " + sa.type);
+			
+			if (i == selectedIndex)
+				b.setBackground(Color.RED);
+			
+			b.setFocusable(false);
 			b.addActionListener(new ActionListener(){
 
 				@Override
@@ -1836,17 +1961,21 @@ class SceneEditorFrame extends JFrame
 		}
 		
 		JScrollPane saScroll = new JScrollPane(saPanel);
+		saScroll.setFocusable(false);
 		saScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		side.add(saScroll);
 		
 		JPanel bottom = new JPanel();
+		bottom.setFocusable(false);
 		
-		final String[] types = {"Speech", "ChangeSpriteSheet", "ChangeAnimation"};
+		final String[] types = {"Speech", "ChangeSpriteSheet", "ChangeAnimate", "EntityToActor"};
 		final JComboBox typesBox = new JComboBox(types);
+		typesBox.setFocusable(false);
 		bottom.add(typesBox);
 		
 		JButton add = new JButton("Add Action");
+		add.setFocusable(false);
 		add.addActionListener(new ActionListener(){
 
 			@Override
@@ -1858,10 +1987,100 @@ class SceneEditorFrame extends JFrame
 			}});
 		bottom.add(add);
 		
+		JButton moveUp = new JButton("Move Up");
+		moveUp.setFocusable(false);
+		moveUp.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedIndex <= 0)
+					return;
+				
+				SceneAction temp = scene.sceneActions.get(selectedIndex-1);
+				
+				scene.sceneActions.set(selectedIndex-1, scene.sceneActions.get(selectedIndex));
+				scene.sceneActions.set(selectedIndex, temp);
+				
+				selectedIndex--;
+				init();
+				
+			}});
+		bottom.add(moveUp);
+		
+		JButton movDown = new JButton("Move Down");
+		movDown.setFocusable(false);
+		movDown.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedIndex >= scene.sceneActions.size()-1)
+					return;
+				
+				SceneAction temp = scene.sceneActions.get(selectedIndex+1);
+				
+				scene.sceneActions.set(selectedIndex+1, scene.sceneActions.get(selectedIndex));
+				scene.sceneActions.set(selectedIndex, temp);
+				
+				selectedIndex++;
+				init();
+				
+			}});
+		bottom.add(movDown);
+		
+		JButton delete = new JButton("Delete");
+		delete.setFocusable(false);
+		delete.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (scene.sceneActions.size() == 0)
+					return;
+				
+				scene.sceneActions.remove(selectedIndex);
+				
+				init();
+				
+			}});
+		bottom.add(delete);
+		
 		side.add(bottom);
+		side.setFocusable(false);
 		
 		side.revalidate();
 		side.repaint();
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+		{
+			selectedIndex--;
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+		{
+			selectedIndex++;
+		}
+		
+		init();
+		
+	}
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
@@ -1895,52 +2114,294 @@ class SceneActionFrame extends JFrame
 	{
 		if (sa.type.equals("Speech"))
 		{
-			while (sa.arg.size() < 4)
-			{
-				sa.arg.add("");
-			}
-			
-			JPanel p1 = new JPanel();
-			
-			p1.add(new JLabel("Index: "));
-			
-			final JTextField index = new JTextField(15);
-			index.setText(sa.arg.get(0));
-			p1.add(index);
-			
-			JPanel p2 = new JPanel();
-			
-			p2.add(new JLabel("Text: "));
-			
-			final JTextField text = new JTextField(15);
-			text.setText(sa.arg.get(1));
-			
-			p2.add(text);
-			
-			JPanel p3 = new JPanel();
-
-			JButton apply = new JButton("Apply");
-			apply.addActionListener(new ActionListener(){
-
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					ArrayList<String> args = new ArrayList<String>();
-					
-					args.add(index.getText());
-					args.add(text.getText());
-
-					sa.arg = args;
-					frame.dispose();
-					
-				}});
-			
-			p3.add(apply);
-			
-			add(p1);
-			add(p2);
-			add(p3);
-
+			speech();
 		}
+		else if (sa.type.equals("EntityToActor"))
+		{
+			entityToActor();
+		}
+		else if (sa.type.equals("ChangeSpritesheet"))
+		{
+			changeSpritesheet();
+		}
+		else if (sa.type.equals("ChangeAnimate"))
+		{
+			changeAnimate();
+		}
+	}
+	
+	public void speech()
+	{
+		while (sa.arg.size() < 4)
+		{
+			sa.arg.add("");
+		}
+		
+		JPanel p1 = new JPanel();
+		
+		p1.add(new JLabel("Index: "));
+		
+		final JTextField index = new JTextField(15);
+		index.setText(sa.arg.get(0));
+		p1.add(index);
+		
+		JPanel p2 = new JPanel();
+		
+		p2.add(new JLabel("Text: "));
+		
+		final JTextField text = new JTextField(15);
+		text.setText(sa.arg.get(1));
+		
+		p2.add(text);
+		
+		JPanel p3 = new JPanel();
+
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> args = new ArrayList<String>();
+				
+				args.add(index.getText());
+				args.add(text.getText());
+
+				sa.arg = args;
+				frame.dispose();
+				
+			}});
+		
+		p3.add(apply);
+		
+		add(p1);
+		add(p2);
+		add(p3);
+	}
+	
+	public void changeSpritesheet()
+	{
+		while (sa.arg.size() < 4)
+		{
+			sa.arg.add("");
+		}
+		
+		JPanel p1 = new JPanel();
+		
+		p1.add(new JLabel("Index: "));
+		
+		final JTextField index = new JTextField(15);
+		index.setText(sa.arg.get(0));
+		p1.add(index);
+		
+		JPanel p2 = new JPanel();
+		
+		p2.add(new JLabel("Spritesheet: "));
+		
+		final JTextField ss = new JTextField(15);
+		ss.setText(sa.arg.get(1));
+		
+		p2.add(ss);
+		
+		JPanel p3 = new JPanel();
+		
+		p3.add(new JLabel("Current Stage: "));
+		
+		final JTextField cs = new JTextField(15);
+		cs.setText(sa.arg.get(2));
+		
+		p3.add(cs);
+		
+		JPanel p4 = new JPanel();
+		
+		p4.add(new JLabel("Total Stage: "));
+		
+		final JTextField ts = new JTextField(15);
+		ts.setText(sa.arg.get(3));
+		
+		p4.add(ts);
+		
+		JPanel p5 = new JPanel();
+		
+		p5.add(new JLabel("Current Strip: "));
+		
+		final JTextField csr = new JTextField(15);
+		csr.setText(sa.arg.get(4));
+		
+		p5.add(csr);
+		
+		JPanel p6 = new JPanel();
+		
+		p6.add(new JLabel("Total Strip: "));
+		
+		final JTextField tsr = new JTextField(15);
+		tsr.setText(sa.arg.get(5));
+		
+		p6.add(tsr);
+		
+		JPanel p7 = new JPanel();
+
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> args = new ArrayList<String>();
+				
+				args.add(index.getText());
+				args.add(ss.getText());
+				args.add(cs.getText());
+				args.add(ts.getText());
+				args.add(csr.getText());
+				args.add(tsr.getText());
+
+				sa.arg = args;
+				frame.dispose();
+				
+			}});
+		
+		p7.add(apply);
+		
+		add(p1);
+		add(p2);
+		add(p3);
+		add(p4);
+		add(p5);
+		add(p6);
+		add(p7);
+	}
+	
+	public void changeAnimate()
+	{
+		while (sa.arg.size() < 6)
+		{
+			sa.arg.add("");
+		}
+		
+		JPanel p1 = new JPanel();
+		
+		p1.add(new JLabel("Index: "));
+		
+		final JTextField index = new JTextField(15);
+		index.setText(sa.arg.get(0));
+		p1.add(index);
+		
+		JPanel p2 = new JPanel();
+		
+		p2.add(new JLabel("Animate: "));
+		
+		final JTextField a = new JTextField(15);
+		a.setText(sa.arg.get(1));
+		
+		p2.add(a);
+		
+		JPanel p3 = new JPanel();
+		
+		p3.add(new JLabel("Visible: "));
+		
+		final JTextField v = new JTextField(15);
+		v.setText(sa.arg.get(2));
+		
+		p3.add(v);
+		
+		JPanel p4 = new JPanel();
+		
+		p4.add(new JLabel("Animate Time: "));
+		
+		final JTextField at = new JTextField(15);
+		at.setText(sa.arg.get(3));
+		
+		p4.add(at);
+		
+		JPanel p7 = new JPanel();
+
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> args = new ArrayList<String>();
+				
+				args.add(index.getText());
+				args.add(a.getText());
+				args.add(v.getText());
+				args.add(at.getText());
+
+				sa.arg = args;
+				frame.dispose();
+				
+			}});
+		
+		p7.add(apply);
+		
+		add(p1);
+		add(p2);
+		add(p3);
+		add(p4);
+		add(p7);
+	}
+	
+	public void entityToActor()
+	{
+		while (sa.arg.size() < 4)
+		{
+			sa.arg.add("");
+		}
+		
+		JPanel p1 = new JPanel();
+		
+		p1.add(new JLabel("Entity: "));
+		
+		final JTextField entity = new JTextField(15);
+		entity.setText(sa.arg.get(0));
+		p1.add(entity);
+		
+		JPanel p2 = new JPanel();
+		
+		p2.add(new JLabel("Pos X: "));
+		
+		final JTextField x = new JTextField(3);
+		x.setText(sa.arg.get(1));
+		
+		p2.add(x);
+		
+		p2.add(new JLabel("Pos Y: "));
+		
+		final JTextField y = new JTextField(3);
+		y.setText(sa.arg.get(2));
+		
+		p2.add(y);
+		
+		p2.add(new JLabel("Dir: "));
+		
+		final JTextField d = new JTextField(2);
+		d.setText(sa.arg.get(3));
+		
+		p2.add(d);
+		
+		JPanel p3 = new JPanel();
+
+		JButton apply = new JButton("Apply");
+		apply.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> args = new ArrayList<String>();
+				
+				args.add(entity.getText());
+				args.add(x.getText());
+				args.add(y.getText());
+				args.add(d.getText());
+
+				sa.arg = args;
+				frame.dispose();
+				
+			}});
+		
+		p3.add(apply);
+		
+		add(p1);
+		add(p2);
+		add(p3);
 	}
 	
 }

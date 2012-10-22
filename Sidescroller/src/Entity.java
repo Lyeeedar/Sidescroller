@@ -1547,13 +1547,14 @@ public class Entity implements Serializable{
 	}
 
 	public static final String[] deathMessages = {" died!", " bit the dust!", " kicked the bucket!", " became a statistic!"};
+	public boolean showDeathMessage = false;
 	public void death()
 	{
 		if (faction.equals(""))
 		{
 
 		}
-		else
+		else if (showDeathMessage)
 			Main.gamedata.systemMessages.add(new SystemMessage(this.getName()+deathMessages[Main.ran.nextInt(deathMessages.length)], Color.GREEN, 10000));
 
 		for (Map.Entry<String, Integer> entry : dropList.entrySet())

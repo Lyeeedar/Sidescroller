@@ -386,12 +386,32 @@ class SceneAction implements Serializable
 		{
 			pause();
 		}
+		else if (type.equals("EntityToActor"))
+		{
+			entityToActor();
+		}
 	}
 	
 	public void speech()
 	{
 		parent.actors.get(Integer.parseInt(arg.get(0))).dialogue = arg.get(1);
 		parent.wait = 1;
+	}
+	
+	public void entityToActor()
+	{
+		Entity e = Main.gamedata.getGameEntities().get(arg.get(0));
+		
+		if (e == null)
+			System.err.println("Entity " + arg.get(0) + " not found!");
+		
+		int[] pos = {Integer.parseInt(arg.get(1)), Integer.parseInt(arg.get(2)), Integer.parseInt(arg.get(3))};
+		
+		SceneActor sa = new SceneActor(e.spriteFile, pos, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime);
+		
+		parent.actors.add(sa);
+		
+		parent.wait = 3;
 	}
 	
 	public void addNewActor()
