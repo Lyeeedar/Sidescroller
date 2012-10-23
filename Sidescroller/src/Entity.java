@@ -784,6 +784,11 @@ public class Entity implements Serializable{
 
 	public void behavior1Alt()
 	{
+		if (!alive)
+		{
+			pos = findGround(pos, collisionShape[2]);
+		}
+		
 		// Scale X velocity so it can never exceed 30
 		if ((velocity[0] < 0) && (velocity[0] < -30))
 		{
@@ -896,6 +901,32 @@ public class Entity implements Serializable{
 			applyFriction();
 		}
 	}
+	
+	
+	public int[] findGround(int[] npos, int width)
+	{
+		if (npos[0] < 0)
+			npos[0] = 0;
+		
+		if (npos[0]+width > Main.gamedata.collisionX-1)
+			npos[0] = Main.gamedata.collisionX-1-width;
+		
+		boolean ground = Main.gamedata.checkCollision(npos[0], npos[1]+collisionShape[1]+collisionShape[3]);
+		
+		while (!ground)
+		{
+			npos[1]++;
+			
+			ground = Main.gamedata.checkCollision(npos[0], npos[1]+collisionShape[1]+collisionShape[3]);
+			
+			if (!ground)
+			{
+				ground = Main.gamedata.checkCollision(npos[0]+width, npos[1]+collisionShape[1]+collisionShape[3]);
+			}
+		}
+		
+		return npos;
+	}
 
 	boolean alerted = false;
 	int patrolDistance = 300;
@@ -924,8 +955,7 @@ public class Entity implements Serializable{
 				velocity[1] -= 15;
 			}
 
-			if ((Math.abs(pos[0] - lastTargetPos[0]) < 50) &&
-					(Math.abs(pos[1] - lastTargetPos[1]) < 50))
+			if (Math.pow(pos[0]+collisionShape[0]-lastTargetPos[0], 2)+Math.pow(pos[1]+collisionShape[1]-lastTargetPos[01], 2) < 10000)
 			{
 				if (Math.abs(pos[0] - lastTargetPos[0]) < 50)
 				{
@@ -934,7 +964,7 @@ public class Entity implements Serializable{
 				if ((this.spellCD > 0) || (isAnimating))
 					return;
 
-				newAnimStrip = 3;
+				newAnimStrip = 4;
 
 				int[] pos = {0, 0, this.getPos()[2]};
 
@@ -967,7 +997,7 @@ public class Entity implements Serializable{
 				this.spellCD = s.spellCDTime;
 
 				spellToCast = s;
-				castSpellAt = animStages-1;
+				castSpellAt = 2;
 
 			}
 		}

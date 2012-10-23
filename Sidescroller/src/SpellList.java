@@ -77,7 +77,7 @@ public class SpellList {
 		Spell s = null;
 		
 		s = new Spell(type+" Strike", 60, pos, collision,
-				new boolean[]{false, false, true, false, false}, new int[]{17, 0}, null, 0, true, false, 1300, 700, type, amount, exclude);
+				new boolean[]{false, false, true, false, false}, new int[]{17, 0}, null, 0, true, false, 1300, 200, type, amount, exclude);
 		
 		s.setVisible(false);
 		

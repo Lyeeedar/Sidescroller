@@ -288,11 +288,11 @@ class Spell extends Entity
 		
 		if (pos[2] == 0)
 		{
-			pos[0] -= collisionShape[2]/2;
+			pos[0] -= collisionShape[2]/4;
 		}
 		else
 		{
-			pos[0] += 2*collisionShape[2]/2;
+			pos[0] += 2*collisionShape[2]/4;
 		}
 		
 		String s = super.collideEntitiesCombat(pos);
@@ -402,31 +402,6 @@ class Spell extends Entity
 		
 		e.heal(damageAmount);
 		e.infoText.add(new SystemMessage("+"+damageAmount+"     HP", Color.GREEN, 3000));
-	}
-	
-	public int[] findGround(int[] npos, int width)
-	{
-		if (npos[0] < 0)
-			npos[0] = 0;
-		
-		if (npos[0] > Main.gamedata.collisionX-1-width)
-			npos[0] = Main.gamedata.collisionX-1-width;
-		
-		boolean ground = Main.gamedata.checkCollision(npos[0], npos[1]);
-		
-		while (!ground)
-		{
-			npos[1]++;
-			
-			ground = Main.gamedata.checkCollision(npos[0], npos[1]);
-			
-			if (!ground)
-			{
-				ground = Main.gamedata.checkCollision(npos[0]+width, npos[1]);
-			}
-		}
-		
-		return npos;
 	}
 	
 	@Override
