@@ -182,7 +182,7 @@ public class Entity implements Serializable{
 	/**
 	 * All the spells that this entity knows
 	 */
-	protected ArrayList<String> spells = new ArrayList<String>();
+	protected HashMap<String, Integer> spellsList = new HashMap<String, Integer>();
 
 	/**
 	 * Whether this entity has been damaged
@@ -288,8 +288,8 @@ public class Entity implements Serializable{
 		processSpritesheet();
 
 		collisionShape = collision;
-
-		spells.add("Fireball");
+		
+		spellsList.put("Strike", 1);
 
 		defense.put(Entity.PHYSICAL, (double) 0);
 		defense.put(Entity.FIRE, (double) 0);
@@ -938,7 +938,28 @@ public class Entity implements Serializable{
 
 				int[] pos = {0, 0, this.getPos()[2]};
 
-				Spell s = SpellList.getStrike(Entity.PHYSICAL, 5, pos, name, collisionShape);
+				Spell s = null;
+				
+				ArrayList<Map.Entry<String, Integer>> spells = new ArrayList<Map.Entry<String, Integer>>();
+				for (Map.Entry<String, Integer> entry : spellsList.entrySet())
+				{
+					spells.add(entry);
+				}
+				
+				while(s == null)
+				{
+					Map.Entry<String, Integer> entry = spells.get(Main.ran.nextInt(spells.size()));
+					
+					if (entry.getKey().equals("Strike"))
+					{
+						s = SpellList.getStrike(Entity.PHYSICAL, entry.getValue(), pos, name, collisionShape);
+					}
+					else if (Main.ran.nextInt(100) < entry.getValue())
+					{
+						s = SpellList.getSpell(entry.getKey(), pos, name);
+					}
+				}
+
 				s.setFaction(this.getFaction());
 
 				castSpellOffset = pos;
@@ -946,7 +967,7 @@ public class Entity implements Serializable{
 				this.spellCD = s.spellCDTime;
 
 				spellToCast = s;
-				castSpellAt = 5;
+				castSpellAt = animStages-1;
 
 			}
 		}
@@ -2008,19 +2029,19 @@ public class Entity implements Serializable{
 	}
 
 	/**
-	 * Returns {@link Entity#spells}
+	 * Returns {@link Entity#spellsList}
 	 * @return the spells
 	 */
-	public ArrayList<String> getSpells() {
-		return spells;
+	public HashMap<String, Integer> getSpells() {
+		return spellsList;
 	}
 
 	/**
-	 * Sets {@link Entity#spells}
+	 * Sets {@link Entity#spellsList}
 	 * @param spells the spells to set
 	 */
-	public void setSpells(ArrayList<String> spells) {
-		this.spells = spells;
+	public void setSpells(HashMap<String, Integer> spells) {
+		this.spellsList = spells;
 	}
 
 	/**

@@ -170,7 +170,7 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadStage = 2;
 		Main.gamedata.loadText = "Creating The World";
 		Main.maincanvas.paintLoad(gc);
-		Level level = Level.load(new File("Data/"+save.currentLevel+".data"));
+		Level level = Level.load(save.currentLevel+".data");
 		if (level == null)
 			return false;
 		
@@ -272,7 +272,7 @@ public class SaveGame implements Serializable{
 		Main.gamedata.loadStage = 2;
 		Main.gamedata.loadText = "Creating The Land";
 		Main.maincanvas.paintLoad(gc);
-		Level level = Level.load(new File("Data/"+levelName+".data"));
+		Level level = Level.load(levelName+".data");
 		
 		HashMap<String, Entity> gameEntities = level.gameEntities;
 		

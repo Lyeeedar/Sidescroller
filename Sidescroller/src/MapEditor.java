@@ -15,7 +15,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -352,7 +354,7 @@ class OptionsPanel extends JPanel
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				File file = new File("Data/Resources/Levels/"+name.getText());
+				File file = new File("src/Data/Resources/Levels/"+name.getText());
 				file.mkdirs();
 				
 				Level level = new Level();
@@ -362,7 +364,7 @@ class OptionsPanel extends JPanel
 				
 				for (int i = 0; i < 5; i++)
 				{
-					file = new File("Data/Resources/Levels/"+name.getText()+"/back"+i+".png");
+					file = new File("src/Data/Resources/Levels/"+name.getText()+"/back"+i+".png");
 					try{
 						ImageIO.write(MapEditor.gamedata.background[i], "PNG", file);
 					} catch (FileNotFoundException e1) {
@@ -370,6 +372,32 @@ class OptionsPanel extends JPanel
 					} catch (IOException eio) {
 						eio.printStackTrace();
 					}
+				}
+				
+				File backup = new File("Data/Resources/LevelBackups/"+name.getText());
+				backup.mkdirs();
+				backup = new File("Data/Resources/LevelBackups/"+name.getText()+"/"+name.getText()+System.currentTimeMillis()+".data");
+				
+				try {
+					backup.createNewFile();
+					
+					FileOutputStream fout = new FileOutputStream(backup);
+					FileInputStream fin = new FileInputStream("src/Data/"+name.getText()+".data");
+
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = fin.read(buf)) > 0) {
+						fout.write(buf, 0, len);
+					}
+					fin.close();
+					fout.close();
+					
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException ioe) {
+					// TODO Auto-generated catch block
+					ioe.printStackTrace();
 				}
 				
 				JOptionPane.showMessageDialog(null, "Save Done");
@@ -385,14 +413,14 @@ class OptionsPanel extends JPanel
 
 				File file = null;
 
-				final JFileChooser fc = new JFileChooser(new File("").getAbsolutePath());
+				final JFileChooser fc = new JFileChooser(new File("").getAbsolutePath()+"/src/Data/");
 
 				int returnVal = fc.showOpenDialog(null);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					file = fc.getSelectedFile();
 
-					Level level = Level.load(file);
+					Level level = Level.load(file.getName());
 
 					name.setText(level.name);
 					bgmname.setText(level.BGM);
@@ -592,12 +620,25 @@ class EntityFrame extends JFrame
 	boolean[] behavior;
 	Dialogue d;
 	HashMap<String, Integer> dropList;
+	HashMap<String, Integer> spellList;
 
 	public EntityFrame(Entity e)
 	{
 		this.e = e;
 		
 		dropList = e.dropList;
+		spellList = e.spellsList;
+		
+		if (dropList == null)
+		{
+			dropList = new HashMap<String, Integer>();
+		}
+		
+		if (spellList == null)
+		{
+			spellList = new HashMap<String, Integer>();
+		}
+		
 		d = e.getDialogue().copy();
 		d.parent = e.name;
 		
@@ -621,7 +662,7 @@ class EntityFrame extends JFrame
 	public void init()
 	{
 		panel.removeAll();
-		panel.setLayout(new GridLayout(27, 2));
+		panel.setLayout(new GridLayout(30, 2));
 
 		panel.add(new JLabel("Name: "));
 		final JTextField name = new JTextField(10);
@@ -798,6 +839,16 @@ class EntityFrame extends JFrame
 		exp.setText(Integer.toString(e.expAmount));
 		panel.add(exp);
 		
+		final JButton spells = new JButton("Spells");
+		 spells.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				new DropListFrame(spellList);
+
+			}});
+		panel.add( spells);
+		
 		final JButton drops = new JButton("Drops");
 		drops.addActionListener(new ActionListener(){
 
@@ -807,6 +858,73 @@ class EntityFrame extends JFrame
 
 			}});
 		panel.add(drops);
+		
+		JButton copy = new JButton("Copy");
+		copy.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				Entity e1 = new Entity("", 0, 0, 0, new int[]{e.pos[0]+40, e.pos[1]+40, 0}, 0, null, new int[]{0, 0, 0, 0}, new boolean[]{false, false, false, false}, null);
+				e1.dropList = dropList;
+				e1.expAmount = Integer.parseInt(exp.getText());
+				
+				e1.setName(name.getText()+"1");
+				MapEditor.gamedata.getGameEntities().put(e1.getName(), e1);
+				e1.setFaction(faction.getText());
+				e1.setAnimateTime(Long.parseLong(animUpdate.getText()));
+				e1.setTotalAnimateStrip(Integer.parseInt(animStrips.getText()));
+				e1.speed = Integer.parseInt(speed.getText());
+				e1.setAnimStages(Integer.parseInt(animStages.getText()));
+				e1.setAnimateStrip(Integer.parseInt(cuanimStrips.getText()));
+				e1.setAnimateStage(Integer.parseInt(cuanimStage.getText()));
+				e1.setWeight(Integer.parseInt(weight.getText()));
+				e1.setSpriteFile(spriteFile.getText());
+				e1.processSpritesheet();
+
+				int[] r = {Integer.parseInt(x.getText()), Integer.parseInt(y.getText()),
+						Integer.parseInt(width.getText()), Integer.parseInt(height.getText())};
+
+				e1.setCollisionShape(r);
+
+				e1.setPassable(passable.isSelected());
+				e1.setVisible(visible.isSelected());
+
+				if (left.isSelected())
+				{
+					e.getPos()[2] = 0;
+				}
+				else
+				{
+					e.getPos()[2] = 1;
+				}
+
+				e1.setBehavior(behavior);
+				
+				Dialogue ind = d.copy();
+				ind.parent = e1.getName();
+				
+				e1.setDialogue(ind);
+				
+				e1.setMaxHealth(Double.parseDouble(health.getText()));
+				e1.setHealth(Double.parseDouble(health.getText()));
+				
+				e1.showDeathMessage = deathMessage.isSelected();
+				
+				HashMap<String, Double> newDefense = new HashMap<String, Double>();
+				newDefense.put(Entity.PHYSICAL, Double.parseDouble(armorPhys.getText()));
+				newDefense.put(Entity.FIRE, Double.parseDouble(armorFire.getText()));
+				newDefense.put(Entity.AIR, Double.parseDouble(armorAir.getText()));
+				newDefense.put(Entity.EARTH, Double.parseDouble(armorEarth.getText()));
+				newDefense.put(Entity.WATER, Double.parseDouble(armorWater.getText()));
+				newDefense.put(Entity.DEATH, Double.parseDouble(armorDeath.getText()));
+				newDefense.put(Entity.LIFE, Double.parseDouble(armorLife.getText()));
+				
+				e1.setDefense(newDefense);
+				
+				EditorFrame.mapPanel.repaint();
+				
+			}});
+		panel.add(copy);
 
 		JButton apply = new JButton("Apply");
 		apply.addActionListener(new ActionListener(){
@@ -815,6 +933,7 @@ class EntityFrame extends JFrame
 			public void actionPerformed(ActionEvent ev) {
 				try{
 					e.dropList = dropList;
+					e.spellsList = spellList;
 					e.expAmount = Integer.parseInt(exp.getText());
 					
 					MapEditor.gamedata.getGameEntities().remove(e.getName());
@@ -913,7 +1032,7 @@ class EntityFrame extends JFrame
 		
 		if ((location == null) || (location.equals("")))
 		{
-			location = new File("").getAbsolutePath();
+			location = new File("").getAbsolutePath()+"/src/Data/Resources/Spritesheets";
 		}
 		
 		final JFileChooser fc = new JFileChooser(location);

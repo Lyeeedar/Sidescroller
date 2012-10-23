@@ -8,21 +8,5 @@ Dialogue types:
 
 Edit other gender dialogue stage
 Change gender
-Play anim
-Move
-Disable/enable player move
 
 confirm menu option
-
-------------------------------------------------
-
-
-Scenes
-
-Scenes launched through dialogue
-
-400x300
-
-once zoomed in then draw and store the the scene background
-position sprites on the scene grid (not relative to overall level)
-Store spritesheets, dialogues and actions 

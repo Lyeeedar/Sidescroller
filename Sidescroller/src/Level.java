@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -75,9 +77,9 @@ public class Level implements Serializable{
 	{
 		try
 		{
-			File folders = new File("Data/Resources");
+			File folders = new File("src/Data/Resources");
 			folders.mkdirs();
-			FileOutputStream fileOut = new FileOutputStream("Data/" + level.name + ".data");
+			FileOutputStream fileOut = new FileOutputStream("src/Data/" + level.name + ".data");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(level);
 			out.close();
@@ -96,18 +98,30 @@ public class Level implements Serializable{
 	 * @param file
 	 * @return
 	 */
-	public static Level load(File file)
-	{
-		if (!file.exists())
-			return null;
-		
+	public static Level load(String file)
+	{	
+		file = "Data/"+file;
 		Level level = null;
 		try{
-			FileInputStream fin = new FileInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(fin);
-			level = (Level) in.readObject();
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
+			
+			if (in == null)
+			{
+				try{
+					// Try to load it from the local file system
+					in = new FileInputStream(file);
+				}
+				catch (FileNotFoundException fne)
+				{
+					// Try to load it from the src folder (only useful if run from eclipse)
+					in = new FileInputStream("src/"+file);
+				}
+			}
+			
+			ObjectInputStream oin = new ObjectInputStream(in);
+			level = (Level) oin.readObject();
+			oin.close();
 			in.close();
-			fin.close();
 		}
 		catch(Exception e)
 		{

@@ -64,7 +64,7 @@ public class Scene implements Serializable{
 		Entity e = Main.gamedata.getGameEntities().get(parent);
 		resolution = MainCanvas.resolution;
 		
-		actors.add(new SceneActor(e.spriteFile, new int[]{0, 0, e.pos[2]}, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime));
+		actors.add(new SceneActor(e.spriteFile, new int[]{0, 0, e.pos[2]}, new int[]{e.collisionShape[0]+(e.collisionShape[2]/3), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime));
 		screenPosition = new int[]{e.pos[0]-(resolution[0]/2), e.pos[1]-(resolution[1]/2)};
 		
 		background = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
@@ -114,13 +114,23 @@ public class Scene implements Serializable{
 		
 		if (wait == 0)
 		{
-			sceneActions.get(sceneStage).action();
+			if (sceneStage > sceneActions.size()-1)
+			{
+				
+			}
+			else
+				sceneActions.get(sceneStage).action();
 		}
 		else if (wait == 1)
 		{
 			if (MainCanvas.enter)
 			{
 				MainCanvas.enter = false;
+				
+				for (SceneActor sa : actors)
+				{
+					sa.dialogue = "";
+				}
 				
 				sceneStage++;
 				wait = 0;
@@ -131,6 +141,11 @@ public class Scene implements Serializable{
 			waitDuration -= time;
 			if (waitDuration < 0)
 			{
+				for (SceneActor sa : actors)
+				{
+					sa.dialogue = "";
+				}
+				
 				sceneStage++;
 				wait = 0;
 			}
@@ -138,6 +153,7 @@ public class Scene implements Serializable{
 		else if (wait == 3)
 		{
 			sceneStage++;
+			wait = 0;
 		}
 		
 		if (sceneStage >= sceneActions.size())
@@ -168,10 +184,8 @@ public class Scene implements Serializable{
 				end();
 			}
 		}
-		else
-		{
-			evaluateActions(time);
-		}
+		
+		evaluateActions(time);
 
 		for (SceneActor sa : actors)
 		{
@@ -407,7 +421,7 @@ class SceneAction implements Serializable
 		
 		int[] pos = {Integer.parseInt(arg.get(1)), Integer.parseInt(arg.get(2)), Integer.parseInt(arg.get(3))};
 		
-		SceneActor sa = new SceneActor(e.spriteFile, pos, new int[]{e.collisionShape[0]+(e.collisionShape[2]/2), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime);
+		SceneActor sa = new SceneActor(e.spriteFile, pos, new int[]{e.collisionShape[0]+(e.collisionShape[2]/3), e.collisionShape[1]}, false, e.animateStage, e.animStages, e.animateStrip, e.totalAnimateStrip, (int)e.animateTime);
 		
 		parent.actors.add(sa);
 		
