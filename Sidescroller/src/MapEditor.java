@@ -128,7 +128,7 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 			
 			g.drawRect(e.getPos()[0]-55, e.getPos()[1]-50, 55, 70);
 			
-			g.drawString(e.getName(), e.getPos()[0]-50, e.getPos()[1]-30);
+			g.drawString(entry.getKey(), e.getPos()[0]-50, e.getPos()[1]-30);
 			g.drawString(e.faction, e.getPos()[0]-50, e.getPos()[1]-15);
 			g.drawString(""+e.pos[0], e.getPos()[0]-50, e.getPos()[1]);
 			g.drawString(""+e.pos[1], e.getPos()[0]-50, e.getPos()[1]+15);
@@ -221,7 +221,7 @@ class MapPanel extends JPanel implements MouseListener, MouseMotionListener
 				}
 				else
 				{
-					new EntityFrame(ent);
+					new EntityFrame(ent, entry.getKey());
 					return;
 				}
 			}
@@ -305,11 +305,11 @@ class OptionsPanel extends JPanel
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				Entity e = new Entity("Unnamed", 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, 0, null, new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
+				Entity e = new Entity("Unnamed"+MapEditor.gamedata.getGameEntities().size(), 100, 0, 8, new int[]{EditorFrame.sp.getHorizontalScrollBar().getValue(), EditorFrame.sp.getVerticalScrollBar().getValue(), 0}, 0, null, new int[]{0, 0, 50, 50}, new boolean[]{false, false, false}, null);
 
-				MapEditor.gamedata.getGameEntities().put("Unnamed"+MapEditor.gamedata.getGameEntities().size(), e);
+				MapEditor.gamedata.getGameEntities().put(e.getName(), e);
 
-				new EntityFrame(e);
+				new EntityFrame(e, e.getName());
 
 				EditorFrame.mapPanel.repaint();
 
@@ -621,9 +621,11 @@ class EntityFrame extends JFrame
 	Dialogue d;
 	HashMap<String, Integer> dropList;
 	HashMap<String, Integer> spellList;
+	String entryKey;
 
-	public EntityFrame(Entity e)
+	public EntityFrame(Entity e, String entry)
 	{
+		this.entryKey = entry;
 		this.e = e;
 		
 		dropList = e.dropList;
@@ -937,8 +939,10 @@ class EntityFrame extends JFrame
 					e.expAmount = Integer.parseInt(exp.getText());
 					
 					MapEditor.gamedata.getGameEntities().remove(e.getName());
+					MapEditor.gamedata.getGameEntities().remove(entryKey);
 					e.setName(name.getText());
 					MapEditor.gamedata.getGameEntities().put(e.getName(), e);
+					
 					e.setFaction(faction.getText());
 					e.setAnimateTime(Long.parseLong(animUpdate.getText()));
 					e.setTotalAnimateStrip(Integer.parseInt(animStrips.getText()));

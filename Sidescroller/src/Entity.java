@@ -955,18 +955,20 @@ public class Entity implements Serializable{
 				velocity[1] -= 15;
 			}
 
-			if (Math.pow(pos[0]+collisionShape[0]-lastTargetPos[0], 2)+Math.pow(pos[1]+collisionShape[1]-lastTargetPos[01], 2) < 10000)
-			{
+			if (Math.pow(pos[0]+collisionShape[0]-lastTargetPos[0], 2)+Math.pow(pos[1]+collisionShape[1]-lastTargetPos[1], 2) < 10000)
+			{	
 				if (Math.abs(pos[0] - lastTargetPos[0]) < 50)
 				{
 					alerted = false;
 				}
-				if ((this.spellCD > 0) || (isAnimating))
+				if ((this.spellCD > 0) || (isAnimating) || (animateStrip == 4))
 					return;
+				
+				if (Main.debug) this.infoText.add(new SystemMessage("Attacking!", Color.RED, 500));
 
 				newAnimStrip = 4;
 
-				int[] pos = {0, 0, this.getPos()[2]};
+				int[] pos = {0, -(collisionShape[2]/3), this.getPos()[2]};
 
 				Spell s = null;
 				
@@ -993,8 +995,6 @@ public class Entity implements Serializable{
 				s.setFaction(this.getFaction());
 
 				castSpellOffset = pos;
-
-				this.spellCD = s.spellCDTime;
 
 				spellToCast = s;
 				castSpellAt = 2;
@@ -1445,6 +1445,8 @@ public class Entity implements Serializable{
 						}
 
 						Main.gamedata.getGameEntities().put(spellToCast.getName()+System.currentTimeMillis(), spellToCast);
+						
+						spellCD = spellToCast.spellCDTime;
 
 						if (name.equals("Player"))
 							Character.spellCooldown[castSpellIndex] = spellToCast.spellCDTime;

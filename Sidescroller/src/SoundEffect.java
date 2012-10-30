@@ -34,7 +34,13 @@ public enum SoundEffect {
 	    	InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(soundFileName);
 	    	if (in == null)
 	    	{
-	    		in = new FileInputStream(soundFileName);
+	    		try {
+	    			in = new FileInputStream(soundFileName);
+	    		}
+	    		catch (Exception e)
+	    		{
+	    			in = new FileInputStream("src/"+soundFileName);
+	    		}
 	    	}
 	    	else
 	    	{
